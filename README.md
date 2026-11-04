@@ -2,8 +2,14 @@
 <!-- Author: Raditte Anggoro | Provenance: RA.CODEXSKILLS.2026.10 | Metadata: docs/provenance.json -->
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+[![Skills](https://img.shields.io/badge/focused%20skills-8-6C5CE7)](#skills)
+[![Maintenance](https://img.shields.io/badge/maintenance-Python%203.9%2B-3776AB?logo=python&logoColor=white)](#development)
 
-Eight practical skills for working with Codex: make focused changes, investigate failures, verify results, clarify features, and understand unfamiliar code.
+Eight focused Codex engineering skills for debugging, implementation, architecture,
+browser diagnostics, planning, release review, and evidence-backed verification.
+
+**Best for:** developers who want to load one clear workflow for the task instead
+of adding one large instruction pack to every coding session.
 
 Each workflow has its own `SKILL.md`. Load the one the task needs, use the project's existing tools, and keep evidence behind completion claims.
 
