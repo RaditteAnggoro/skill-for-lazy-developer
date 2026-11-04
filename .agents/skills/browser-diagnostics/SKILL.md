@@ -1,6 +1,6 @@
 ---
 name: browser-diagnostics
-description: "Reproduce web UI bugs and inspect browser console, network, rendering, or performance evidence using available browser tools."
+description: "Reproduce web UI failures using browser console, network, DOM, rendering, or performance evidence. Use when behaviour must be observed in a browser, not for ordinary static UI edits."
 ---
 
 # Browser Diagnostics

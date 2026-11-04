@@ -1,6 +1,6 @@
 ---
 name: verification-before-completion
-description: "Check evidence before reporting a coding change as complete, fixed, or passing. Use at implementation handoff or on a verification request."
+description: "Verify an implementation before reporting completion. Pair with coding changes when relevant checks can support the final claim; do not treat skipped checks as passing."
 ---
 
 # Verification Before Completion

@@ -1,0 +1,66 @@
+cases:
+  - id: failing-unit-test
+    prompt: "The invoice calculation test fails after the latest change. Find the cause, fix it, and run the relevant checks."
+    interaction: automatic
+    primary: systematic-debugging
+    supporting: [verification-before-completion]
+  - id: browser-refresh-failure
+    prompt: "The dashboard becomes blank after a browser refresh. Reproduce it, fix the cause, and verify the original flow."
+    interaction: automatic
+    primary: systematic-debugging
+    supporting: [browser-diagnostics, verification-before-completion]
+  - id: clear-label-change
+    prompt: "Change the submit button label to Save and update the existing test."
+    interaction: automatic
+    primary: lean-senior-engineering
+    supporting: [verification-before-completion]
+  - id: static-ui-change
+    prompt: "Move the account summary heading above the balance card. The desired layout is already shown in the attached design."
+    interaction: automatic
+    primary: lean-senior-engineering
+    supporting: [verification-before-completion]
+  - id: diagnose-only
+    prompt: "Explain why this build fails, but do not change any files."
+    interaction: automatic
+    primary: systematic-debugging
+    supporting: []
+  - id: architecture-only
+    prompt: "Trace how a campaign request is validated, stored, queued, and returned. Do not modify the implementation."
+    interaction: automatic
+    primary: architecture-map
+    supporting: []
+  - id: ambiguous-feature
+    prompt: "Improve the login experience."
+    interaction: choice
+    primary: feature-discovery
+    supporting: []
+  - id: vague-system-request
+    prompt: "Fix the system."
+    interaction: question
+    primary: adaptive-workflow
+    supporting: []
+  - id: consequential-feature
+    prompt: "Plan a CSV import feature, including how duplicates and invalid rows should be handled. Planning only."
+    interaction: automatic
+    primary: feature-discovery
+    supporting: []
+  - id: multi-module-migration
+    prompt: "Migrate authentication from local sessions to the existing company identity provider across the web app and API. Implement and verify it over multiple sessions."
+    interaction: automatic
+    primary: research-plan-implement
+    supporting: [verification-before-completion]
+  - id: release-assessment
+    prompt: "Assess whether the current branch is ready for staging. Report blockers and missing checks; do not deploy."
+    interaction: automatic
+    primary: release-readiness
+    supporting: []
+  - id: verification-only
+    prompt: "Check whether the current change fixes the reported pagination bug and tell me exactly which checks pass."
+    interaction: automatic
+    primary: verification-before-completion
+    supporting: []
+  - id: review-only
+    prompt: "Review my uncommitted changes for concrete defects and regressions. Do not implement fixes."
+    interaction: automatic
+    primary: lean-senior-engineering
+    supporting: []

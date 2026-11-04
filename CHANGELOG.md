@@ -2,6 +2,12 @@
 
 ## Unreleased
 
+- Add an implicitly invoked adaptive workflow that selects and sequences focused
+  skills from natural-language tasks.
+- Replace skill-name-first examples and UI prompts with automatic routing,
+  outcome-based choices, and a normal-language quick start.
+- Add a routing policy, 13-case prompt corpus, policy tests, and an updated automatic
+  workflow illustration.
 - Add project, third-party, inspiration, and citation notices to the source and
   release archive.
 - Add a visual README tour with a workflow illustration, task-routing diagram and expandable prompt walkthroughs.

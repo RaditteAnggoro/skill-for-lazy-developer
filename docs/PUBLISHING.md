@@ -40,7 +40,7 @@ If `origin` already exists, inspect `git remote -v` and use the intended remote 
 ## Verify the published result
 
 - Confirm GitHub shows the intended visibility (**Public** for this copy).
-- Confirm the eight skills and their supporting files are present.
+- Confirm the adaptive router, eight focused skills, and their supporting files are present.
 - Wait for the **Validate skills** workflow to finish.
 - Check the README and relative documentation links render correctly.
 - Invite collaborators only as intended.

@@ -19,7 +19,8 @@ class ValidationTests(unittest.TestCase):
         (self.skill / "agents/openai.yaml").write_text(
             'interface:\n  display_name: "Sample Skill"\n'
             '  short_description: "Investigate a specific test failure"\n'
-            '  default_prompt: "Use $sample-skill to investigate this failure."\n',
+            '  default_prompt: "Investigate this failure and report the evidence."\n'
+            'policy:\n  allow_implicit_invocation: true\n',
             encoding="utf-8",
         )
 
@@ -45,10 +46,21 @@ class ValidationTests(unittest.TestCase):
         with self.assertRaises(yaml.YAMLError):
             read_mapping("value: !!python/object:builtins.object {}\n")
 
-    def test_rejects_wrong_invocation(self):
+    def test_rejects_empty_default_prompt(self):
         ui = self.skill / "agents/openai.yaml"
-        ui.write_text(ui.read_text().replace("$sample-skill", "$wrong-skill"))
-        self.assertTrue(any("invoke its skill" in error for error in validate_skill(self.skill)))
+        ui.write_text(ui.read_text().replace(
+            'default_prompt: "Investigate this failure and report the evidence."',
+            'default_prompt: ""',
+        ))
+        self.assertTrue(any("default_prompt" in error for error in validate_skill(self.skill)))
+
+    def test_rejects_non_boolean_implicit_policy(self):
+        ui = self.skill / "agents/openai.yaml"
+        ui.write_text(ui.read_text().replace(
+            "allow_implicit_invocation: true",
+            'allow_implicit_invocation: "sometimes"',
+        ))
+        self.assertTrue(any("allow_implicit_invocation" in error for error in validate_skill(self.skill)))
 
     def test_accepts_existing_local_link_and_ignores_external_url(self):
         (self.root / "guide.md").write_text("# Guide\n")

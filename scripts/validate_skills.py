@@ -87,8 +87,14 @@ def validate_skill(directory):
         if not isinstance(short, str) or not 25 <= len(short) <= 64:
             errors.append("UI short_description must contain 25 to 64 characters")
         prompt = interface.get("default_prompt")
-        if not isinstance(prompt, str) or "$" + str(name) not in prompt:
-            errors.append("UI default_prompt must invoke its skill")
+        if not isinstance(prompt, str) or not prompt.strip() or len(prompt) > 500:
+            errors.append("UI default_prompt must be a nonempty string of at most 500 characters")
+        policy = ui.get("policy")
+        if policy is not None:
+            if not isinstance(policy, dict):
+                errors.append("UI policy must be a mapping")
+            elif not isinstance(policy.get("allow_implicit_invocation", True), bool):
+                errors.append("UI allow_implicit_invocation must be boolean")
     except (OSError, UnicodeError, ValueError, yaml.YAMLError) as exc:
         errors.append(str(exc))
     return ["{}: {}".format(directory.name, error) for error in errors]

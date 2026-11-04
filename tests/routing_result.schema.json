@@ -1,0 +1,47 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "interaction": {
+      "type": "string",
+      "enum": ["automatic", "choice", "question"]
+    },
+    "primary": {
+      "type": "string",
+      "enum": [
+        "adaptive-workflow",
+        "architecture-map",
+        "browser-diagnostics",
+        "feature-discovery",
+        "lean-senior-engineering",
+        "release-readiness",
+        "research-plan-implement",
+        "systematic-debugging",
+        "verification-before-completion"
+      ]
+    },
+    "supporting": {
+      "type": "array",
+      "maxItems": 2,
+      "items": {
+        "type": "string",
+        "enum": [
+          "architecture-map",
+          "browser-diagnostics",
+          "feature-discovery",
+          "lean-senior-engineering",
+          "release-readiness",
+          "research-plan-implement",
+          "systematic-debugging",
+          "verification-before-completion"
+        ]
+      }
+    },
+    "user_message": {
+      "type": "string",
+      "minLength": 1
+    }
+  },
+  "required": ["interaction", "primary", "supporting", "user_message"],
+  "additionalProperties": false
+}

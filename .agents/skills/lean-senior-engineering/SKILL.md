@@ -1,6 +1,6 @@
 ---
 name: lean-senior-engineering
-description: "Implement small, complete code changes using existing project patterns. Use for features, fixes, refactors, code reviews, or technical-debt reviews."
+description: "Implement or review a clear code change using existing patterns and focused tests. Use when desired behaviour is known; route unexplained failures to systematic-debugging first."
 ---
 
 # Lean Senior Engineering

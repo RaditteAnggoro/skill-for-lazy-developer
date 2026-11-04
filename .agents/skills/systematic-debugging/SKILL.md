@@ -1,6 +1,6 @@
 ---
 name: systematic-debugging
-description: "Investigate reproducible bugs, failing tests, build failures, or unexpected behaviour using evidence and focused experiments."
+description: "Diagnose reproducible bugs, failing tests, build failures, or unexpected behaviour when the cause is unknown. Make a focused fix only when implementation is authorized."
 ---
 
 # Systematic Debugging

@@ -15,10 +15,16 @@ These independently maintained workflows were first assembled on 2026-10-28. The
 
 ## OpenAI documentation used for packaging
 
-- [Build skills](https://learn.chatgpt.com/docs/build-skills): local `.agents/skills` discovery, required metadata, explicit and implicit invocation, duplicate-name behaviour.
+- [Build skills](https://learn.chatgpt.com/docs/build-skills): local `.agents/skills`
+  discovery, required metadata, progressive disclosure, implicit invocation,
+  optional UI policy, and duplicate-name behaviour.
 - [AGENTS.md](https://learn.chatgpt.com/docs/agent-configuration/agents-md): repository instructions and scope.
 - [Build focused skills](https://developers.openai.com/plugins/build/skills): concise entrypoints, supporting references, workflow boundaries, representative testing.
+- [Testing Agent Skills Systematically with Evals](https://developers.openai.com/blog/eval-skills): positive, contextual, and negative prompt cases plus trace-based evaluation guidance.
 
-Use explicit `$skill-name` prompts to compare workflows. Skill availability and actual tool access are separate: instructions cannot provide an absent browser, network access, a database connection, or a running application.
+The adaptive router and routing policy are original implementation choices in this
+repository, informed by the documented implicit-invocation model. Skill availability
+and actual tool access are separate: instructions cannot provide an absent browser,
+network access, a database connection, or a running application.
 
 The sources evolve. For full upstream behaviour, install and review the relevant upstream project separately and follow its current license and setup instructions. This pack makes no claim to reproduce upstream benchmarks or every plugin feature.

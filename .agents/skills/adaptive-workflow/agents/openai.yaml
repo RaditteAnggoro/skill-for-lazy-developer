@@ -1,0 +1,6 @@
+interface:
+  display_name: "Adaptive Workflow"
+  short_description: "Choose and combine skills from a natural-language task"
+  default_prompt: "Describe the software task normally. The workflow will be selected automatically and only meaningful choices will be shown."
+policy:
+  allow_implicit_invocation: true

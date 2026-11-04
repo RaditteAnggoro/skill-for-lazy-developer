@@ -1,54 +1,70 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="600" viewBox="0 0 1280 600" role="img" aria-labelledby="title desc">
-  <title id="title">Codex Developer Skills workflow</title>
-  <desc id="desc">A conceptual overview of eight developer skills. Start with your task, choose a focused workflow, and receive a result supported by source evidence and relevant checks. These are instructions for your existing coding agent, not a separate application.</desc>
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="640" viewBox="0 0 1280 640" role="img" aria-labelledby="title desc">
+  <title id="title">Automatic Codex skill routing</title>
+  <desc id="desc">Describe a software task normally. An adaptive workflow identifies the outcome, continues automatically for a clear task, or offers outcome-based choices when the request is ambiguous. It loads only the selected skills and finishes with evidence.</desc>
   <defs>
     <linearGradient id="background" x1="0" y1="0" x2="1" y2="1">
       <stop offset="0" stop-color="#0b1426"/>
       <stop offset="1" stop-color="#142c3b"/>
     </linearGradient>
+    <linearGradient id="router" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#172d4d"/>
+      <stop offset="1" stop-color="#193b4a"/>
+    </linearGradient>
     <marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto">
       <path d="M1 1 L8 5 L1 9" fill="none" stroke="#7dd3fc" stroke-width="1.5"/>
     </marker>
   </defs>
-  <rect width="1280" height="600" rx="24" fill="url(#background)"/>
+  <rect width="1280" height="640" rx="24" fill="url(#background)"/>
   <g font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif">
-    <text x="56" y="63" fill="#7dd3fc" font-size="15" font-weight="700" letter-spacing="2">CODEX DEVELOPER SKILLS</text>
-    <text x="56" y="119" fill="#f8fafc" font-size="39" font-weight="700">Your task. A focused workflow. Clear evidence.</text>
-    <text x="56" y="155" fill="#cbd5e1" font-size="19">Eight skills that work with the code, tools and conventions already in your project.</text>
+    <text x="56" y="62" fill="#7dd3fc" font-size="15" font-weight="700" letter-spacing="2">ADAPTIVE CODEX WORKFLOWS</text>
+    <text x="56" y="116" fill="#f8fafc" font-size="39" font-weight="700">Describe the task. The right workflow finds you.</text>
+    <text x="56" y="153" fill="#cbd5e1" font-size="19">No skill-name syntax required. Clear work continues; meaningful ambiguity becomes an easy choice.</text>
 
-    <rect x="56" y="202" width="344" height="194" rx="16" fill="#15253b" stroke="#3b536e"/>
-    <rect x="468" y="202" width="344" height="194" rx="16" fill="#153040" stroke="#3f7188"/>
-    <rect x="880" y="202" width="344" height="194" rx="16" fill="#143a39" stroke="#3c8276"/>
-    <path d="M414 299 H450" fill="none" stroke="#7dd3fc" stroke-width="2" marker-end="url(#arrow)"/>
-    <path d="M826 299 H862" fill="none" stroke="#7dd3fc" stroke-width="2" marker-end="url(#arrow)"/>
+    <rect x="56" y="204" width="252" height="220" rx="16" fill="#15253b" stroke="#3b536e"/>
+    <rect x="358" y="204" width="252" height="220" rx="16" fill="url(#router)" stroke="#3f7188"/>
+    <rect x="660" y="204" width="252" height="220" rx="16" fill="#16343f" stroke="#36758a"/>
+    <rect x="962" y="204" width="262" height="220" rx="16" fill="#143a39" stroke="#3c8276"/>
+    <path d="M320 314 H346" fill="none" stroke="#7dd3fc" stroke-width="2" marker-end="url(#arrow)"/>
+    <path d="M622 314 H648" fill="none" stroke="#7dd3fc" stroke-width="2" marker-end="url(#arrow)"/>
+    <path d="M924 314 H950" fill="none" stroke="#7dd3fc" stroke-width="2" marker-end="url(#arrow)"/>
 
-    <text x="80" y="240" fill="#7dd3fc" font-size="14" font-weight="700">01 / DESCRIBE</text>
-    <text x="80" y="280" fill="#f8fafc" font-size="25" font-weight="700">Start with your task</text>
-    <text x="80" y="318" fill="#cbd5e1" font-size="17">“Fix this failing test.”</text>
-    <text x="80" y="346" fill="#cbd5e1" font-size="17">“Show how this endpoint works.”</text>
-    <text x="80" y="374" fill="#cbd5e1" font-size="17">“Review these changes.”</text>
+    <text x="78" y="240" fill="#7dd3fc" font-size="14" font-weight="700">01 / DESCRIBE</text>
+    <text x="78" y="278" fill="#f8fafc" font-size="23" font-weight="700">Use normal words</text>
+    <text x="78" y="316" fill="#cbd5e1" font-size="16">“Fix this failing test.”</text>
+    <text x="78" y="344" fill="#cbd5e1" font-size="16">“Explain this data flow.”</text>
+    <text x="78" y="372" fill="#cbd5e1" font-size="16">“Is this release ready?”</text>
+    <text x="78" y="401" fill="#94a3b8" font-size="14">No workflow name needed</text>
 
-    <text x="492" y="240" fill="#7dd3fc" font-size="14" font-weight="700">02 / WORK</text>
-    <text x="492" y="280" fill="#f8fafc" font-size="25" font-weight="700">Use the right skill</text>
-    <text x="492" y="318" fill="#cbd5e1" font-size="17">Inspect relevant source.</text>
-    <text x="492" y="346" fill="#cbd5e1" font-size="17">Follow existing patterns.</text>
-    <text x="492" y="374" fill="#cbd5e1" font-size="17">Stay within the requested scope.</text>
+    <text x="380" y="240" fill="#7dd3fc" font-size="14" font-weight="700">02 / ROUTE</text>
+    <text x="380" y="278" fill="#f8fafc" font-size="23" font-weight="700">Read the outcome</text>
+    <text x="380" y="316" fill="#cbd5e1" font-size="16">Clear → continue</text>
+    <text x="380" y="344" fill="#cbd5e1" font-size="16">Different outcomes → choose</text>
+    <text x="380" y="372" fill="#cbd5e1" font-size="16">Blocked → one question</text>
+    <text x="380" y="401" fill="#94a3b8" font-size="14">Scope and intent stay intact</text>
 
-    <text x="904" y="240" fill="#5eead4" font-size="14" font-weight="700">03 / VERIFY</text>
-    <text x="904" y="280" fill="#f8fafc" font-size="25" font-weight="700">Inspect the result</text>
-    <text x="904" y="318" fill="#cbd5e1" font-size="17">What changed or was found?</text>
-    <text x="904" y="346" fill="#cbd5e1" font-size="17">Which checks actually ran?</text>
-    <text x="904" y="374" fill="#cbd5e1" font-size="17">What remains uncertain?</text>
+    <text x="682" y="240" fill="#7dd3fc" font-size="14" font-weight="700">03 / COMPOSE</text>
+    <text x="682" y="278" fill="#f8fafc" font-size="23" font-weight="700">Load only what helps</text>
+    <text x="682" y="316" fill="#cbd5e1" font-size="16">Debug → verify</text>
+    <text x="682" y="344" fill="#cbd5e1" font-size="16">Discover → build → verify</text>
+    <text x="682" y="372" fill="#cbd5e1" font-size="16">Map or review on its own</text>
+    <text x="682" y="401" fill="#94a3b8" font-size="14">One primary + up to two helpers</text>
 
-    <text x="56" y="448" fill="#f8fafc" font-size="18" font-weight="700">Choose a workflow that fits</text>
-    <text x="56" y="485" fill="#cbd5e1" font-size="17">Implement / review</text>
-    <text x="352" y="485" fill="#cbd5e1" font-size="17">Debug</text>
-    <text x="648" y="485" fill="#cbd5e1" font-size="17">Verify</text>
-    <text x="944" y="485" fill="#cbd5e1" font-size="17">Discover a feature</text>
-    <text x="56" y="521" fill="#cbd5e1" font-size="17">Work across sessions</text>
-    <text x="352" y="521" fill="#cbd5e1" font-size="17">Map architecture</text>
-    <text x="648" y="521" fill="#cbd5e1" font-size="17">Assess a release</text>
-    <text x="944" y="521" fill="#cbd5e1" font-size="17">Diagnose a browser UI</text>
-    <text x="56" y="567" fill="#94a3b8" font-size="14">WORKFLOW ILLUSTRATION • Instructions for your existing agent • Actual behavior depends on available tools</text>
+    <text x="984" y="240" fill="#5eead4" font-size="14" font-weight="700">04 / EVIDENCE</text>
+    <text x="984" y="278" fill="#f8fafc" font-size="23" font-weight="700">See what happened</text>
+    <text x="984" y="316" fill="#cbd5e1" font-size="16">Result or supported cause</text>
+    <text x="984" y="344" fill="#cbd5e1" font-size="16">Checks that actually ran</text>
+    <text x="984" y="372" fill="#cbd5e1" font-size="16">Unknowns and blocked checks</text>
+    <text x="984" y="401" fill="#94a3b8" font-size="14">No invented completion claims</text>
+
+    <text x="56" y="478" fill="#f8fafc" font-size="18" font-weight="700">Adaptive router + eight focused workflows</text>
+    <text x="56" y="516" fill="#cbd5e1" font-size="16">Implement / review</text>
+    <text x="284" y="516" fill="#cbd5e1" font-size="16">Debug</text>
+    <text x="512" y="516" fill="#cbd5e1" font-size="16">Verify</text>
+    <text x="740" y="516" fill="#cbd5e1" font-size="16">Discover a feature</text>
+    <text x="1008" y="516" fill="#cbd5e1" font-size="16">Work across sessions</text>
+    <text x="56" y="552" fill="#cbd5e1" font-size="16">Map architecture</text>
+    <text x="284" y="552" fill="#cbd5e1" font-size="16">Assess a release</text>
+    <text x="512" y="552" fill="#cbd5e1" font-size="16">Diagnose a browser UI</text>
+    <text x="56" y="604" fill="#94a3b8" font-size="14">WORKFLOW ILLUSTRATION • Instructions for an existing coding agent • Actual behavior depends on the model and available tools</text>
   </g>
 </svg>
