@@ -1,0 +1,10 @@
+cff-version: 1.2.0
+message: "If you use these workflows in research or teaching, please cite this repository."
+title: "Codex Developer Skills"
+version: "0.1.0"
+type: software
+authors:
+  - given-names: "Raditte"
+    family-names: "Anggoro"
+license: MIT
+repository-code: "https://github.com/RaditteAnggoro/codexSkillForLocalDeveloper"

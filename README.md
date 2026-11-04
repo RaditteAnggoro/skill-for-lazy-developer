@@ -11,7 +11,7 @@ Each workflow has its own `SKILL.md`. Load the one the task needs, use the proje
 
 *Workflow illustration, not an application screenshot. The skills guide the agent inside your existing development project.*
 
-[Get started](#quick-start) · [Choose a workflow](#choose-your-workflow) · [Try a task](#try-a-task) · [All eight skills](#skills) · [Development](#development)
+[Get started](#quick-start) · [Choose a workflow](#choose-your-workflow) · [Try a task](#try-a-task) · [All eight skills](#skills) · [Development](#development) · [License](LICENSE) · [Credits](docs/SOURCES.md)
 
 ## Quick start
 
@@ -169,4 +169,7 @@ To publish your own copy, follow [Publishing to GitHub](docs/PUBLISHING.md). For
 
 ## License
 
-[MIT](LICENSE). Keep upstream notices if you later import upstream material; source acknowledgements do not replace those licenses.
+[MIT](LICENSE), copyright 2026 Raditte Anggoro and contributors. Read the
+[project notice](NOTICE.md), [third-party notices](THIRD_PARTY_NOTICES.md), and
+[inspiration/source record](docs/SOURCES.md). Credits acknowledge ideas and capability
+comparisons; they do not claim affiliation or import upstream code into this project.

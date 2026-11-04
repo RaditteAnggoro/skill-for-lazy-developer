@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Add project, third-party, inspiration, and citation notices to the source and
+  release archive.
 - Add a visual README tour with a workflow illustration, task-routing diagram and expandable prompt walkthroughs.
 - Add passive author and project provenance metadata to the README source and distributed documentation.
 
