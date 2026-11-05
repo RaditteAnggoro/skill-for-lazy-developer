@@ -209,40 +209,19 @@ UI fixtures use local Chrome and Playwright tooling when available. Browser diag
 
 These workflows are independently maintained files informed by the projects credited in [Sources](docs/SOURCES.md). This is an independent project, with no affiliation with OpenAI or the credited upstream projects. It does not reproduce their full plugins, dashboards, or benchmark results.
 
-## Version 2 development
+## What's in Version 2
 
-Version 2 is being developed through evidence-gated phases. Phase 0 established the
-capability baseline and reusable model evaluation runner. Phase 1 completed the
-approachable companion contract, interaction grading, routing boundaries, and bounded
-always-on context. Phase 2 completed a provider-neutral memory contract and a measured
-ai-memory vs Engram bake-off; Engram is selected for the first Phase 3 runtime adapter.
-Phase 3 is **complete** with verification `verified-with-deferred-claude`. Codex has a
-live-verified lifecycle slice including a transcript-evidenced handoff; DSH has live
-recall, remember, handoff, opt-out, fail-open, uninstall, and confirmed forget. Claude
-Code has a tested `settings.json` adapter, but its live verification is deferred until
-authentication is available. Handoffs are promoted to verified only with linked
-verification evidence; otherwise they remain drafts. Phase 4 is **in progress**: the
-optimizer is a benchmark prototype and is not connected to the agent runtime. Synthetic
-context-retention tests and two paired model trials are encouraging but do not prove
-that the approach preserves quality for arbitrary tasks. See the [development plan](docs/V2_DEVELOPMENT_PLAN.md).
-Phase 5 is **complete**: design, implementation, and quality verification are separate
-skills, with plain, React, and Next.js enterprise fixtures, six screenshot baselines,
-and keyboard, responsive, empty/loading/error checks. See [UI evidence](tests/ui/evidence.yaml).
-Phase 6 is **complete**: domain modeling, specification traceability, third-party skill
-security review, and optional transaction-safety workflows are covered by eight
-positive/negative checker cases. See [Phase 6 evidence](tests/phase6_evidence.yaml).
-Phase 7 is **complete**: a portable pack exports, verifies, imports, backs up, and rolls
-back the host-neutral skill layer, with adapter compatibility and a reviewed license
-inventory. Their individual evidence does not make the unfinished Phase 4 complete.
+Version 2 brings together practical workflows for development, design, and everyday
+problem-solving:
 
+- **A friendly companion** that adapts to your request and helps choose a focused workflow.
+- **Project memory adapters** for saving and recalling useful context across sessions.
+- **UI/UX skills** for design direction, implementation, and quality checks.
+- **Engineering skills** for domain modeling, security review, and transaction safety.
+- **A portable skill pack** for moving workflows between projects and supported agents.
 
-Read the [development plan](docs/V2_DEVELOPMENT_PLAN.md), [capability
-matrix](docs/V2_CAPABILITY_MATRIX.md), [memory contract](docs/V2_MEMORY_CONTRACT.md),
-[Phase 2 evidence](docs/V2_PHASE2_EVIDENCE.md), [Codex adapter
-evidence](docs/CODEX_ADAPTER_EVIDENCE.md), and the [host adapter
-matrix](docs/ADAPTERS.md). Planned capability does not mean implemented behaviour; the
-current sixteen skills and the validation record remain the source of truth for what this
-release provides.
+Explore the [host adapter guide](docs/ADAPTERS.md) and [portable pack guide](docs/PORTABLE_PACK.md)
+to choose the setup that fits your project.
 
 ## Repository layout
 
