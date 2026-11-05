@@ -10,12 +10,16 @@ from zipfile import ZipFile, ZipInfo, ZIP_DEFLATED
 
 PATHS = (
     ".agents/skills", ".github", "docs", "scripts", "tests",
+    "adapters", "integrations", ".codex-plugin/plugin.json",
     "AGENTS.md", "AGENTS.snippet.md", "README.md", "LICENSE", "NOTICE.md",
     "THIRD_PARTY_NOTICES.md", "CITATION.cff", "VERSION",
     "CHANGELOG.md", "CONTRIBUTING.md", "SECURITY.md", ".gitignore",
     ".gitattributes", "requirements-dev.txt",
 )
-EXCLUDED = {".git", ".venv", "venv", "__pycache__", ".DS_Store", "Thumbs.db"}
+EXCLUDED = {
+    ".git", ".venv", "venv", "__pycache__", ".DS_Store", "Thumbs.db",
+    "node_modules", ".next", "dist", "artifacts", ".npm-cache",
+}
 
 
 def collect_files(root):

@@ -1,0 +1,42 @@
+run_date: 2026-11-05
+host:
+  name: Claude Code
+  binary_available: false
+  authenticated_session: false
+provider:
+  name: Engram
+  version: 3.6.2
+hooks:
+  - SessionStart
+  - UserPromptSubmit
+  - Stop
+checks:
+  settings_merge: true
+  existing_settings_preserved: true
+  installer_idempotent: true
+  uninstall: true
+  rollback: true
+  recall: true
+  remember_opt_out: true
+  handoff: true
+  fail_open: true
+  sensitive_write_skipped: true
+  verified_handoff_shared_runtime: true
+  forget_confirmation_shared_runtime: true
+checks_passed: 12
+checks_total: 12
+live_model_delivery: false
+handoff:
+  kind: conditional
+  verified_confidence: 0.9
+  unverified_confidence: 0.6
+  raw_transcript_stored: false
+forget:
+  two_step_confirmation: true
+  live_verified: false
+limits:
+  - no Claude Code binary or authenticated session on this machine
+  - handoff is evidence-conditional; live Claude delivery is deferred
+  - shared runtime tests cover the hook contract, not live model behavior
+phase_three_status: complete
+phase_three_verification: verified-with-deferred-claude

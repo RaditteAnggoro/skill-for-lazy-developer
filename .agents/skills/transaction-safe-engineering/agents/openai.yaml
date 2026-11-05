@@ -1,0 +1,6 @@
+interface:
+  display_name: "Transaction-Safe Engineering"
+  short_description: "Protect money, ledger, retries, and batch integrity"
+  default_prompt: "Review this money, ledger, retry, or batch path for idempotency, atomicity, concurrency, and recovery risks."
+policy:
+  allow_implicit_invocation: true

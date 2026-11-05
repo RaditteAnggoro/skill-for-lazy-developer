@@ -1,0 +1,10 @@
+model: broken
+terms:
+  - {term: Order, definition: A request.}
+  - {term: Order, definition: Duplicate term.}
+states: [draft]
+initial: missing
+events: []
+transitions:
+  - {from: draft, event: unknown, to: nowhere}
+invariants: []

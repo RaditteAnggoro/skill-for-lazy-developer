@@ -1,0 +1,44 @@
+run_date: 2026-11-05
+browser: Google Chrome headless via playwright-core
+viewports: [360, 1440]
+fixtures:
+  plain: tests/ui/fixtures/plain/index.html
+  react: tests/ui/fixtures/react
+  next: tests/ui/fixtures/next
+checks:
+  plain_and_react_total: 35
+  next_total: 12
+  plain_and_react_passed: 35
+  next_passed: 12
+screenshots:
+  baselines: 6
+  plain: pass
+  react: pass
+  next: pass
+  comparison: pixelmatch; at most 2 percent changed pixels
+keyboard:
+  focus_chain: pass
+  visible_focus: pass
+responsive:
+  narrow_360: pass
+  desktop_1440: pass
+  horizontal_overflow: pass
+states:
+  empty: pass
+  loading: pass
+  error: pass
+  retry: pass
+data_journey:
+  filter: pass
+  selection: pass
+  bulk_approve: pass
+next_build: pass
+next_version: 15.5.29
+console_errors: none
+limitations:
+  - screenshot baselines are tied to the local Chrome version and font stack
+  - the Next fixture was built and started locally; its browser checks are separate from the plain/React runner
+  - fixtures use test data and do not prove backend authorization or production data correctness
+  - automated keyboard checks do not replace a full assistive-technology review
+phase_five_status: complete
+gate_pass: true

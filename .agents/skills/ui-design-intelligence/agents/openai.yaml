@@ -1,0 +1,6 @@
+interface:
+  display_name: "UI Design Intelligence"
+  short_description: "Define UI direction and enterprise data patterns"
+  default_prompt: "Define the UI direction, hierarchy, design tokens, and enterprise data behavior for this interface before implementation."
+policy:
+  allow_implicit_invocation: true

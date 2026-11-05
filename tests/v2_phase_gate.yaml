@@ -1,0 +1,359 @@
+current_phase: 4
+
+phases:
+  - id: 0
+    name: capability-baseline
+    status: complete
+    depends_on: []
+    required_checks:
+      - repository-validator
+      - unit-tests
+      - routing-model-evaluation
+    exit_criteria:
+      - capability ownership is explicit
+      - overlap decisions are recorded
+      - routing corpus has direct, contextual, and negative-control cases
+      - current routing model evaluation passes
+  - id: 1
+    name: companion-and-router-v2
+    status: complete
+    depends_on: [0]
+    required_checks:
+      - repository-validator
+      - unit-tests
+      - routing-model-evaluation
+      - interaction-model-evaluation
+      - always-on-context-budget
+    exit_criteria:
+      - clear tasks continue without redundant approval questions
+      - ambiguous tasks remain interactive
+      - unsafe shortcuts receive concise evidence-based pushback
+      - user language and explicit boundaries are preserved
+      - Phase 0 routing baseline has no material regression
+  - id: 2
+    name: memory-contract-and-provider-bakeoff
+    status: complete
+    depends_on: [1]
+    required_checks:
+      - repository-validator
+      - unit-tests
+      - memory-contract-tests
+      - provider-bakeoff
+      - privacy-recovery
+    exit_criteria:
+      - provider-neutral record and bundle schemas are machine-checked
+      - every record carries provenance, confidence, timestamps, scope, and lifecycle status
+      - sensitive content is rejected before provider storage
+      - ai-memory and Engram are measured on the same task corpus
+      - an explicit recovery path survives restart and deletion
+      - repository state overrides stale memory
+  - id: 3
+    name: seamless-runtime
+    status: complete
+    verification: verified-with-deferred-claude
+    verification_reason: Codex has live verified handoff and confirmed forget; DSH has live lifecycle, verified handoff unit coverage, and live confirmed forget; Claude is contract-tested and deferred for live credentials
+    deferred:
+      - claude-live-verification
+    depends_on: [2]
+    required_checks:
+      - repository-validator
+      - unit-tests
+      - codex-hook-installer
+      - codex-lifecycle-evaluation
+      - dsh-hook-installer
+      - dsh-lifecycle-evaluation
+      - claude-hook-installer
+      - claude-hook-contract
+      - fail-open
+      - user-controls
+      - memory-privacy
+    exit_criteria:
+      - one-time Codex setup installs untrusted hooks deliberately and reversibly
+      - SessionStart recalls relevant, bounded project memory without a memory command
+      - explicit remember and project opt-out controls work in ordinary language
+      - turn-end writes a bounded handoff without raw transcripts or secrets
+      - missing Engram or a failing hook leaves ordinary work usable
+      - Codex has recorded end-to-end lifecycle evidence
+      - DSH lifecycle hooks and controls have recorded evidence
+      - Claude hook configuration and controls have recorded evidence
+      - host-specific limitations are recorded without claiming unobserved delivery
+  - id: 4
+    name: token-optimization
+    status: in-progress
+    verification: partial
+    verification_reason: Synthetic retention benchmark passed; runtime integration and model answer quality comparison remain unverified
+    depends_on: [3]
+    required_checks:
+      - repository-validator
+      - unit-tests
+      - token-baseline
+      - context-reduction
+      - correctness-regression
+      - critical-constraints-preserved
+      - raw-evidence-recovery
+    exit_criteria:
+      - median context token reduction is at least 30 percent on the same task corpus
+      - task correctness has no material regression
+      - safety, approval, security, and financial constraints are never compressed away
+      - raw evidence remains recoverable on demand
+      - context selection is project-scoped and bounded
+      - before and after measurements are recorded with limitations
+  - id: 5
+    name: ui-ux-intelligence
+    status: complete
+    verification: verified
+    verification_reason: Three UI skills, enterprise profiles, three stack fixtures, six screenshot baselines, 47 browser and source checks, keyboard and responsive checks, and empty/loading/error journeys passed
+    depends_on: [4]
+    required_checks:
+      - repository-validator
+      - unit-tests
+      - ui-routing
+      - enterprise-profiles
+      - plain-react-next-fixtures
+      - screenshot-comparison
+      - keyboard-navigation
+      - responsive-viewport
+      - empty-loading-error-states
+      - browser-diagnostics-boundary
+    exit_criteria:
+      - design, implementation, and quality verification have distinct owners
+      - enterprise profiles cover tables, filters, approvals, long forms, reconciliation, and financial data
+      - React, Next.js, and plain web fixtures exist
+      - screenshots are compared at desktop and mobile widths
+      - keyboard navigation has visible focus and a logical order
+      - empty, loading, and error states are exercised
+      - browser-diagnostics investigates failures without duplicating the UI audit
+      - visual and interactive evidence is recorded, not only a successful build
+  - id: 6
+    name: engineering-intelligence-and-safety
+    status: complete
+    verification: verified
+    verification_reason: Eight positive and negative cases passed across domain invariants, specification traceability, skill-security scanning, and transaction safety
+    depends_on: [5]
+    required_checks:
+      - repository-validator
+      - unit-tests
+      - phase6-routing
+      - domain-model-validation
+      - specification-traceability
+      - skill-security-scan
+      - transaction-safety-check
+      - negative-case-rejection
+    exit_criteria:
+      - domain terms, states, events, and invariants have a distinct owner
+      - specification requirements trace to implementation and test evidence
+      - third-party skills are reviewed before adoption and never auto-installed
+      - transaction safety is optional and loaded only for integrity risk
+      - safe fixtures pass and deliberately unsafe fixtures are rejected
+      - limitations are recorded rather than treating heuristics as proof
+  - id: 7
+    name: cross-agent-packaging
+    status: complete
+    verification: verified
+    verification_reason: Portable pack export/verify/import/backup/rollback, adapter uninstall/rollback CLI checks, checksum/traversal rejection, documentation, and license inventory passed
+    depends_on: [6]
+    required_checks:
+      - repository-validator
+      - unit-tests
+      - portable-pack-export
+      - portable-pack-import
+      - backup-and-rollback
+      - adapter-compatibility
+      - archive-integrity
+      - documentation
+      - license-review
+      - skill-security-scan
+    exit_criteria:
+      - the host-neutral pack exports and verifies with a canonical manifest
+      - import is previewable, preserves unrelated skills, and backs up replaced files
+      - rollback restores the previous skill layer
+      - tampered archives and path traversal are rejected
+      - Codex, Claude, and DSH adapters expose uninstall and rollback paths
+      - documentation and license inventory cover the distributed and development layers
+
+capabilities:
+  - id: adaptive-routing
+    phase: 0
+    disposition: existing-skill
+    owner: adaptive-workflow
+    trigger: choose a workflow from an ordinary software request
+    non_goal: execute every installed skill
+  - id: implementation-and-review
+    phase: 0
+    disposition: existing-skill
+    owner: lean-senior-engineering
+    trigger: implement or review a clear code change
+    non_goal: diagnose a failure whose cause is unknown
+  - id: systematic-debugging
+    phase: 0
+    disposition: existing-skill
+    owner: systematic-debugging
+    trigger: diagnose a reproducible unexplained failure
+    non_goal: redesign a feature with no observed failure
+  - id: evidence-verification
+    phase: 0
+    disposition: existing-skill
+    owner: verification-before-completion
+    trigger: verify a change or completion claim
+    non_goal: add a ceremonial approval step
+  - id: staged-research-and-implementation
+    phase: 0
+    disposition: existing-skill
+    owner: research-plan-implement
+    trigger: carry a substantial change across modules or sessions
+    non_goal: add planning overhead to a small focused change
+  - id: architecture-explanation
+    phase: 0
+    disposition: existing-skill
+    owner: architecture-map
+    trigger: explain architecture, data flow, or change impact from source evidence
+    non_goal: treat an explanation request as authorization to refactor
+  - id: release-assessment
+    phase: 0
+    disposition: existing-skill
+    owner: release-readiness
+    trigger: assess a specified release candidate and its outstanding evidence
+    non_goal: publish, deploy, or migrate the release
+  - id: browser-failure-diagnostics
+    phase: 0
+    disposition: existing-skill
+    owner: browser-diagnostics
+    trigger: reproduce an unexplained browser-visible failure from runtime evidence
+    non_goal: run for an ordinary static interface edit
+  - id: requirement-discovery
+    phase: 1
+    disposition: extend-skill
+    owner: feature-discovery
+    trigger: clarify choices that materially change a feature outcome
+    non_goal: interview the user about a clear small change
+  - id: companion-interaction
+    phase: 1
+    disposition: core-policy
+    owner: companion-core
+    trigger: every user interaction
+    non_goal: pretend to be human or add a large personality prompt
+  - id: memory-contract
+    phase: 2
+    disposition: runtime-service
+    owner: memory-provider-interface
+    trigger: persist or retrieve project knowledge across sessions
+    non_goal: store every message and raw tool output
+  - id: memory-provider-bakeoff
+    phase: 2
+    disposition: evaluation-harness
+    owner: repository-tests
+    trigger: compare candidate memory providers on the same task corpus
+    non_goal: choose a provider by popularity or copy upstream benchmark claims
+  - id: seamless-memory-runtime
+    phase: 3
+    disposition: runtime-service
+    owner: companion-runtime
+    trigger: supported session lifecycle events
+    non_goal: require a memory command for each task
+  - id: codex-runtime-adapter
+    phase: 3
+    disposition: runtime-integration
+    owner: codex-adapter
+    trigger: a trusted Codex hook lifecycle event
+    non_goal: claim identical hooks or memory behavior on DSH or Claude
+  - id: continuous-learning
+    phase: 3
+    disposition: runtime-service
+    owner: verified-memory-pipeline
+    trigger: a task produces evidence-backed reusable learning
+    non_goal: promote an unverified model guess to permanent memory
+  - id: context-budget
+    phase: 4
+    disposition: runtime-service
+    owner: companion-runtime
+    trigger: retrieve only the context needed for the current task
+    non_goal: compress away safety, approval, or financial constraints
+  - id: tool-output-filtering
+    phase: 4
+    disposition: runtime-service
+    owner: companion-runtime
+    trigger: a tool returns large or repetitive output
+    non_goal: make raw evidence unrecoverable
+  - id: symbol-level-retrieval
+    phase: 4
+    disposition: runtime-integration
+    owner: source-retrieval-adapter
+    trigger: repository investigation benefits from symbols and references
+    non_goal: replace ordinary file reads for small focused tasks
+  - id: ui-design-intelligence
+    phase: 5
+    disposition: new-skill
+    owner: ui-design-intelligence
+    trigger: define or reshape visual direction and a design system
+    non_goal: diagnose a browser runtime failure
+  - id: ui-implementation
+    phase: 5
+    disposition: new-skill
+    owner: ui-implementation
+    trigger: implement an agreed interface using the project stack
+    non_goal: invent a new design direction when one already exists
+  - id: ui-quality-verification
+    phase: 5
+    disposition: new-skill
+    owner: ui-quality-verification
+    trigger: audit responsive, visual, interaction, and accessibility quality
+    non_goal: replace browser-diagnostics for unexplained browser failures
+  - id: enterprise-data-ux
+    phase: 5
+    disposition: supporting-reference
+    owner: ui-design-intelligence
+    trigger: dense tables, filters, approvals, reconciliation, or long forms
+    non_goal: become a separate always-visible skill
+  - id: domain-modeling
+    phase: 6
+    disposition: new-skill
+    owner: domain-modeling
+    trigger: ambiguous domain terms, states, events, or invariants affect design
+    non_goal: create a glossary for every small task
+  - id: spec-to-code-verification
+    phase: 6
+    disposition: new-skill
+    owner: spec-to-code-verification
+    trigger: compare testable requirements with implementation evidence
+    non_goal: run for every ordinary code edit
+  - id: skill-security-guard
+    phase: 6
+    disposition: new-skill
+    owner: skill-security-guard
+    trigger: assess a third-party skill before adoption or installation
+    non_goal: silently install or trust external instructions
+  - id: transaction-safety
+    phase: 6
+    disposition: optional-domain-skill
+    owner: transaction-safe-engineering
+    trigger: money movement, ledger, batch restart, reconciliation, or idempotency risk
+    non_goal: load for projects with no transaction-integrity concern
+  - id: agent-quality-evaluation
+    phase: 0
+    disposition: evaluation-harness
+    owner: repository-tests
+    trigger: skill, router, memory, or interaction behaviour changes
+    non_goal: become a workflow the user must invoke
+  - id: cross-agent-adapters
+    phase: 7
+    disposition: runtime-integration
+    owner: adapter-layer
+    trigger: expose the same contract to a supported agent runtime
+    non_goal: promise identical hooks on every platform
+
+overlap_decisions:
+  - left: requirement-discovery
+    right: domain-modeling
+    decision: discovery owns unresolved product choices; domain modeling owns terminology, states, events, and invariants
+  - left: systematic-debugging
+    right: ui-quality-verification
+    decision: debugging owns unexplained browser failures; UI verification owns planned quality audits and post-change checks
+  - left: continuous-learning
+    right: agent-quality-evaluation
+    decision: learning writes verified reusable memory; evaluation measures behaviour and regressions without becoming memory
+  - left: tool-output-filtering
+    right: context-budget
+    decision: filtering reduces individual tool payloads; context budget decides what task context is loaded
+  - left: enterprise-data-ux
+    right: ui-design-intelligence
+    decision: enterprise data UX remains a routed reference under the design and verification workflows

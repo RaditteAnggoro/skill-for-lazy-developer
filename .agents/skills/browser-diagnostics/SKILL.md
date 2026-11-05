@@ -29,6 +29,14 @@ For diagnosis-only requests, report evidence and fix direction. For requested fi
 
 Do not change application records, replay payments, send messages, or use a personal browser profile as a side effect of testing without relevant authorization. A browser connection can expose real data and perform real actions.
 
+## Boundary with UI quality verification
+
+Use this skill when an interface or browser flow has an **unexplained failure** and you
+need to reproduce it, isolate the cause, and verify a fix. Use
+`ui-quality-verification` for a planned visual, responsive, keyboard, state, or
+accessibility audit of a working interface. Do not duplicate a full quality audit here;
+once the failure is understood, hand a requested broader audit to that skill.
+
 ## Handoff
 
 Report reproduction steps, supported cause, changes if made, browser results, and remaining gaps. Distinguish browser checks from backend checks and performance measurements.

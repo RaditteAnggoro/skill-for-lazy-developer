@@ -1,0 +1,20 @@
+operations:
+  - id: transfer-001
+    kind: money
+    idempotency: true
+    idempotency_key: business-operation-id
+    approval: true
+    retry: bounded_with_backoff
+    recovery: Persist the original result and compensate only after an approved reversal.
+  - id: ledger-batch-001
+    kind: batch
+    idempotency: true
+    approval: true
+    retry: bounded
+    recovery: Replay from the persisted checkpoint without resetting missing values.
+  - id: reconcile-001
+    kind: reconciliation
+    idempotency: true
+    approval: true
+    retry: none
+    recovery: Reopen the exception queue; do not auto-post the difference.

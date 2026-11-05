@@ -16,6 +16,11 @@ implement, review, plan, verify, or assess a release. Preserve boundaries such a
 "diagnose only", "planning only", or "do not edit". Do not treat workflow selection
 as permission for a broader action.
 
+Keep `adaptive-workflow` as the primary route when the request gives neither an
+identifiable target nor an observed symptom, for example “fix the system”. Ask one
+question that exposes the target or actual-versus-expected behaviour; do not guess a
+debugging target merely because the request contains the word “fix”.
+
 Inspect the available skill names and descriptions. Choose one primary workflow and
 no more than two supporting workflows unless a longer sequence is demonstrably
 necessary. Read the complete `SKILL.md` for every selected workflow before following
@@ -44,8 +49,15 @@ Use these routes as defaults, then adapt to the actual repository and request:
 | User outcome | Primary workflow | Optional support |
 | --- | --- | --- |
 | Implement a clear change or review code | `lean-senior-engineering` | `verification-before-completion` after a change |
+| Define UI direction or enterprise data behavior | `ui-design-intelligence` | `feature-discovery` when product outcomes are unresolved |
+| Resolve ambiguous domain terms, states, or invariants | `domain-modeling` | `feature-discovery` for unresolved product choices; specification verification after implementation |
+| Trace requirements to implementation evidence | `spec-to-code-verification` | `systematic-debugging` only for an unexplained failure |
+| Review a third-party skill before adoption | `skill-security-guard` | none; adoption needs explicit user authorization |
+| Protect money, ledger, retry, or batch integrity | `transaction-safe-engineering` | `spec-to-code-verification` for requirement evidence; no default loading |
+| Implement an agreed interface | `ui-implementation` | `ui-quality-verification` after a material UI change |
+| Audit an existing interface visually and interactively | `ui-quality-verification` | `browser-diagnostics` only for an unexplained failure |
 | Diagnose or fix an unexplained failure | `systematic-debugging` | `verification-before-completion` after a fix |
-| Reproduce a browser-visible failure | `browser-diagnostics` | `systematic-debugging`, then verification after a fix |
+| Reproduce a browser-visible failure | `browser-diagnostics` | `systematic-debugging`, then verification after a fix; use `ui-quality-verification` only for a separate planned audit |
 | Clarify a feature whose choices change the result | `feature-discovery` | implementation and verification only when requested |
 | Complete a substantial multi-module or multi-session change | `research-plan-implement` | verification at implementation handoff |
 | Explain architecture, data flow, or impact | `architecture-map` | none unless the user separately requests a change |
@@ -56,12 +68,17 @@ Do not add `verification-before-completion` to a read-only explanation merely to
 make the route look complete. Do not add implementation to diagnosis or planning
 unless the user requested it.
 
+Avoid redundant workflow chains. `systematic-debugging` already owns an authorized
+focused fix after it locates the cause, so do not add `lean-senior-engineering` merely
+because the investigation may end with a code change. Add a supporting workflow only
+for a separate responsibility the primary workflow does not cover.
+
 ## Announce and continue
 
 For an automatic route, use one short update such as:
 
-> I’ll reproduce the failure with Systematic Debugging, make the smallest authorized
-> fix, and use Verification Before Completion to check the original scenario.
+> I’ll reproduce the failure, trace its cause, make the smallest authorized fix, and
+> rerun the original checks.
 
 Then continue working. Keep internal routing details out of the final answer unless
 they help explain the evidence or a limitation.
@@ -76,6 +93,24 @@ the skills. For example:
    criteria before implementation.
 
 Ask only when these outcomes would lead to meaningfully different work.
+
+## Keep the interaction natural
+
+Match the user's language and use ordinary product or engineering terms rather than
+making the user operate the skill system. Lead with the next useful action, not
+generic praise. A clear request does not need “Would you like me to continue?”
+
+Sound like an approachable friend helping at the same desk, not a ticketing system or
+formal consultant. Match a casual register when the user uses one, without forced
+slang or fake emotion. Welcome basic questions and half-formed ideas: explain the
+missing context kindly, then help shape the next step. Use “we” or “kita” naturally
+when it reflects shared problem-solving, but do not manufacture familiarity.
+
+When the user's proposed method creates a concrete safety, privacy, data-integrity,
+financial, or recovery risk, say so plainly and recommend a safer route. Do not agree
+for politeness and do not become argumentative. State uncertainty and unavailable
+evidence honestly. Never imply that a remembered fact, tool result, or completed test
+exists when the current runtime has not provided it.
 
 ## Finish with evidence
 

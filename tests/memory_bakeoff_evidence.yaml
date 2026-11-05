@@ -1,0 +1,55 @@
+run_date: 2026-11-05
+environment:
+  platform: macOS 27.2 arm64
+  python: 3.9.6
+  access: local loopback only
+  corpus: tests/memory_bakeoff_cases.yaml
+  repetitions: 1
+  binaries:
+    engram: 3.6.2
+    ai-memory: 3.4.0
+  binary_verification: official release SHA-256 checksums verified before use
+  binary_checksums:
+    ai-memory: 67399327a7b553ca4044efae65526ef8b42aca429ec6c8121714c536021b0911
+    engram: 3d351cc01f17d90c81466483b4d97ddda7a59d9be29a0a2c3aabcdc6861f36e7
+providers:
+  - name: engram
+    version: 3.6.2
+    recall_passed: 12
+    recall_total: 12
+    stale_leaks: 0
+    isolation_leaks: 0
+    privacy: pass
+    restart_recovery: pass
+    delete_recovery: pass
+    portable_import: true
+    setup_ms: 231.3
+    query_ms_median: 2.8
+    context_chars_median: 52.0
+    store_bytes: 2502241
+    export_bytes: 7208
+    gate: pass
+  - name: ai-memory
+    version: 3.4.0
+    recall_passed: 12
+    recall_total: 12
+    stale_leaks: 0
+    isolation_leaks: 0
+    privacy: pass
+    restart_recovery: pass
+    delete_recovery: pass
+    portable_import: false
+    setup_ms: 485.4
+    query_ms_median: 591.8
+    context_chars_median: 52.0
+    store_bytes: 1285062
+    export_bytes: 1345
+    gate: pass
+recommendation:
+  provider: engram
+  reason: both providers passed the hard gates; Engram had lower setup and query overhead and supports portable import
+limitations:
+  - adapter-enforced status and trust filtering; providers do not natively own the contract schema
+  - the privacy canary was rejected before provider storage, so upstream secret scrubbing was not tested
+  - one synthetic corpus and one repetition do not establish statistical significance
+  - lifecycle hooks, Codex integration, concurrency, crash recovery, and fail-open behaviour remain Phase 3 work

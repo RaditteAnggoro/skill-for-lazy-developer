@@ -1,0 +1,169 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/RaditteAnggoro/codexSkillForLocalDeveloper/docs/schemas/memory_record.schema.json",
+  "title": "Companion memory record",
+  "description": "One project-scoped, provenance-bearing memory item. Providers store this envelope but do not own its meaning.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "id",
+    "kind",
+    "topic",
+    "scope",
+    "title",
+    "content",
+    "provenance",
+    "confidence",
+    "status",
+    "trust",
+    "created_at",
+    "updated_at"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": 1
+    },
+    "id": {
+      "type": "string",
+      "maxLength": 96,
+      "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+    },
+    "kind": {
+      "enum": ["fact", "decision", "lesson", "handoff", "preference"]
+    },
+    "topic": {
+      "type": "string",
+      "maxLength": 120,
+      "pattern": "^[a-z0-9]+(?:[/-][a-z0-9]+)*$",
+      "description": "Stable topic key; at most one active record may exist per scope and topic."
+    },
+    "scope": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["workspace", "project"],
+      "properties": {
+        "workspace": {
+          "type": "string",
+          "maxLength": 120,
+          "pattern": "^[a-z0-9]+(?:[/-][a-z0-9]+)*$"
+        },
+        "project": {
+          "type": "string",
+          "maxLength": 120,
+          "pattern": "^[a-z0-9]+(?:[/-][a-z0-9]+)*$"
+        },
+        "paths": {
+          "type": "array",
+          "maxItems": 20,
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 300
+          }
+        }
+      }
+    },
+    "title": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 160
+    },
+    "content": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 4000,
+      "description": "A concise statement, not a transcript or full tool log."
+    },
+    "provenance": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["source", "observed_at", "evidence"],
+      "properties": {
+        "source": {
+          "enum": ["user", "repository", "test", "tool", "agent-inference", "import"]
+        },
+        "session_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128
+        },
+        "observed_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "evidence": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 8,
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 500
+          },
+          "description": "Short references to supporting evidence, never a full conversation or raw log."
+        }
+      }
+    },
+    "confidence": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 1
+    },
+    "status": {
+      "enum": ["active", "superseded", "stale"]
+    },
+    "trust": {
+      "enum": ["verified", "unverified", "untrusted"]
+    },
+    "created_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "updated_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "supersedes": {
+      "type": "array",
+      "maxItems": 10,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "maxLength": 96,
+        "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+      }
+    },
+    "superseded_by": {
+      "type": ["string", "null"],
+      "maxLength": 96,
+      "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+    },
+    "review_after": {
+      "type": ["string", "null"],
+      "format": "date-time"
+    },
+    "tags": {
+      "type": "array",
+      "maxItems": 12,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "maxLength": 48,
+        "pattern": "^[a-z0-9][a-z0-9-]*$"
+      }
+    },
+    "repository_anchors": {
+      "type": "array",
+      "maxItems": 20,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 300
+      },
+      "description": "Paths or symbols that must still exist before this record is treated as current."
+    }
+  }
+}

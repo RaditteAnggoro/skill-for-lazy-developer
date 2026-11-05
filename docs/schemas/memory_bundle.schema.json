@@ -1,0 +1,51 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/RaditteAnggoro/codexSkillForLocalDeveloper/docs/schemas/memory_bundle.schema.json",
+  "title": "Portable companion memory bundle",
+  "description": "Provider-neutral export for one workspace/project. The checksum covers the canonical records array only.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "exported_at",
+    "scope",
+    "records",
+    "checksum"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": 1
+    },
+    "exported_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "scope": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["workspace", "project"],
+      "properties": {
+        "workspace": {
+          "type": "string",
+          "maxLength": 120,
+          "pattern": "^[a-z0-9]+(?:[/-][a-z0-9]+)*$"
+        },
+        "project": {
+          "type": "string",
+          "maxLength": 120,
+          "pattern": "^[a-z0-9]+(?:[/-][a-z0-9]+)*$"
+        }
+      }
+    },
+    "records": {
+      "type": "array",
+      "items": {
+        "$ref": "memory_record.schema.json"
+      }
+    },
+    "checksum": {
+      "type": "string",
+      "pattern": "^sha256:[a-f0-9]{64}$"
+    }
+  }
+}

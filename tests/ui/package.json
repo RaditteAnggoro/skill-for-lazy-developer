@@ -1,0 +1,17 @@
+{
+  "name": "ui-quality-fixtures",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "check": "node run_ui_checks.mjs",
+    "check:next": "node run_next_checks.mjs"
+  },
+  "devDependencies": {
+    "playwright-core": "1.56.0"
+  },
+  "dependencies": {
+    "pixelmatch": "^6.0.0",
+    "pngjs": "^7.0.0"
+  }
+}

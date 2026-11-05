@@ -1,0 +1,12 @@
+{
+  "name": "skills-lazy-local",
+  "interface": { "displayName": "Skills for Lazy Developer (Local)" },
+  "plugins": [
+    {
+      "name": "skill-for-lazy-developer",
+      "source": { "source": "local", "path": "./" },
+      "policy": { "installation": "AVAILABLE", "authentication": "ON_INSTALL" },
+      "category": "Developer Tools"
+    }
+  ]
+}

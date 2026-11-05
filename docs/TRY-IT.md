@@ -12,7 +12,7 @@ List the repo-local skills under .agents/skills. Show each name and
 when you would select it. Do not edit files.
 ```
 
-Expect nine names: the adaptive router and eight focused workflows. If the selector
+Expect sixteen names: the adaptive router and fifteen focused workflows. If the selector
 omits them, check the location, hidden folder, and YAML frontmatter, then restart
 Codex. If a name collides with another installed skill, inspect both paths and keep
 one intended active copy.

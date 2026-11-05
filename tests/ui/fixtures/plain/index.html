@@ -1,0 +1,247 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Approvals workspace</title>
+<style>
+  :root {
+    color-scheme: light;
+    --ink: #18202a;
+    --muted: #5d6b7a;
+    --line: #dbe2ea;
+    --surface: #ffffff;
+    --canvas: #f3f6f9;
+    --accent: #0b5cab;
+    --accent-ink: #ffffff;
+    --ok: #18794e;
+    --warn: #9a4a00;
+    --danger: #b42318;
+    --radius: 10px;
+    --space: 8px;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--canvas);
+    color: var(--ink);
+    font: 14px/1.45 "Helvetica Neue", Arial, sans-serif;
+  }
+  .shell { max-width: 1180px; margin: 0 auto; padding: 24px; }
+  header { display: flex; gap: 16px; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; }
+  h1 { font-size: 24px; line-height: 1.2; margin: 0 0 6px; letter-spacing: -0.02em; }
+  .muted { color: var(--muted); }
+  .card { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); }
+  .stats { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; margin: 20px 0 12px; }
+  .stat { padding: 14px; }
+  .stat strong { display: block; font-size: 22px; font-variant-numeric: tabular-nums; }
+  .toolbar { display: flex; gap: 8px; align-items: end; flex-wrap: wrap; padding: 12px; margin-bottom: 12px; }
+  label { display: grid; gap: 4px; font-size: 12px; color: var(--muted); }
+  input, select, button { font: inherit; }
+  input, select { border: 1px solid var(--line); border-radius: 8px; padding: 9px 10px; background: #fff; color: var(--ink); }
+  button { border: 1px solid var(--line); border-radius: 8px; padding: 9px 12px; background: #fff; color: var(--ink); cursor: pointer; }
+  button.primary { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
+  button.danger { color: var(--danger); }
+  button:focus-visible, input:focus-visible, select:focus-visible, tr:focus-visible { outline: 3px solid #f2b705; outline-offset: 2px; }
+  button:disabled { opacity: 0.45; cursor: not-allowed; }
+  .table-wrap { overflow-x: auto; }
+  table { width: 100%; border-collapse: collapse; }
+  caption { text-align: left; padding: 12px; font-weight: 600; border-bottom: 1px solid var(--line); }
+  th, td { padding: 11px 12px; border-bottom: 1px solid var(--line); text-align: left; vertical-align: top; }
+  th { font-size: 12px; letter-spacing: 0.04em; text-transform: uppercase; color: var(--muted); background: #f8fafc; }
+  td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
+  tr[aria-selected="true"] { background: #eef5ff; }
+  .pill { display: inline-block; border-radius: 999px; padding: 2px 8px; font-size: 12px; border: 1px solid currentColor; }
+  .pill.pending { color: var(--warn); }
+  .pill.approved { color: var(--ok); }
+  .pill.rejected { color: var(--danger); }
+  .bulk { display: flex; gap: 8px; align-items: center; justify-content: space-between; padding: 12px; border-top: 1px solid var(--line); }
+  .bulk[hidden] { display: none; }
+  .state { padding: 24px; text-align: center; }
+  .state h2 { font-size: 16px; margin: 0 0 4px; }
+  .loading { opacity: 0.55; pointer-events: none; }
+  .empty, .error { display: none; }
+  .empty.visible, .error.visible { display: block; }
+  .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0; }
+  @media (max-width: 720px) {
+    .shell { padding: 14px; }
+    .stats { grid-template-columns: 1fr; }
+    thead { display: none; }
+    table, tbody, tr, td { display: block; width: 100%; }
+    tr { border: 1px solid var(--line); border-radius: 10px; margin: 10px 0; padding: 6px 10px; background: #fff; }
+    td { border: 0; padding: 6px 0 6px 108px; position: relative; min-height: 32px; }
+    td::before { content: attr(data-label); position: absolute; left: 0; width: 98px; color: var(--muted); font-size: 12px; }
+    td.num { text-align: left; }
+    td[data-label="Select"] { padding-left: 0; }
+    td[data-label="Select"]::before { content: ""; }
+  }
+</style>
+</head>
+<body>
+<div class="shell">
+  <header>
+    <div>
+      <h1>Approvals workspace</h1>
+      <p class="muted">Review payment exceptions before they reach the ledger.</p>
+    </div>
+    <div class="muted" id="as-of">As of 14:00 WIB</div>
+  </header>
+
+  <section class="stats" aria-label="Approval summary">
+    <div class="card stat"><span class="muted">Pending</span><strong id="stat-pending">4</strong></div>
+    <div class="card stat"><span class="muted">Amount at risk</span><strong id="stat-risk">Rp 48.750.000</strong></div>
+    <div class="card stat"><span class="muted">SLA breaches</span><strong id="stat-sla">1</strong></div>
+  </section>
+
+  <section class="card" aria-labelledby="queue-title">
+    <div class="toolbar">
+      <label>Search records<input id="search" type="search" placeholder="Invoice or vendor" autocomplete="off"></label>
+      <label>Status<select id="status-filter"><option value="">All statuses</option><option value="pending">Pending</option><option value="approved">Approved</option><option value="rejected">Rejected</option></select></label>
+      <button id="clear-filters" type="button">Clear filters</button>
+      <button id="simulate-loading" type="button">Load loading state</button>
+      <button id="simulate-empty" type="button">Load empty state</button>
+      <button id="simulate-error" type="button">Load error state</button>
+      <button id="reset-state" class="primary" type="button">Reset</button>
+    </div>
+    <div id="state-region" role="status" aria-live="polite" class="sr-only">Ready</div>
+    <div id="loading" class="state" hidden><h2>Loading approvals…</h2><p class="muted">Fetching the latest review queue.</p></div>
+    <div id="empty" class="state empty"><h2>No approvals match</h2><p class="muted">Clear the filters or wait for new exceptions.</p></div>
+    <div id="error" class="state error" role="alert"><h2>Approvals could not load</h2><p class="muted">The queue service is unavailable. Retry or keep the last known view.</p><button id="retry" type="button">Retry</button></div>
+    <div id="table-region" class="table-wrap">
+      <table aria-describedby="queue-title">
+        <caption id="queue-title">Pending payment exceptions</caption>
+        <thead><tr><th scope="col">Select</th><th scope="col">Invoice</th><th scope="col">Vendor</th><th scope="col" class="num">Amount</th><th scope="col">Age</th><th scope="col">Status</th><th scope="col">Action</th></tr></thead>
+        <tbody id="rows"></tbody>
+      </table>
+    </div>
+    <div class="bulk" id="bulk" hidden>
+      <span id="selection-count" role="status">0 selected</span>
+      <div><button id="bulk-approve" class="primary" type="button">Approve selected</button><button id="bulk-reject" class="danger" type="button">Reject selected</button></div>
+    </div>
+  </section>
+</div>
+<script>
+  const records = [
+    { id: "INV-1042", vendor: "Nusa Supply", amount: 18750000, age: "3d 4h", status: "pending", risk: true },
+    { id: "INV-1043", vendor: "Sinar Logistics", amount: 9200000, age: "1d 2h", status: "pending", risk: false },
+    { id: "INV-1044", vendor: "Karya Digital", amount: 12400000, age: "5d 1h", status: "pending", risk: true },
+    { id: "INV-1045", vendor: "Mitra Energi", amount: 8400000, age: "2h", status: "pending", risk: false },
+    { id: "INV-1039", vendor: "Nusa Supply", amount: 6100000, age: "—", status: "approved", risk: false },
+    { id: "INV-1038", vendor: "Sinar Logistics", amount: 3700000, age: "—", status: "rejected", risk: false }
+  ];
+  const selected = new Set();
+  const rows = document.getElementById("rows");
+  const search = document.getElementById("search");
+  const statusFilter = document.getElementById("status-filter");
+  const empty = document.getElementById("empty");
+  const error = document.getElementById("error");
+  const loading = document.getElementById("loading");
+  const tableRegion = document.getElementById("table-region");
+  const bulk = document.getElementById("bulk");
+  const stateRegion = document.getElementById("state-region");
+
+  function formatAmount(value) {
+    return "Rp " + value.toLocaleString("id-ID");
+  }
+  function visibleRecords() {
+    const term = search.value.trim().toLowerCase();
+    const status = statusFilter.value;
+    return records.filter((record) => {
+      const matchesText = !term || (record.id + " " + record.vendor).toLowerCase().includes(term);
+      return matchesText && (!status || record.status === status);
+    });
+  }
+  function render() {
+    const visible = visibleRecords();
+    rows.replaceChildren();
+    visible.forEach((record) => {
+      const tr = document.createElement("tr");
+      tr.tabIndex = 0;
+      tr.dataset.id = record.id;
+      tr.setAttribute("aria-selected", selected.has(record.id) ? "true" : "false");
+      tr.innerHTML = `
+        <td data-label="Select"><input type="checkbox" ${selected.has(record.id) ? "checked" : ""} aria-label="Select ${record.id}"></td>
+        <td data-label="Invoice"><strong>${record.id}</strong>${record.risk ? ' <span class="pill pending">Risk</span>' : ""}</td>
+        <td data-label="Vendor">${record.vendor}</td>
+        <td data-label="Amount" class="num">${formatAmount(record.amount)}</td>
+        <td data-label="Age">${record.age}</td>
+        <td data-label="Status"><span class="pill ${record.status}">${record.status}</span></td>
+        <td data-label="Action"><button type="button" data-approve="${record.id}" ${record.status !== "pending" ? "disabled" : ""}>Approve</button></td>`;
+      tr.querySelector("input").addEventListener("change", (event) => {
+        if (event.target.checked) selected.add(record.id); else selected.delete(record.id);
+        tr.setAttribute("aria-selected", selected.has(record.id) ? "true" : "false");
+        updateBulk();
+      });
+      tr.querySelector("[data-approve]").addEventListener("click", () => {
+        record.status = "approved";
+        selected.delete(record.id);
+        render();
+        stateRegion.textContent = record.id + " approved.";
+      });
+      rows.append(tr);
+    });
+    empty.classList.toggle("visible", visible.length === 0 && loading.hidden && !error.classList.contains("visible"));
+    tableRegion.hidden = visible.length === 0;
+    updateBulk();
+    document.getElementById("stat-pending").textContent = records.filter((record) => record.status === "pending").length;
+    stateRegion.textContent = visible.length + " records visible.";
+  }
+  function updateBulk() {
+    const count = selected.size;
+    bulk.hidden = count === 0;
+    document.getElementById("selection-count").textContent = count + " selected";
+  }
+  function resetState() {
+    loading.hidden = true;
+    error.classList.remove("visible");
+    empty.classList.remove("visible");
+    tableRegion.hidden = false;
+    render();
+  }
+  search.addEventListener("input", render);
+  statusFilter.addEventListener("change", render);
+  document.getElementById("clear-filters").addEventListener("click", () => {
+    search.value = "";
+    statusFilter.value = "";
+    render();
+    stateRegion.textContent = "Filters cleared.";
+  });
+  document.getElementById("simulate-loading").addEventListener("click", () => {
+    loading.hidden = false;
+    tableRegion.hidden = true;
+    empty.classList.remove("visible");
+    stateRegion.textContent = "Loading approvals.";
+  });
+  document.getElementById("simulate-empty").addEventListener("click", () => {
+    loading.hidden = true;
+    tableRegion.hidden = true;
+    empty.classList.add("visible");
+    stateRegion.textContent = "No approvals match.";
+  });
+  document.getElementById("simulate-error").addEventListener("click", () => {
+    loading.hidden = true;
+    tableRegion.hidden = true;
+    empty.classList.remove("visible");
+    error.classList.add("visible");
+    stateRegion.textContent = "Approvals could not load.";
+  });
+  document.getElementById("retry").addEventListener("click", resetState);
+  document.getElementById("reset-state").addEventListener("click", resetState);
+  document.getElementById("bulk-approve").addEventListener("click", () => {
+    const count = selected.size;
+    records.forEach((record) => { if (selected.has(record.id)) record.status = "approved"; });
+    selected.clear();
+    render();
+    stateRegion.textContent = count + " records approved.";
+  });
+  document.getElementById("bulk-reject").addEventListener("click", () => {
+    const count = selected.size;
+    records.forEach((record) => { if (selected.has(record.id)) record.status = "rejected"; });
+    selected.clear();
+    render();
+    stateRegion.textContent = count + " records rejected.";
+  });
+  render();
+</script>
+</body>
+</html>

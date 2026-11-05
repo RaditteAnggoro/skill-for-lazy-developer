@@ -1,0 +1,6 @@
+interface:
+  display_name: "Domain Modeling"
+  short_description: "Clarify domain terms, states, events, and invariants"
+  default_prompt: "Build a compact domain model for these terms, states, events, and invariants before implementation."
+policy:
+  allow_implicit_invocation: true

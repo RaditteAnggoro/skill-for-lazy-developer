@@ -1,0 +1,6 @@
+interface:
+  display_name: "UI Quality Verification"
+  short_description: "Audit visual, responsive, keyboard, and state quality"
+  default_prompt: "Audit this interface with browser evidence at desktop and mobile widths, including keyboard navigation and empty, loading, and error states."
+policy:
+  allow_implicit_invocation: true

@@ -1,0 +1,95 @@
+run_date: 2026-11-05
+host:
+  name: DeepSeek Harness
+  version: 0.2.1-rc.5
+  model_profile: dsh-eval
+  provider: deepseek-account
+  model: deepseek-flash
+  platform: macOS 27.2 arm64
+  node: v24.22.1
+  python: 3.9.6
+skill_catalog:
+  expected: 16
+  observed: 16
+  live_catalog_reverified: true
+  names:
+    - adaptive-workflow
+    - architecture-map
+    - browser-diagnostics
+    - feature-discovery
+    - lean-senior-engineering
+    - release-readiness
+    - research-plan-implement
+    - systematic-debugging
+    - verification-before-completion
+    - ui-quality-verification
+    - transaction-safe-engineering
+    - skill-security-guard
+    - spec-to-code-verification
+    - domain-modeling
+    - ui-implementation
+    - ui-design-intelligence
+routing:
+  corpus: tests/routing_cases.yaml
+  passed: 24
+  total: 24
+  read_only_snapshot: true
+  interaction_cases: true
+  ambiguous_cases: true
+  read_only_cases: true
+adapter_installer:
+  install: pass
+  check: pass
+  idempotent: pass
+  uninstall: pass
+  rollback: pass
+  user_content_preserved: pass
+memory:
+  bundle_manifest: true
+  save_search: true
+  context: true
+  restart: true
+  delete: true
+  isolation: true
+  privacy_guard: true
+  fail_open_config: true
+  checks_passed: 9
+  checks_total: 9
+bundle_lifecycle:
+  bundle_rows: true
+  fail_open: true
+  rows_removed: true
+  still_works: true
+  checks_passed: 4
+  checks_total: 4
+privacy:
+  provider_accepted_canary: true
+  guard_blocks_sensitive_write: true
+  dsh_model_refused_end_to_end_write: true
+  provider_canary_removed: true
+  limitation: The Host guard denial path was unit/bundle verified; the live DSH model refused the canary write before tool execution.
+phase_three_status: complete
+phase_three_verification: verified-with-deferred-claude
+phase_three_verification: verified-with-deferred-claude
+phase_three_opened: true
+lifecycle:
+  automatic_recall_unit: true
+  remember_unit: true
+  show_unit: true
+  opt_out_unit: true
+  handoff_unit: true
+  verified_handoff_unit: true
+  forget_two_step_unit: true
+  live_forget: true
+  live_model_delivery: true
+  live_uninstall: true
+  live_fail_open: true
+  live_opt_out: true
+  transport_failure_fixed: true
+  root_cause: DSH injected user context without a complete message identity; moving recall to pre-step with an identified message fixed delivery
+limitations:
+  - one DSH profile, model, and repetition
+  - DSH routing overlay is host-specific
+  - guard is pattern-based, not a complete data-loss-prevention system
+  - live handoff without verification evidence remains unverified
+  - the live forget model summary was inconsistent even though the store deletion succeeded

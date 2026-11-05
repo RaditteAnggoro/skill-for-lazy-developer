@@ -1,0 +1,24 @@
+run_date: 2026-11-05
+cases: 8
+passed: 8
+security:
+  safe_findings: 0
+  unsafe_verdict: reject
+  unsafe_high_findings: 5
+domain:
+  valid_model: pass
+  invalid_model_rejected: pass
+specification:
+  valid_traceability: pass
+  missing_requirements_detected: pass
+  orphan_reference_detected: pass
+transactions:
+  safe_cases: pass
+  unsafe_cases_rejected: pass
+gate_pass: true
+limitations:
+  - security scanning is heuristic triage, not a proof of safety
+  - domain and specification checks use small fixtures, not a live model run
+  - transaction checks validate declared controls, not production behavior
+  - the optional transaction-safe skill is selected only for transaction-integrity triggers
+phase_six_status: complete

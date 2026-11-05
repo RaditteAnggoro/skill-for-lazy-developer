@@ -32,7 +32,7 @@ UniqueKeyLoader.add_constructor(
 FRONTMATTER = re.compile(r"\A---\n(.*?)\n---(?:\n|$)", re.DOTALL)
 LINK = re.compile(r"!?\[[^\]\n]*\]\(\s*(<[^>\n]+>|[^\s)]+)")
 NAME = re.compile(r"[a-z0-9]+(?:-[a-z0-9]+)*\Z")
-IGNORED = {".git", ".venv", "venv", "dist", "__pycache__", ".pytest_cache"}
+IGNORED = {".git", ".venv", "venv", "dist", "node_modules", ".next", "__pycache__", ".pytest_cache"}
 
 
 def read_mapping(text):

@@ -1,0 +1,12 @@
+operations:
+  - id: transfer-unsafe
+    kind: money
+    idempotency: false
+    approval: false
+    retry: unlimited
+    recovery: retry until it works
+  - id: ledger-unsafe
+    kind: ledger
+    idempotency: true
+    approval: true
+    retry: none

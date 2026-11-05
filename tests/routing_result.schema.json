@@ -4,7 +4,11 @@
   "properties": {
     "interaction": {
       "type": "string",
-      "enum": ["automatic", "choice", "question"]
+      "enum": [
+        "automatic",
+        "choice",
+        "question"
+      ]
     },
     "primary": {
       "type": "string",
@@ -17,7 +21,14 @@
         "release-readiness",
         "research-plan-implement",
         "systematic-debugging",
-        "verification-before-completion"
+        "verification-before-completion",
+        "ui-design-intelligence",
+        "ui-implementation",
+        "ui-quality-verification",
+        "domain-modeling",
+        "spec-to-code-verification",
+        "skill-security-guard",
+        "transaction-safe-engineering"
       ]
     },
     "supporting": {
@@ -33,7 +44,14 @@
           "release-readiness",
           "research-plan-implement",
           "systematic-debugging",
-          "verification-before-completion"
+          "verification-before-completion",
+          "ui-design-intelligence",
+          "ui-implementation",
+          "ui-quality-verification",
+          "domain-modeling",
+          "spec-to-code-verification",
+          "skill-security-guard",
+          "transaction-safe-engineering"
         ]
       }
     },
@@ -42,6 +60,11 @@
       "minLength": 1
     }
   },
-  "required": ["interaction", "primary", "supporting", "user_message"],
+  "required": [
+    "interaction",
+    "primary",
+    "supporting",
+    "user_message"
+  ],
   "additionalProperties": false
 }

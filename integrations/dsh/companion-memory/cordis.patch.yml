@@ -1,0 +1,11 @@
+- insert:
+    - id: engram-mcp
+      name: '@deepseek-ai/dsh-mcp-client'
+      config:
+        serverName: engram
+        transport: stdio
+        command: engram
+        args: ["mcp", "--tools=agent,admin"]
+        failOnStartupError: false
+    - id: engram-guard
+      name: '@local/dsh-companion-memory'

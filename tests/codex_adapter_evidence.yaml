@@ -1,0 +1,48 @@
+run_date: 2026-11-05
+host:
+  name: Codex CLI
+  version: 0.166.0-alpha.6
+  model: gpt-6.1-sol
+  platform: macOS 27.2 arm64
+provider:
+  name: Engram
+  version: 3.6.2
+hooks_verified:
+  - SessionStart
+  - UserPromptSubmit
+  - Stop
+checks:
+  recall: true
+  remember: true
+  handoff: true
+  fail_open: true
+  opt_out: true
+  uninstall: true
+  sensitive_write_skipped: true
+  installer_idempotent: true
+  installer_rollback: true
+  unrelated_hooks_preserved: true
+  verified_handoff_with_transcript: true
+  forget_confirmation: true
+checks_passed: 12
+checks_total: 12
+trust_model:
+  hook_review_required: true
+  installation_does_not_trust_hooks: true
+  end_to_end_test_used_bypass: true
+handoff:
+  kind: conditional
+  verified_confidence: 0.9
+  unverified_confidence: 0.6
+  live_verified_run: make check
+  raw_transcript_stored: false
+forget:
+  two_step_confirmation: true
+  hard_delete: true
+limits:
+  - one Codex version, model, and run
+  - verification is evidence-linked to the transcript, not an independent rerun
+  - handoff is unverified without a verification command and success marker
+  - prompt/model behaviour can vary; the hook contract is the stable part
+phase_three_status: complete
+phase_three_verification: verified-with-deferred-claude

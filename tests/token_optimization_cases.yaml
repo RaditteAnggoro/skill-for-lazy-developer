@@ -1,0 +1,1645 @@
+version: 1
+cases:
+- id: invoice-reconcile
+  project: billing
+  task: Investigate why invoice INV-1042 failed reconciliation and recommend the safe
+    fix.
+  memory:
+  - id: invoice-reconcile-rel-1
+    kind: decision
+    topic: billing/database
+    scope:
+      project: billing
+    title: Billing database
+    content: Billing reconciliation uses PostgreSQL 16 and immutable invoice rows.
+    trust: verified
+  - id: invoice-reconcile-rel-2
+    kind: lesson
+    topic: billing/reconcile
+    scope:
+      project: billing
+    title: Reconciliation lesson
+    content: INV-1042 failed reconciliation because the amount mismatch came from
+      a stale FX cache; clear the cache before retrying.
+    trust: verified
+  - id: invoice-reconcile-other-1
+    kind: fact
+    topic: office/wifi
+    scope:
+      project: billing
+    title: Office wifi
+    content: The office wifi guest password rotates monthly.
+    trust: verified
+  - id: invoice-reconcile-other-2
+    kind: preference
+    topic: ui/theme
+    scope:
+      project: billing
+    title: Frontend theme
+    content: The dashboard theme uses a blue accent.
+    trust: unverified
+  tool_output: 'debug: request accepted
+
+    debug: cache warm
+
+    debug: worker heartbeat
+
+    debug: queue depth 3
+
+    debug: config loaded
+
+    debug: trace span complete
+
+    debug: connection pool ready
+
+    debug: retry budget available
+
+    debug: request accepted
+
+    debug: cache warm
+
+    debug: worker heartbeat
+
+    debug: queue depth 3
+
+    debug: config loaded
+
+    debug: trace span complete
+
+    debug: connection pool ready
+
+    debug: retry budget available
+
+    debug: request accepted
+
+    debug: cache warm
+
+    debug: worker heartbeat
+
+    debug: queue depth 3
+
+    debug: config loaded
+
+    debug: trace span complete
+
+    debug: connection pool ready
+
+    debug: retry budget available
+
+    ERROR INV-1042 amount mismatch detected at reconciliation step
+
+    cause: stale FX cache reused a previous rate
+
+    fix: clear FX cache, preserve invoice row, then retry
+
+    test: reconciliation_test passed exit code 0
+
+    debug: request accepted
+
+    debug: cache warm
+
+    debug: worker heartbeat
+
+    debug: queue depth 3
+
+    debug: config loaded
+
+    debug: trace span complete
+
+    debug: connection pool ready
+
+    debug: retry budget available
+
+    debug: request accepted
+
+    debug: cache warm
+
+    debug: worker heartbeat
+
+    debug: queue depth 3
+
+    debug: config loaded
+
+    debug: trace span complete
+
+    debug: connection pool ready
+
+    debug: retry budget available
+
+    debug: request accepted
+
+    debug: cache warm
+
+    debug: worker heartbeat
+
+    debug: queue depth 3
+
+    debug: config loaded
+
+    debug: trace span complete
+
+    debug: connection pool ready
+
+    debug: retry budget available
+
+    Never retry a payment without an idempotency key.
+
+    Require human approval before any ledger adjustment.
+
+    debug: request accepted
+
+    debug: cache warm
+
+    debug: worker heartbeat
+
+    debug: queue depth 3
+
+    debug: config loaded
+
+    debug: trace span complete
+
+    debug: connection pool ready
+
+    debug: retry budget available
+
+    debug: request accepted
+
+    debug: cache warm
+
+    debug: worker heartbeat
+
+    debug: queue depth 3
+
+    debug: config loaded
+
+    debug: trace span complete
+
+    debug: connection pool ready
+
+    debug: retry budget available
+
+    debug: request accepted
+
+    debug: cache warm
+
+    debug: worker heartbeat
+
+    debug: queue depth 3
+
+    debug: config loaded
+
+    debug: trace span complete
+
+    debug: connection pool ready
+
+    debug: retry budget available'
+  source: "def unrelated_helper(value):\n    return value\nclass LegacyAdapter:\n\
+    \    def run(self):\n        return None\nconst CONFIG = {}\n// old path\n/* generated\
+    \ */\ndef unrelated_helper(value):\n    return value\nclass LegacyAdapter:\n \
+    \   def run(self):\n        return None\nconst CONFIG = {}\n// old path\n/* generated\
+    \ */\ndef reconcile(invoice):\n    assert invoice.id == 'INV-1042'\n    return\
+    \ normalize_amount(invoice)"
+  must_include:
+  - INV-1042
+  - amount mismatch
+  - FX cache
+  constraints:
+  - Never retry a payment without an idempotency key.
+  - Require human approval before any ledger adjustment.
+- id: payment-retry
+  project: payments
+  task: Why did payment PAY-778 retry twice and what is the safe retry rule?
+  memory:
+  - id: payment-retry-rel-1
+    kind: decision
+    topic: payments/retry
+    scope:
+      project: payments
+    title: Retry policy
+    content: Payment retries must reuse the same idempotency key; duplicate retries
+      create double charges.
+    trust: verified
+  - id: payment-retry-rel-2
+    kind: lesson
+    topic: payments/incident
+    scope:
+      project: payments
+    title: Incident lesson
+    content: PAY-778 retried twice because the gateway timeout was treated as a new
+      payment.
+    trust: verified
+  - id: payment-retry-other-1
+    kind: fact
+    topic: release/notes
+    scope:
+      project: payments
+    title: Release notes
+    content: Version 2.4 changed the dashboard header.
+    trust: verified
+  - id: payment-retry-other-2
+    kind: fact
+    topic: testing/seed
+    scope:
+      project: payments
+    title: Test data
+    content: The staging seed contains 12 sample customers.
+    trust: unverified
+  tool_output: 'debug: request accepted
+
+    debug: cache warm
+
+    debug: worker heartbeat
+
+    debug: queue depth 3
+
+    debug: config loaded
+
+    debug: trace span complete
+
+    debug: connection pool ready
+
+    debug: retry budget available
+
+    debug: request accepted
+
+    debug: cache warm
+
+    debug: worker heartbeat
+
+    debug: queue depth 3
+
+    debug: config loaded
+
+    debug: trace span complete
+
+    debug: connection pool ready
+
+    debug: retry budget available
+
+    debug: request accepted
+
+    debug: cache warm
+
+    debug: worker heartbeat
+
+    debug: queue depth 3
+
+    debug: config loaded
+
+    debug: trace span complete
+
+    debug: connection pool ready
+
+    debug: retry budget available
+
+    ERROR PAY-778 gateway timeout after 30s
+
+    warning retry used a new request id
+
+    risk: duplicate charge if retried without idempotency key
+
+    test: payment_retry_test passed exit code 0
+
+    debug: request accepted
+
+    debug: cache warm
+
+    debug: worker heartbeat
+
+    debug: queue depth 3
+
+    debug: config loaded
+
+    debug: trace span complete
+
+    debug: connection pool ready
+
+    debug: retry budget available
+
+    debug: request accepted
+
+    debug: cache warm
+
+    debug: worker heartbeat
+
+    debug: queue depth 3
+
+    debug: config loaded
+
+    debug: trace span complete
+
+    debug: connection pool ready
+
+    debug: retry budget available
+
+    debug: request accepted
+
+    debug: cache warm
+
+    debug: worker heartbeat
+
+    debug: queue depth 3
+
+    debug: config loaded
+
+    debug: trace span complete
+
+    debug: connection pool ready
+
+    debug: retry budget available
+
+    Never retry a payment without an idempotency key.
+
+    Require approval before issuing a manual refund.
+
+    debug: request accepted
+
+    debug: cache warm
+
+    debug: worker heartbeat
+
+    debug: queue depth 3
+
+    debug: config loaded
+
+    debug: trace span complete
+
+    debug: connection pool ready
+
+    debug: retry budget available
+
+    debug: request accepted
+
+    debug: cache warm
+
+    debug: worker heartbeat
+
+    debug: queue depth 3
+
+    debug: config loaded
+
+    debug: trace span complete
+
+    debug: connection pool ready
+
+    debug: retry budget available
+
+    debug: request accepted
+
+    debug: cache warm
+
+    debug: worker heartbeat
+
+    debug: queue depth 3
+
+    debug: config loaded
+
+    debug: trace span complete
+
+    debug: connection pool ready
+
+    debug: retry budget available'
+  source: "def unrelated_helper(value):\n    return value\nclass LegacyAdapter:\n\
+    \    def run(self):\n        return None\nconst CONFIG = {}\n// old path\n/* generated\
+    \ */\ndef unrelated_helper(value):\n    return value\nclass LegacyAdapter:\n \
+    \   def run(self):\n        return None\nconst CONFIG = {}\n// old path\n/* generated\
+    \ */\ndef retry_payment(payment):\n    return gateway.charge(payment, idempotency_key=payment.key)\n\
+    assert payment.id == 'PAY-778'"
+  must_include:
+  - PAY-778
+  - idempotency key
+  - double charge
+  constraints:
+  - Never retry a payment without an idempotency key.
+  - Require approval before issuing a manual refund.
+- id: refund-approval
+  project: refunds
+  task: Explain the refund REF-31 approval failure and the required control.
+  memory:
+  - id: refund-approval-rel-1
+    kind: decision
+    topic: refunds/approval
+    scope:
+      project: refunds
+    title: Refund threshold
+    content: Refunds above 500 require dual approval from finance and support.
+    trust: verified
+  - id: refund-approval-rel-2
+    kind: lesson
+    topic: refunds/incident
+    scope:
+      project: refunds
+    title: Refund incident
+    content: REF-31 failed because the approver list was stale and the amount exceeded
+      the threshold.
+    trust: verified
+  - id: refund-approval-other-1
+    kind: fact
+    topic: people/holiday
+    scope:
+      project: refunds
+    title: Holiday calendar
+    content: The support team is off on December 25.
+    trust: verified
+  - id: refund-approval-other-2
+    kind: preference
+    topic: comms/email
+    scope:
+      project: refunds
+    title: Email footer
+    content: Use the standard company email footer.
+    trust: unverified
+  tool_output: 'debug: request accepted
+
+    debug: cache warm
+
+    debug: worker heartbeat
+
+    debug: queue depth 3
+
+    debug: config loaded
+
+    debug: trace span complete
+
+    debug: connection pool ready
+
+    debug: retry budget available
+
+    debug: request accepted
+
+    debug: cache warm
+
+    debug: worker heartbeat
+
+    debug: queue depth 3
+
+    debug: config loaded
+
+    debug: trace span complete
+
+    debug: connection pool ready
+
+    debug: retry budget available
+
+    debug: request accepted
+
+    debug: cache warm
+
+    debug: worker heartbeat
+
+    debug: queue depth 3
+
+    debug: config loaded
+
+    debug: trace span complete
+
+    debug: connection pool ready
+
+    debug: retry budget available
+
+    ERROR REF-31 amount 740 exceeds single-approver limit
+
+    cause: stale approver list
+
+    required control: dual approval by finance and support
+
+    test: refund_policy_test passed exit code 0
+
+    debug: request accepted
+
+    debug: cache warm
+
+    debug: worker heartbeat
+
+    debug: queue depth 3
+
+    debug: config loaded
+
+    debug: trace span complete
+
+    debug: connection pool ready
+
+    debug: retry budget available
+
+    debug: request accepted
+
+    debug: cache warm
+
+    debug: worker heartbeat
+
+    debug: queue depth 3
+
+    debug: config loaded
+
+    debug: trace span complete
+
+    debug: connection pool ready
+
+    debug: retry budget available
+
+    debug: request accepted
+
+    debug: cache warm
+
+    debug: worker heartbeat
+
+    debug: queue depth 3
+
+    debug: config loaded
+
+    debug: trace span complete
+
+    debug: connection pool ready
+
+    debug: retry budget available
+
+    Require dual approval for refunds above 500.
+
+    Never bypass the approver list for financial exceptions.
+
+    debug: request accepted
+
+    debug: cache warm
+
+    debug: worker heartbeat
+
+    debug: queue depth 3
+
+    debug: config loaded
+
+    debug: trace span complete
+
+    debug: connection pool ready
+
+    debug: retry budget available
+
+    debug: request accepted
+
+    debug: cache warm
+
+    debug: worker heartbeat
+
+    debug: queue depth 3
+
+    debug: config loaded
+
+    debug: trace span complete
+
+    debug: connection pool ready
+
+    debug: retry budget available
+
+    debug: request accepted
+
+    debug: cache warm
+
+    debug: worker heartbeat
+
+    debug: queue depth 3
+
+    debug: config loaded
+
+    debug: trace span complete
+
+    debug: connection pool ready
+
+    debug: retry budget available'
+  source: "def unrelated_helper(value):\n    return value\nclass LegacyAdapter:\n\
+    \    def run(self):\n        return None\nconst CONFIG = {}\n// old path\n/* generated\
+    \ */\ndef unrelated_helper(value):\n    return value\nclass LegacyAdapter:\n \
+    \   def run(self):\n        return None\nconst CONFIG = {}\n// old path\n/* generated\
+    \ */\ndef approve_refund(refund):\n    assert refund.amount == 740\n    require_dual_approval(refund)"
+  must_include:
+  - REF-31
+  - dual approval
+  - '500'
+  constraints:
+  - Require dual approval for refunds above 500.
+  - Never bypass the approver list for financial exceptions.
+- id: ledger-batch
+  project: ledger
+  task: Why did batch BATCH-19 leave the ledger unreconciled and how should it be
+    replayed?
+  memory:
+  - id: ledger-batch-rel-1
+    kind: decision
+    topic: ledger/replay
+    scope:
+      project: ledger
+    title: Batch replay
+    content: Ledger batches must be replayed with the same batch ID and must remain
+      idempotent.
+    trust: verified
+  - id: ledger-batch-rel-2
+    kind: lesson
+    topic: ledger/incident
+    scope:
+      project: ledger
+    title: Batch lesson
+    content: BATCH-19 was partially committed because the process died after the debit
+      step.
+    trust: verified
+  - id: ledger-batch-other-1
+    kind: fact
+    topic: documents/template
+    scope:
+      project: ledger
+    title: Invoice template
+    content: The invoice PDF template uses the A4 layout.
+    trust: verified
+  - id: ledger-batch-other-2
+    kind: fact
+    topic: cache/policy
+    scope:
+      project: ledger
+    title: Cache policy
+    content: Redis is used for dashboard caching.
+    trust: unverified
+  tool_output: 'debug: request accepted
+
+    debug: cache warm
+
+    debug: worker heartbeat
+
+    debug: queue depth 3
+
+    debug: config loaded
+
+    debug: trace span complete
+
+    debug: connection pool ready
+
+    debug: retry budget available
+
+    debug: request accepted
+
+    debug: cache warm
+
+    debug: worker heartbeat
+
+    debug: queue depth 3
+
+    debug: config loaded
+
+    debug: trace span complete
+
+    debug: connection pool ready
+
+    debug: retry budget available
+
+    debug: request accepted
+
+    debug: cache warm
+
+    debug: worker heartbeat
+
+    debug: queue depth 3
+
+    debug: config loaded
+
+    debug: trace span complete
+
+    debug: connection pool ready
+
+    debug: retry budget available
+
+    ERROR BATCH-19 partially committed after debit step
+
+    missing commit marker for batch BATCH-19
+
+    replay must preserve batch ID and idempotent entries
+
+    test: ledger_replay_test passed exit code 0
+
+    debug: request accepted
+
+    debug: cache warm
+
+    debug: worker heartbeat
+
+    debug: queue depth 3
+
+    debug: config loaded
+
+    debug: trace span complete
+
+    debug: connection pool ready
+
+    debug: retry budget available
+
+    debug: request accepted
+
+    debug: cache warm
+
+    debug: worker heartbeat
+
+    debug: queue depth 3
+
+    debug: config loaded
+
+    debug: trace span complete
+
+    debug: connection pool ready
+
+    debug: retry budget available
+
+    debug: request accepted
+
+    debug: cache warm
+
+    debug: worker heartbeat
+
+    debug: queue depth 3
+
+    debug: config loaded
+
+    debug: trace span complete
+
+    debug: connection pool ready
+
+    debug: retry budget available
+
+    Never replay a ledger batch without verifying the prior commit marker.
+
+    Require human approval before reversing a posted ledger entry.
+
+    debug: request accepted
+
+    debug: cache warm
+
+    debug: worker heartbeat
+
+    debug: queue depth 3
+
+    debug: config loaded
+
+    debug: trace span complete
+
+    debug: connection pool ready
+
+    debug: retry budget available
+
+    debug: request accepted
+
+    debug: cache warm
+
+    debug: worker heartbeat
+
+    debug: queue depth 3
+
+    debug: config loaded
+
+    debug: trace span complete
+
+    debug: connection pool ready
+
+    debug: retry budget available
+
+    debug: request accepted
+
+    debug: cache warm
+
+    debug: worker heartbeat
+
+    debug: queue depth 3
+
+    debug: config loaded
+
+    debug: trace span complete
+
+    debug: connection pool ready
+
+    debug: retry budget available'
+  source: "def unrelated_helper(value):\n    return value\nclass LegacyAdapter:\n\
+    \    def run(self):\n        return None\nconst CONFIG = {}\n// old path\n/* generated\
+    \ */\ndef unrelated_helper(value):\n    return value\nclass LegacyAdapter:\n \
+    \   def run(self):\n        return None\nconst CONFIG = {}\n// old path\n/* generated\
+    \ */\ndef replay(batch):\n    assert batch.id == 'BATCH-19'\n    return ledger.replay_idempotent(batch)"
+  must_include:
+  - BATCH-19
+  - partially committed
+  - idempotent
+  constraints:
+  - Never replay a ledger batch without verifying the prior commit marker.
+  - Require human approval before reversing a posted ledger entry.
+- id: customer-export
+  project: privacy
+  task: Review the customer export EXP-5 failure and the privacy-safe handling.
+  memory:
+  - id: customer-export-rel-1
+    kind: decision
+    topic: privacy/export
+    scope:
+      project: privacy
+    title: Export policy
+    content: Customer exports must exclude PII and require an audit record before
+      download.
+    trust: verified
+  - id: customer-export-rel-2
+    kind: lesson
+    topic: privacy/incident
+    scope:
+      project: privacy
+    title: Export incident
+    content: EXP-5 exposed an email column because the projection allowlist was incomplete.
+    trust: verified
+  - id: customer-export-other-1
+    kind: fact
+    topic: brand/logo
+    scope:
+      project: privacy
+    title: Brand guide
+    content: The product logo has a dark variant.
+    trust: verified
+  - id: customer-export-other-2
+    kind: fact
+    topic: ci/cache
+    scope:
+      project: privacy
+    title: Build cache
+    content: CI caches node_modules for two hours.
+    trust: unverified
+  tool_output: 'debug: request accepted
+
+    debug: cache warm
+
+    debug: worker heartbeat
+
+    debug: queue depth 3
+
+    debug: config loaded
+
+    debug: trace span complete
+
+    debug: connection pool ready
+
+    debug: retry budget available
+
+    debug: request accepted
+
+    debug: cache warm
+
+    debug: worker heartbeat
+
+    debug: queue depth 3
+
+    debug: config loaded
+
+    debug: trace span complete
+
+    debug: connection pool ready
+
+    debug: retry budget available
+
+    debug: request accepted
+
+    debug: cache warm
+
+    debug: worker heartbeat
+
+    debug: queue depth 3
+
+    debug: config loaded
+
+    debug: trace span complete
+
+    debug: connection pool ready
+
+    debug: retry budget available
+
+    ERROR EXP-5 export blocked: email column detected
+
+    cause: projection allowlist missing email exclusion
+
+    required: privacy approval and audit record before retry
+
+    test: export_privacy_test passed exit code 0
+
+    debug: request accepted
+
+    debug: cache warm
+
+    debug: worker heartbeat
+
+    debug: queue depth 3
+
+    debug: config loaded
+
+    debug: trace span complete
+
+    debug: connection pool ready
+
+    debug: retry budget available
+
+    debug: request accepted
+
+    debug: cache warm
+
+    debug: worker heartbeat
+
+    debug: queue depth 3
+
+    debug: config loaded
+
+    debug: trace span complete
+
+    debug: connection pool ready
+
+    debug: retry budget available
+
+    debug: request accepted
+
+    debug: cache warm
+
+    debug: worker heartbeat
+
+    debug: queue depth 3
+
+    debug: config loaded
+
+    debug: trace span complete
+
+    debug: connection pool ready
+
+    debug: retry budget available
+
+    Never export customer PII without a logged audit record.
+
+    Require privacy approval before re-running a failed export.
+
+    debug: request accepted
+
+    debug: cache warm
+
+    debug: worker heartbeat
+
+    debug: queue depth 3
+
+    debug: config loaded
+
+    debug: trace span complete
+
+    debug: connection pool ready
+
+    debug: retry budget available
+
+    debug: request accepted
+
+    debug: cache warm
+
+    debug: worker heartbeat
+
+    debug: queue depth 3
+
+    debug: config loaded
+
+    debug: trace span complete
+
+    debug: connection pool ready
+
+    debug: retry budget available
+
+    debug: request accepted
+
+    debug: cache warm
+
+    debug: worker heartbeat
+
+    debug: queue depth 3
+
+    debug: config loaded
+
+    debug: trace span complete
+
+    debug: connection pool ready
+
+    debug: retry budget available'
+  source: "def unrelated_helper(value):\n    return value\nclass LegacyAdapter:\n\
+    \    def run(self):\n        return None\nconst CONFIG = {}\n// old path\n/* generated\
+    \ */\ndef unrelated_helper(value):\n    return value\nclass LegacyAdapter:\n \
+    \   def run(self):\n        return None\nconst CONFIG = {}\n// old path\n/* generated\
+    \ */\ndef export_customers():\n    assert 'email' not in ALLOWED_COLUMNS\n   \
+    \ audit.record('customer-export')"
+  must_include:
+  - EXP-5
+  - email column
+  - audit record
+  constraints:
+  - Never export customer PII without a logged audit record.
+  - Require privacy approval before re-running a failed export.
+- id: inventory-sync
+  project: inventory
+  task: Diagnose inventory sync SYNC-88 and the safe recovery step.
+  memory:
+  - id: inventory-sync-rel-1
+    kind: decision
+    topic: inventory/sync
+    scope:
+      project: inventory
+    title: Inventory sync
+    content: Inventory sync uses SKU as the idempotency key and must not reset stock
+      to zero.
+    trust: verified
+  - id: inventory-sync-rel-2
+    kind: lesson
+    topic: inventory/incident
+    scope:
+      project: inventory
+    title: Sync lesson
+    content: SYNC-88 reset stock because a partial payload was treated as a full snapshot.
+    trust: verified
+  - id: inventory-sync-other-1
+    kind: fact
+    topic: warehouse/location
+    scope:
+      project: inventory
+    title: Warehouse map
+    content: Warehouse B is in Surabaya.
+    trust: verified
+  - id: inventory-sync-other-2
+    kind: preference
+    topic: ui/spacing
+    scope:
+      project: inventory
+    title: UI spacing
+    content: Use 8px spacing for cards.
+    trust: unverified
+  tool_output: 'debug: request accepted
+
+    debug: cache warm
+
+    debug: worker heartbeat
+
+    debug: queue depth 3
+
+    debug: config loaded
+
+    debug: trace span complete
+
+    debug: connection pool ready
+
+    debug: retry budget available
+
+    debug: request accepted
+
+    debug: cache warm
+
+    debug: worker heartbeat
+
+    debug: queue depth 3
+
+    debug: config loaded
+
+    debug: trace span complete
+
+    debug: connection pool ready
+
+    debug: retry budget available
+
+    debug: request accepted
+
+    debug: cache warm
+
+    debug: worker heartbeat
+
+    debug: queue depth 3
+
+    debug: config loaded
+
+    debug: trace span complete
+
+    debug: connection pool ready
+
+    debug: retry budget available
+
+    ERROR SYNC-88 partial payload rejected
+
+    cause: payload missing SKU list and was treated as full snapshot
+
+    recovery: resync by SKU, never reset missing values to zero
+
+    test: inventory_sync_test passed exit code 0
+
+    debug: request accepted
+
+    debug: cache warm
+
+    debug: worker heartbeat
+
+    debug: queue depth 3
+
+    debug: config loaded
+
+    debug: trace span complete
+
+    debug: connection pool ready
+
+    debug: retry budget available
+
+    debug: request accepted
+
+    debug: cache warm
+
+    debug: worker heartbeat
+
+    debug: queue depth 3
+
+    debug: config loaded
+
+    debug: trace span complete
+
+    debug: connection pool ready
+
+    debug: retry budget available
+
+    debug: request accepted
+
+    debug: cache warm
+
+    debug: worker heartbeat
+
+    debug: queue depth 3
+
+    debug: config loaded
+
+    debug: trace span complete
+
+    debug: connection pool ready
+
+    debug: retry budget available
+
+    Never reset inventory stock from a partial payload.
+
+    Require warehouse approval before a full resync.
+
+    debug: request accepted
+
+    debug: cache warm
+
+    debug: worker heartbeat
+
+    debug: queue depth 3
+
+    debug: config loaded
+
+    debug: trace span complete
+
+    debug: connection pool ready
+
+    debug: retry budget available
+
+    debug: request accepted
+
+    debug: cache warm
+
+    debug: worker heartbeat
+
+    debug: queue depth 3
+
+    debug: config loaded
+
+    debug: trace span complete
+
+    debug: connection pool ready
+
+    debug: retry budget available
+
+    debug: request accepted
+
+    debug: cache warm
+
+    debug: worker heartbeat
+
+    debug: queue depth 3
+
+    debug: config loaded
+
+    debug: trace span complete
+
+    debug: connection pool ready
+
+    debug: retry budget available'
+  source: "def unrelated_helper(value):\n    return value\nclass LegacyAdapter:\n\
+    \    def run(self):\n        return None\nconst CONFIG = {}\n// old path\n/* generated\
+    \ */\ndef unrelated_helper(value):\n    return value\nclass LegacyAdapter:\n \
+    \   def run(self):\n        return None\nconst CONFIG = {}\n// old path\n/* generated\
+    \ */\ndef sync_inventory(payload):\n    assert payload.sku == 'SYNC-88'\n    return\
+    \ merge_by_sku(payload)"
+  must_include:
+  - SYNC-88
+  - SKU
+  - partial payload
+  constraints:
+  - Never reset inventory stock from a partial payload.
+  - Require warehouse approval before a full resync.
+- id: auth-migration
+  project: identity
+  task: Assess the auth migration AUTH-7 failure and the safe compatibility step.
+  memory:
+  - id: auth-migration-rel-1
+    kind: decision
+    topic: identity/migration
+    scope:
+      project: identity
+    title: Auth migration
+    content: Auth migration AUTH-7 requires dual-read sessions and a rollback path
+      before cutover.
+    trust: verified
+  - id: auth-migration-rel-2
+    kind: lesson
+    topic: identity/incident
+    scope:
+      project: identity
+    title: Migration lesson
+    content: AUTH-7 failed because old session cookies were invalidated before the
+      new verifier was deployed.
+    trust: verified
+  - id: auth-migration-other-1
+    kind: fact
+    topic: office/access
+    scope:
+      project: identity
+    title: Office access
+    content: The office door code changes quarterly.
+    trust: unverified
+  - id: auth-migration-other-2
+    kind: preference
+    topic: docs/theme
+    scope:
+      project: identity
+    title: Docs theme
+    content: The docs site uses a serif heading font.
+    trust: unverified
+  tool_output: 'debug: request accepted
+
+    debug: cache warm
+
+    debug: worker heartbeat
+
+    debug: queue depth 3
+
+    debug: config loaded
+
+    debug: trace span complete
+
+    debug: connection pool ready
+
+    debug: retry budget available
+
+    debug: request accepted
+
+    debug: cache warm
+
+    debug: worker heartbeat
+
+    debug: queue depth 3
+
+    debug: config loaded
+
+    debug: trace span complete
+
+    debug: connection pool ready
+
+    debug: retry budget available
+
+    debug: request accepted
+
+    debug: cache warm
+
+    debug: worker heartbeat
+
+    debug: queue depth 3
+
+    debug: config loaded
+
+    debug: trace span complete
+
+    debug: connection pool ready
+
+    debug: retry budget available
+
+    ERROR AUTH-7 old session cookie rejected after cutover
+
+    cause: old verifier removed before dual-read was deployed
+
+    required: dual-read sessions and tested rollback
+
+    test: auth_compatibility_test passed exit code 0
+
+    debug: request accepted
+
+    debug: cache warm
+
+    debug: worker heartbeat
+
+    debug: queue depth 3
+
+    debug: config loaded
+
+    debug: trace span complete
+
+    debug: connection pool ready
+
+    debug: retry budget available
+
+    debug: request accepted
+
+    debug: cache warm
+
+    debug: worker heartbeat
+
+    debug: queue depth 3
+
+    debug: config loaded
+
+    debug: trace span complete
+
+    debug: connection pool ready
+
+    debug: retry budget available
+
+    debug: request accepted
+
+    debug: cache warm
+
+    debug: worker heartbeat
+
+    debug: queue depth 3
+
+    debug: config loaded
+
+    debug: trace span complete
+
+    debug: connection pool ready
+
+    debug: retry budget available
+
+    Never invalidate old sessions before the new verifier is healthy.
+
+    Require security approval before removing the rollback path.
+
+    debug: request accepted
+
+    debug: cache warm
+
+    debug: worker heartbeat
+
+    debug: queue depth 3
+
+    debug: config loaded
+
+    debug: trace span complete
+
+    debug: connection pool ready
+
+    debug: retry budget available
+
+    debug: request accepted
+
+    debug: cache warm
+
+    debug: worker heartbeat
+
+    debug: queue depth 3
+
+    debug: config loaded
+
+    debug: trace span complete
+
+    debug: connection pool ready
+
+    debug: retry budget available
+
+    debug: request accepted
+
+    debug: cache warm
+
+    debug: worker heartbeat
+
+    debug: queue depth 3
+
+    debug: config loaded
+
+    debug: trace span complete
+
+    debug: connection pool ready
+
+    debug: retry budget available'
+  source: "def unrelated_helper(value):\n    return value\nclass LegacyAdapter:\n\
+    \    def run(self):\n        return None\nconst CONFIG = {}\n// old path\n/* generated\
+    \ */\ndef unrelated_helper(value):\n    return value\nclass LegacyAdapter:\n \
+    \   def run(self):\n        return None\nconst CONFIG = {}\n// old path\n/* generated\
+    \ */\ndef verify(session):\n    assert session.id == 'AUTH-7'\n    return dual_read(session)"
+  must_include:
+  - AUTH-7
+  - dual-read
+  - rollback
+  constraints:
+  - Never invalidate old sessions before the new verifier is healthy.
+  - Require security approval before removing the rollback path.
+- id: release-rollback
+  project: release
+  task: Why did release REL-12 need rollback and what must be checked before retrying?
+  memory:
+  - id: release-rollback-rel-1
+    kind: decision
+    topic: release/rollback
+    scope:
+      project: release
+    title: Release rollback
+    content: Release REL-12 rollback requires schema compatibility and a verified
+      backup before retry.
+    trust: verified
+  - id: release-rollback-rel-2
+    kind: lesson
+    topic: release/incident
+    scope:
+      project: release
+    title: Release lesson
+    content: REL-12 rolled back because the migration ran before the compatibility
+      check.
+    trust: verified
+  - id: release-rollback-other-1
+    kind: fact
+    topic: marketing/copy
+    scope:
+      project: release
+    title: Marketing copy
+    content: The launch tagline is 'Build with confidence'.
+    trust: verified
+  - id: release-rollback-other-2
+    kind: fact
+    topic: legal/font
+    scope:
+      project: release
+    title: Font license
+    content: The display font is licensed for web use.
+    trust: unverified
+  tool_output: 'debug: request accepted
+
+    debug: cache warm
+
+    debug: worker heartbeat
+
+    debug: queue depth 3
+
+    debug: config loaded
+
+    debug: trace span complete
+
+    debug: connection pool ready
+
+    debug: retry budget available
+
+    debug: request accepted
+
+    debug: cache warm
+
+    debug: worker heartbeat
+
+    debug: queue depth 3
+
+    debug: config loaded
+
+    debug: trace span complete
+
+    debug: connection pool ready
+
+    debug: retry budget available
+
+    debug: request accepted
+
+    debug: cache warm
+
+    debug: worker heartbeat
+
+    debug: queue depth 3
+
+    debug: config loaded
+
+    debug: trace span complete
+
+    debug: connection pool ready
+
+    debug: retry budget available
+
+    ERROR REL-12 migration failed during rollout
+
+    cause: schema compatibility check ran after migration
+
+    rollback: restore verified backup, re-run compatibility test
+
+    test: release_compat_test passed exit code 0
+
+    debug: request accepted
+
+    debug: cache warm
+
+    debug: worker heartbeat
+
+    debug: queue depth 3
+
+    debug: config loaded
+
+    debug: trace span complete
+
+    debug: connection pool ready
+
+    debug: retry budget available
+
+    debug: request accepted
+
+    debug: cache warm
+
+    debug: worker heartbeat
+
+    debug: queue depth 3
+
+    debug: config loaded
+
+    debug: trace span complete
+
+    debug: connection pool ready
+
+    debug: retry budget available
+
+    debug: request accepted
+
+    debug: cache warm
+
+    debug: worker heartbeat
+
+    debug: queue depth 3
+
+    debug: config loaded
+
+    debug: trace span complete
+
+    debug: connection pool ready
+
+    debug: retry budget available
+
+    Never retry a release without a verified backup and schema compatibility check.
+
+    Require release approval before changing the rollback plan.
+
+    debug: request accepted
+
+    debug: cache warm
+
+    debug: worker heartbeat
+
+    debug: queue depth 3
+
+    debug: config loaded
+
+    debug: trace span complete
+
+    debug: connection pool ready
+
+    debug: retry budget available
+
+    debug: request accepted
+
+    debug: cache warm
+
+    debug: worker heartbeat
+
+    debug: queue depth 3
+
+    debug: config loaded
+
+    debug: trace span complete
+
+    debug: connection pool ready
+
+    debug: retry budget available
+
+    debug: request accepted
+
+    debug: cache warm
+
+    debug: worker heartbeat
+
+    debug: queue depth 3
+
+    debug: config loaded
+
+    debug: trace span complete
+
+    debug: connection pool ready
+
+    debug: retry budget available'
+  source: "def unrelated_helper(value):\n    return value\nclass LegacyAdapter:\n\
+    \    def run(self):\n        return None\nconst CONFIG = {}\n// old path\n/* generated\
+    \ */\ndef unrelated_helper(value):\n    return value\nclass LegacyAdapter:\n \
+    \   def run(self):\n        return None\nconst CONFIG = {}\n// old path\n/* generated\
+    \ */\ndef release_ready():\n    assert migration is not None\n    return schema_compatible()\
+    \ and backup.verified"
+  must_include:
+  - REL-12
+  - schema compatibility
+  - verified backup
+  constraints:
+  - Never retry a release without a verified backup and schema compatibility check.
+  - Require release approval before changing the rollback plan.

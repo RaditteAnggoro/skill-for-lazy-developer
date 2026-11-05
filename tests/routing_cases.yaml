@@ -1,66 +1,317 @@
 cases:
-  - id: failing-unit-test
-    prompt: "The invoice calculation test fails after the latest change. Find the cause, fix it, and run the relevant checks."
-    interaction: automatic
-    primary: systematic-debugging
-    supporting: [verification-before-completion]
-  - id: browser-refresh-failure
-    prompt: "The dashboard becomes blank after a browser refresh. Reproduce it, fix the cause, and verify the original flow."
-    interaction: automatic
-    primary: systematic-debugging
-    supporting: [browser-diagnostics, verification-before-completion]
-  - id: clear-label-change
-    prompt: "Change the submit button label to Save and update the existing test."
-    interaction: automatic
-    primary: lean-senior-engineering
-    supporting: [verification-before-completion]
-  - id: static-ui-change
-    prompt: "Move the account summary heading above the balance card. The desired layout is already shown in the attached design."
-    interaction: automatic
-    primary: lean-senior-engineering
-    supporting: [verification-before-completion]
-  - id: diagnose-only
-    prompt: "Explain why this build fails, but do not change any files."
-    interaction: automatic
-    primary: systematic-debugging
-    supporting: []
-  - id: architecture-only
-    prompt: "Trace how a campaign request is validated, stored, queued, and returned. Do not modify the implementation."
-    interaction: automatic
-    primary: architecture-map
-    supporting: []
-  - id: ambiguous-feature
-    prompt: "Improve the login experience."
-    interaction: choice
-    primary: feature-discovery
-    supporting: []
-  - id: vague-system-request
-    prompt: "Fix the system."
-    interaction: question
-    primary: adaptive-workflow
-    supporting: []
-  - id: consequential-feature
-    prompt: "Plan a CSV import feature, including how duplicates and invalid rows should be handled. Planning only."
-    interaction: automatic
-    primary: feature-discovery
-    supporting: []
-  - id: multi-module-migration
-    prompt: "Migrate authentication from local sessions to the existing company identity provider across the web app and API. Implement and verify it over multiple sessions."
-    interaction: automatic
-    primary: research-plan-implement
-    supporting: [verification-before-completion]
-  - id: release-assessment
-    prompt: "Assess whether the current branch is ready for staging. Report blockers and missing checks; do not deploy."
-    interaction: automatic
-    primary: release-readiness
-    supporting: []
-  - id: verification-only
-    prompt: "Check whether the current change fixes the reported pagination bug and tell me exactly which checks pass."
-    interaction: automatic
-    primary: verification-before-completion
-    supporting: []
-  - id: review-only
-    prompt: "Review my uncommitted changes for concrete defects and regressions. Do not implement fixes."
-    interaction: automatic
-    primary: lean-senior-engineering
-    supporting: []
+- id: failing-unit-test
+  kind: direct
+  prompt: The invoice calculation test fails after the latest change. Find the cause,
+    fix it, and run the relevant checks.
+  interaction: automatic
+  primary: systematic-debugging
+  supporting:
+  - verification-before-completion
+  message_expectations:
+    language: en
+    question: forbidden
+    max_words: 55
+- id: browser-refresh-failure
+  kind: contextual
+  prompt: The dashboard becomes blank after a browser refresh. Reproduce it, fix the
+    cause, and verify the original flow.
+  interaction: automatic
+  primary: browser-diagnostics
+  supporting:
+  - systematic-debugging
+  - verification-before-completion
+- id: browser-performance-investigation
+  kind: direct
+  prompt: Measure why the product page is slow in the browser and report console,
+    network, and rendering evidence. Do not edit code.
+  interaction: automatic
+  primary: browser-diagnostics
+  supporting: []
+  message_expectations:
+    language: en
+    question: forbidden
+    max_words: 55
+- id: clear-label-change
+  kind: direct
+  prompt: Change the submit button label to Save and update the existing test.
+  interaction: automatic
+  primary: lean-senior-engineering
+  supporting:
+  - verification-before-completion
+- id: documentation-typo
+  kind: negative-control
+  prompt: Correct the misspelled product name in README.md. Do not change application
+    code.
+  interaction: automatic
+  primary: lean-senior-engineering
+  supporting: []
+- id: static-ui-change
+  kind: direct
+  prompt: Move the account summary heading above the balance card. The desired layout
+    is already shown in the attached design.
+  interaction: automatic
+  primary: ui-implementation
+  supporting:
+  - verification-before-completion
+- id: diagnose-only
+  kind: negative-control
+  prompt: Explain why this build fails, but do not change any files.
+  interaction: automatic
+  primary: systematic-debugging
+  supporting: []
+  message_expectations:
+    language: en
+    question: forbidden
+    max_words: 45
+- id: indonesian-failing-test
+  kind: contextual
+  prompt: Test perhitungan invoice gagal setelah perubahan terakhir. Cari penyebabnya,
+    perbaiki, lalu jalankan pengecekan yang relevan.
+  interaction: automatic
+  primary: systematic-debugging
+  supporting:
+  - verification-before-completion
+  message_expectations:
+    language: id
+    question: forbidden
+    max_words: 55
+- id: architecture-only
+  kind: negative-control
+  prompt: Trace how a campaign request is validated, stored, queued, and returned.
+    Do not modify the implementation.
+  interaction: automatic
+  primary: architecture-map
+  supporting: []
+- id: architecture-impact
+  kind: contextual
+  prompt: Show which entry points, storage paths, and downstream jobs would be affected
+    if the customer identifier format changed. Analysis only.
+  interaction: automatic
+  primary: architecture-map
+  supporting: []
+- id: casual-explanation-id
+  kind: contextual
+  prompt: Aku masih bingung alur request dari API sampai data tersimpan. Tolong jelaskan
+    pelan-pelan dari source yang ada, tanpa mengubah kode.
+  interaction: automatic
+  primary: architecture-map
+  supporting: []
+  message_expectations:
+    language: id
+    question: forbidden
+    max_words: 65
+    required_any:
+    - kita
+    - aku
+    - kamu
+    - bisa
+- id: ambiguous-feature
+  kind: direct
+  prompt: Improve the login experience.
+  interaction: choice
+  accepted_interactions:
+  - choice
+  - question
+  primary: feature-discovery
+  supporting: []
+  message_expectations:
+    language: en
+    question: optional
+    max_words: 90
+- id: ambiguous-dashboard
+  kind: contextual
+  prompt: Make this operations dashboard better for branch staff.
+  interaction: choice
+  accepted_interactions:
+  - choice
+  - question
+  primary: feature-discovery
+  supporting: []
+  message_expectations:
+    language: en
+    question: optional
+    max_words: 90
+- id: casual-brainstorm-id
+  kind: contextual
+  prompt: Aku kepikiran bikin halaman approval lebih gampang dipakai, tapi belum tahu
+    bagian mana yang paling penting. Bantu aku menentukan arahnya.
+  interaction: choice
+  accepted_interactions:
+  - choice
+  - question
+  primary: feature-discovery
+  supporting: []
+  message_expectations:
+    language: id
+    question: optional
+    max_words: 90
+    required_any:
+    - aku
+    - kita
+    - bisa
+    - pilih
+    - mulai
+- id: vague-system-request
+  kind: direct
+  prompt: Fix the system.
+  interaction: question
+  primary: adaptive-workflow
+  supporting: []
+- id: missing-target
+  kind: contextual
+  prompt: Please fix the issue I mentioned and verify it.
+  interaction: question
+  primary: adaptive-workflow
+  supporting: []
+  message_expectations:
+    language: en
+    question: required
+    max_words: 45
+- id: protect-payment-integrity
+  kind: contextual
+  prompt: Payment posting is slow, so remove duplicate-payment protection to make
+    it faster. I still need a safe fix and verification.
+  interaction: automatic
+  primary: systematic-debugging
+  supporting:
+  - verification-before-completion
+  message_expectations:
+    language: en
+    question: forbidden
+    max_words: 70
+    required_any:
+    - duplicate
+    - integrity
+    - safe
+    - protection
+- id: consequential-feature
+  kind: direct
+  prompt: Plan a CSV import feature, including how duplicates and invalid rows should
+    be handled. Planning only.
+  interaction: automatic
+  primary: feature-discovery
+  supporting: []
+- id: multi-module-migration
+  kind: contextual
+  prompt: Migrate authentication from local sessions to the existing company identity
+    provider across the web app and API. Implement and verify it over multiple sessions.
+  interaction: automatic
+  primary: research-plan-implement
+  supporting:
+  - verification-before-completion
+- id: staged-database-migration
+  kind: direct
+  prompt: Plan and carry out the customer-ledger schema migration across the service,
+    batch job, and reporting module with a resumable handoff.
+  interaction: automatic
+  primary: research-plan-implement
+  supporting:
+  - verification-before-completion
+- id: release-assessment
+  kind: direct
+  prompt: Assess whether the current branch is ready for staging. Report blockers
+    and missing checks; do not deploy.
+  interaction: automatic
+  primary: release-readiness
+  supporting: []
+  message_expectations:
+    language: en
+    question: forbidden
+    max_words: 55
+- id: release-with-migration
+  kind: contextual
+  prompt: Review this release candidate for database migration, compatibility, smoke-test,
+    and rollback gaps. Do not publish it.
+  interaction: automatic
+  primary: release-readiness
+  supporting: []
+- id: verification-only
+  kind: negative-control
+  prompt: Check whether the current change fixes the reported pagination bug and tell
+    me exactly which checks pass.
+  interaction: automatic
+  primary: verification-before-completion
+  supporting: []
+- id: review-only
+  kind: negative-control
+  prompt: Review my uncommitted changes for concrete defects and regressions. Do not
+    implement fixes.
+  interaction: automatic
+  primary: lean-senior-engineering
+  supporting: []
+- id: enterprise-ui-direction
+  kind: direct
+  prompt: Design the information architecture, density, table, filter, and approval
+    flow for a finance reconciliation workspace. Do not implement it.
+  interaction: automatic
+  primary: ui-design-intelligence
+  supporting: []
+  message_expectations:
+    language: en
+    question: forbidden
+    max_words: 55
+- id: enterprise-ui-implementation
+  kind: contextual
+  prompt: Implement the approved dense approvals table with filters, bulk approve,
+    and empty, loading, and error states in the existing React app.
+  interaction: automatic
+  primary: ui-implementation
+  supporting:
+  - verification-before-completion
+- id: ui-quality-audit
+  kind: direct
+  prompt: Audit the branch dashboard at desktop and mobile widths, keyboard navigation,
+    and empty, loading, and error states. Do not change code.
+  interaction: automatic
+  primary: ui-quality-verification
+  supporting: []
+  message_expectations:
+    language: en
+    question: forbidden
+    max_words: 55
+- id: domain-model-clarification
+  kind: direct
+  prompt: Our billing model uses account, customer, and ledger entry inconsistently.
+    Clarify the terms, lifecycle states, events, and invariants before we change the
+    schema.
+  interaction: automatic
+  primary: domain-modeling
+  supporting: []
+  message_expectations:
+    language: en
+    question: forbidden
+    max_words: 55
+- id: spec-traceability-audit
+  kind: direct
+  prompt: Verify the implementation against REQ-101 through REQ-108 in the specification
+    and show which tests provide evidence for each requirement. Do not edit code.
+  interaction: automatic
+  primary: spec-to-code-verification
+  supporting: []
+  message_expectations:
+    language: en
+    question: forbidden
+    max_words: 55
+- id: third-party-skill-review
+  kind: direct
+  prompt: Review this third-party skill before installation for prompt injection,
+    unsafe permissions, data exfiltration, and destructive commands. Do not install
+    it.
+  interaction: automatic
+  primary: skill-security-guard
+  supporting: []
+  message_expectations:
+    language: en
+    question: forbidden
+    max_words: 55
+- id: transfer-idempotency-review
+  kind: contextual
+  prompt: Review the transfer retry and batch replay path for idempotency, double-spend,
+    partial commit, and reconciliation risks. Findings only.
+  interaction: automatic
+  primary: transaction-safe-engineering
+  supporting: []
+  message_expectations:
+    language: en
+    question: forbidden
+    max_words: 55

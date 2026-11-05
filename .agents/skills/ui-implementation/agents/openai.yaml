@@ -1,0 +1,6 @@
+interface:
+  display_name: "UI Implementation"
+  short_description: "Implement agreed interfaces across responsive states"
+  default_prompt: "Implement the agreed interface in the existing stack, including responsive, keyboard, empty, loading, and error states."
+policy:
+  allow_implicit_invocation: true

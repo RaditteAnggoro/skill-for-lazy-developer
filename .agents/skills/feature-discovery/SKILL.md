@@ -13,6 +13,11 @@ Read the request, applicable repository guidance, and the relevant existing flow
 
 For consequential uncertainty, give the user a recommended default with its trade-off and ask a concise question. Continue independent inspection while awaiting a reply. Do not ask again for a decision already made. If the answer would only affect a reversible implementation detail, use a stated assumption and proceed.
 
+A broad improvement request may be handled with either one decision-changing
+question or two or three outcome-based choices. Use the shorter form that makes the
+decision easiest. Do not run a questionnaire, expose internal skill names, or ask the
+user to explain implementation concepts that can be learned from the repository.
+
 ## Describe the feature
 
 Keep the specification proportional. For a small feature, a few lines in the conversation are sufficient. For larger work, use the repository's existing documentation location when a saved plan is requested or needed for execution.

@@ -13,6 +13,7 @@ dist/
 
 # Local artifacts and editor settings
 .agents/artifacts/
+.pnpm-store/
 .vscode/
 .idea/
 *.swp
@@ -27,3 +28,14 @@ dist/
 # OS metadata
 .DS_Store
 Thumbs.db
+
+# UI fixture build output and local browser evidence
+tests/ui/node_modules/
+tests/ui/.npm-cache/
+tests/ui/artifacts/
+tests/ui/fixtures/react/node_modules/
+tests/ui/fixtures/react/dist/
+tests/ui/fixtures/next/node_modules/
+tests/ui/fixtures/next/.next/
+tests/ui/fixtures/next/out/
+tests/.npm-cache/

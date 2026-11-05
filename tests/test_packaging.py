@@ -15,11 +15,16 @@ class PackagingTests(unittest.TestCase):
         for name in PATHS[:5]:
             (self.root / name).mkdir(parents=True)
         for name in PATHS[5:]:
+            (self.root / name).parent.mkdir(parents=True, exist_ok=True)
             (self.root / name).write_text("example\n", encoding="utf-8")
         (self.root / "VERSION").write_text("0.1.0\n")
         sample = self.root / ".agents/skills/example/SKILL.md"
         sample.parent.mkdir(parents=True)
         sample.write_text("example skill\n")
+
+    def test_distribution_includes_host_adapter_directories(self):
+        self.assertIn("adapters", PATHS)
+        self.assertIn("integrations", PATHS)
 
     def test_archive_includes_hidden_skills_and_checksum(self):
         archive, checksum, count = build_release(self.root)

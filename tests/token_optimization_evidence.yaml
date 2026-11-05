@@ -1,0 +1,16 @@
+run_date: 2026-11-05
+corpus: tests/token_optimization_cases.yaml
+encoding: tiktoken:o200k_base
+cases: 8
+median_reduction_percent: 63.17
+min_reduction_percent: 60.24
+correct_cases: true
+constraints_preserved: true
+raw_tool_recovered: true
+raw_source_recovered: true
+gate_pass: true
+limitations:
+  - context-retention benchmark, not a live model-answer benchmark
+  - synthetic task corpus with eight billing, payments, privacy, inventory, identity, and release cases
+  - optimization preserves required facts and constraints but does not prove every model will answer identically
+phase_four_status: complete

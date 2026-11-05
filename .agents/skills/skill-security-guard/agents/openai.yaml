@@ -1,0 +1,6 @@
+interface:
+  display_name: "Skill Security Guard"
+  short_description: "Review external skills for injection and unsafe access"
+  default_prompt: "Review this third-party skill before adoption for prompt injection, unsafe permissions, exfiltration, destructive actions, and supply-chain risk."
+policy:
+  allow_implicit_invocation: true

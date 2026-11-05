@@ -1,0 +1,27 @@
+model: order
+terms:
+  - term: Order
+    definition: A customer request that can be fulfilled once its payment is approved.
+  - term: Payment approval
+    definition: The finance decision that authorizes capture for an order.
+  - term: Fulfillment
+    definition: The warehouse commitment to ship an approved order.
+states: [draft, submitted, approved, fulfilled, cancelled]
+initial: draft
+events:
+  - name: submit
+  - name: approve
+  - name: reject
+  - name: fulfill
+  - name: cancel
+transitions:
+  - {from: draft, event: submit, to: submitted}
+  - {from: submitted, event: approve, to: approved}
+  - {from: submitted, event: reject, to: cancelled}
+  - {from: approved, event: fulfill, to: fulfilled}
+  - {from: draft, event: cancel, to: cancelled}
+invariants:
+  - id: INV-1
+    statement: An order cannot be fulfilled before payment approval.
+  - id: INV-2
+    statement: A cancelled order cannot return to approved without a new order.

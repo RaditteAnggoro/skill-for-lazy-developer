@@ -2,12 +2,12 @@
 <!-- Author: Raditte Anggoro | Provenance: RA.CODEXSKILLS.2026.10 | Metadata: docs/provenance.json -->
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
-[![Workflows](https://img.shields.io/badge/adaptive%20router%20%2B%20skills-9-6C5CE7)](#skills)
+[![Workflows](https://img.shields.io/badge/adaptive%20router%20%2B%20skills-16-6C5CE7)](#skills)
 [![Maintenance](https://img.shields.io/badge/maintenance-Python%203.9%2B-3776AB?logo=python&logoColor=white)](#development)
 
 **Describe the task. The right workflow finds you.**
 
-An adaptive router and eight focused Codex engineering skills for debugging,
+An adaptive router and fifteen focused Codex engineering skills for debugging,
 implementation, architecture, browser diagnostics, planning, release review, and
 evidence-backed verification. Write a normal software request; the router selects one
 workflow or a small ordered combination.
@@ -19,13 +19,67 @@ Each workflow has its own `SKILL.md`. Clear requests continue automatically. Whe
 request could mean materially different work, the user sees two or three plain-language
 outcomes instead of an internal list of skill names.
 
+The companion speaks like an approachable friend helping at the same desk: relaxed,
+clear, and comfortable with basic questions or unfinished ideas. It does not pretend
+to be human, and it still pushes back when a shortcut could harm security, privacy,
+financial correctness, data integrity, or recovery.
+
 ![Automatic workflow: describe a task normally, let the adaptive router select and combine focused skills, and receive an evidence-backed result.](docs/assets/skills-workflow.svg)
 
 *Workflow illustration, not an application screenshot. The skills guide the agent inside your existing development project.*
 
-[Get started](#quick-start) · [Automatic routing](#how-automatic-routing-works) · [Try a task](#try-a-task) · [All workflows](#skills) · [Development](#development) · [License](LICENSE) · [Credits](docs/SOURCES.md)
+[Get started](#quick-start) · [Automatic routing](#how-automatic-routing-works) · [Try a task](#try-a-task) · [All workflows](#skills) · [Version 2 plan](docs/V2_DEVELOPMENT_PLAN.md) · [Development](#development) · [License](LICENSE) · [Credits](docs/SOURCES.md)
+
+## Use it in another project or agent
+
+The skills in this repository do not automatically appear in every project or AI
+agent. Copy the skill layer into the project you want to use, then follow that host's
+instructions. Your existing project files, hooks and credentials are not imported by
+the portable pack.
+
+```mermaid
+flowchart LR
+    A[Skills for Lazy Developer] --> B[Export portable skill pack]
+    B --> C[Another project]
+    C --> D[Codex: AGENTS.md]
+    C --> E[Claude Code: CLAUDE.md and skill discovery]
+    C --> F[DeepSeek Harness: AGENTS.md and DSH profile]
+    D --> G[Ask in your own words]
+    E --> G
+    F --> G
+```
+
+From this repository, create the pack and preview the import before applying it:
+
+```sh
+python scripts/package_skill_pack.py export --output dist/skill-pack.zip
+python scripts/package_skill_pack.py verify dist/skill-pack.zip
+python scripts/package_skill_pack.py import dist/skill-pack.zip --target /path/to/your-project
+python scripts/package_skill_pack.py import dist/skill-pack.zip --target /path/to/your-project --apply
+```
+
+Replace `/path/to/your-project` with the actual project directory. The import copies
+the skill files and `AGENTS.snippet.md`; it does **not** merge instructions into your
+project's existing instruction file. Keep the printed backup path for rollback.
+See [portable pack guide](docs/PORTABLE_PACK.md) before applying it.
+
+| Agent | Next step in the target project | Verification and limits |
+| --- | --- | --- |
+| Codex | Merge `AGENTS.snippet.md` into `AGENTS.md`; open the project in Codex. | Local plugin installation was verified with the CLI; desktop UI installation and every model are not guaranteed. [Codex guide](adapters/codex/README.md) |
+| Claude Code | Configure Claude's supported skill discovery and add the applicable instructions to `CLAUDE.md`. | Installer and hook contract tested; live Claude session not yet tested. [Claude guide](adapters/claude/README.md) |
+| DeepSeek Harness | Use a DSH profile with skill/instruction plugins and install the DSH instruction adapter. | Tested with one DSH profile and model; other DeepSeek clients can have different discovery and hooks. [DSH guide](adapters/dsh/README.md) |
+
+Memory and lifecycle adapters are optional, host-specific setup. Installing the skill
+pack alone does not install Engram or enable automatic memory. See the complete
+[host adapter guide](docs/ADAPTERS.md) before configuring them.
 
 ## Quick start
+
+For Codex plugin installation, the repository includes a compatibility manifest at
+`.codex-plugin/plugin.json`. Plugin installation makes the packaged skills available;
+the companion instructions in `AGENTS.snippet.md` still need to be merged into the
+target project's `AGENTS.md` as described below. Plugin installation from GitHub uses
+the committed remote version; local changes are not available there until published.
 
 1. Clone this repository or download its source ZIP.
 2. Copy the skill folders you want from `.agents/skills/` into the same location in your project. Copy the whole folder, including `references/` and `agents/` when present.
@@ -128,6 +182,13 @@ For more prompts, including review, browser diagnosis and resumable work, see [T
 | [architecture-map](.agents/skills/architecture-map/SKILL.md) | Architecture, data processing, change impact | Diagrams connected to real source evidence |
 | [release-readiness](.agents/skills/release-readiness/SKILL.md) | Pre-release assessment | Scoped readiness decision, blockers, rollout considerations |
 | [browser-diagnostics](.agents/skills/browser-diagnostics/SKILL.md) | UI, console, network, browser performance | Reproduction evidence and an explanation of the failing path |
+| [ui-design-intelligence](.agents/skills/ui-design-intelligence/SKILL.md) | UI direction, hierarchy, and enterprise data behavior | A concrete design brief and implementation handoff |
+| [ui-implementation](.agents/skills/ui-implementation/SKILL.md) | Agreed responsive interfaces and states | Implemented UI with keyboard and state coverage |
+| [ui-quality-verification](.agents/skills/ui-quality-verification/SKILL.md) | Visual, responsive, keyboard, and state audits | Screenshot and interaction evidence with limitations |
+| [domain-modeling](.agents/skills/domain-modeling/SKILL.md) | Ambiguous domain terms, states, and invariants | Glossary, lifecycle, events, and invariants |
+| [spec-to-code-verification](.agents/skills/spec-to-code-verification/SKILL.md) | Requirement-to-implementation evidence audits | Traceability matrix with pass/fail/partial/untested status |
+| [skill-security-guard](.agents/skills/skill-security-guard/SKILL.md) | Pre-adoption review of third-party skills | Injection, permission, exfiltration, and supply-chain findings |
+| [transaction-safe-engineering](.agents/skills/transaction-safe-engineering/SKILL.md) | Money, ledger, retry, or batch integrity risk | Idempotency, concurrency, approval, and recovery checks |
 
 Start with a representative task in ordinary language. The router and concise skill
 descriptions let Codex select matching workflows automatically. See [natural-language
@@ -143,18 +204,57 @@ examples and expected behaviour](docs/TRY-IT.md).
 - Keep reviews and diagnosis separate from implementation when the user requests findings only.
 - Keep detailed references out of the initial skill context until needed.
 
-The pack contains workflow instructions and optional UI metadata. It does not install hooks, a browser, an MCP server, or an application test framework. Browser diagnostics requires available browser tooling or an existing browser-test setup. Architecture diagrams use available rendering tools and disclose when rendering was not verified.
+The pack contains workflow instructions and optional UI metadata. It does not install hooks, a browser, an MCP server, or an application test framework;
+UI fixtures use local Chrome and Playwright tooling when available. Browser diagnostics requires available browser tooling or an existing browser-test setup. Architecture diagrams use available rendering tools and disclose when rendering was not verified.
 
 These workflows are independently maintained files informed by the projects credited in [Sources](docs/SOURCES.md). This is an independent project, with no affiliation with OpenAI or the credited upstream projects. It does not reproduce their full plugins, dashboards, or benchmark results.
+
+## Version 2 development
+
+Version 2 is being developed through evidence-gated phases. Phase 0 established the
+capability baseline and reusable model evaluation runner. Phase 1 completed the
+approachable companion contract, interaction grading, routing boundaries, and bounded
+always-on context. Phase 2 completed a provider-neutral memory contract and a measured
+ai-memory vs Engram bake-off; Engram is selected for the first Phase 3 runtime adapter.
+Phase 3 is **complete** with verification `verified-with-deferred-claude`. Codex has a
+live-verified lifecycle slice including a transcript-evidenced handoff; DSH has live
+recall, remember, handoff, opt-out, fail-open, uninstall, and confirmed forget. Claude
+Code has a tested `settings.json` adapter, but its live verification is deferred until
+authentication is available. Handoffs are promoted to verified only with linked
+verification evidence; otherwise they remain drafts. Phase 4 is **in progress**: the
+optimizer is a benchmark prototype and is not connected to the agent runtime. Synthetic
+context-retention tests and two paired model trials are encouraging but do not prove
+that the approach preserves quality for arbitrary tasks. See the [development plan](docs/V2_DEVELOPMENT_PLAN.md).
+Phase 5 is **complete**: design, implementation, and quality verification are separate
+skills, with plain, React, and Next.js enterprise fixtures, six screenshot baselines,
+and keyboard, responsive, empty/loading/error checks. See [UI evidence](tests/ui/evidence.yaml).
+Phase 6 is **complete**: domain modeling, specification traceability, third-party skill
+security review, and optional transaction-safety workflows are covered by eight
+positive/negative checker cases. See [Phase 6 evidence](tests/phase6_evidence.yaml).
+Phase 7 is **complete**: a portable pack exports, verifies, imports, backs up, and rolls
+back the host-neutral skill layer, with adapter compatibility and a reviewed license
+inventory. Their individual evidence does not make the unfinished Phase 4 complete.
+
+
+Read the [development plan](docs/V2_DEVELOPMENT_PLAN.md), [capability
+matrix](docs/V2_CAPABILITY_MATRIX.md), [memory contract](docs/V2_MEMORY_CONTRACT.md),
+[Phase 2 evidence](docs/V2_PHASE2_EVIDENCE.md), [Codex adapter
+evidence](docs/CODEX_ADAPTER_EVIDENCE.md), and the [host adapter
+matrix](docs/ADAPTERS.md). Planned capability does not mean implemented behaviour; the
+current sixteen skills and the validation record remain the source of truth for what this
+release provides.
 
 ## Repository layout
 
 ```text
 .agents/skills/       Adaptive router, workflow skills, references, and UI metadata
 .github/             CI, issue forms, and pull-request template
-docs/                Trial prompts, sources, publishing, validation
-scripts/             Structure validator and release archive builder
-tests/               Validation, routing-policy, and packaging tests
+docs/                Trial prompts, sources, publishing, validation, memory contract
+docs/schemas/        Provider-neutral memory record and bundle schemas
+adapters/              Per-host instruction/runtime adapters (Codex, DSH)
+integrations/           Codex lifecycle runtime and DSH memory bundle
+scripts/             Validators, routing evaluation, memory, adapters, bake-off, archive
+tests/               Validation, routing, memory, adapter, bake-off, and packaging tests
 AGENTS.md            Guidance for maintaining this repository
 AGENTS.snippet.md    Guidance to merge into a consuming project
 ```
@@ -179,10 +279,12 @@ On Windows, replace `.venv/bin/python` with `.venv\Scripts\python.exe`.
 The validator checks metadata, directory/name agreement, natural default prompts,
 optional invocation policy, portable references, and local links. Routing tests check
 the installed names, chain-size rule, interaction modes, consuming-project policy,
-and a natural-language prompt corpus. Structural checks do not prove that every model
-will make the same routing decision; representative model trials are recorded in
-[validation scope](docs/VALIDATION.md). CI runs the same validation and tests on pushes
-and pull requests.
+and a natural-language prompt corpus. Memory contract tests check schema alignment,
+lifecycle links, privacy rejection, context filtering, and recovery-gate evidence.
+Structural checks do not prove that every model will make the same routing decision;
+representative model trials are recorded in [validation scope](docs/VALIDATION.md).
+Provider bake-off tests require locally supplied provider binaries and are not run by
+CI. CI runs the same validation and unit tests on pushes and pull requests.
 
 The archive builder writes a versioned source ZIP and SHA-256 checksum to `dist/`, using an explicit list of distributable paths. It excludes local Git history, virtual environments, working artifacts, and operating-system files.
 
@@ -198,3 +300,8 @@ To publish your own copy, follow [Publishing to GitHub](docs/PUBLISHING.md). For
 [project notice](NOTICE.md), [third-party notices](THIRD_PARTY_NOTICES.md), and
 [inspiration/source record](docs/SOURCES.md). Credits acknowledge ideas and capability
 comparisons; they do not claim affiliation or import upstream code into this project.
+
+The MIT license requires the copyright and permission notice to accompany copies or
+substantial portions. The provenance identifier in [NOTICE.md](NOTICE.md), citation
+metadata in [CITATION.cff](CITATION.cff), and Git history help identify the original
+project; they cannot technically prevent a third party from modifying a copy.
