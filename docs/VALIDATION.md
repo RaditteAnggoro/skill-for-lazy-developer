@@ -387,6 +387,34 @@ points. The portable layer does not import hooks, trust hooks, copy credentials,
 replace host-specific approval. The license inventory covers development/test
 dependencies and records that they are not vendored.
 
-Final current checks: validator passed for **16 skills** and local links, **161 unit
-tests** passed, and the reproducible archive contains **183 files** with a verified
+Final current checks: validator passed for **16 skills** and local links, **175 unit
+tests** passed, and the reproducible archive contains **190 files** with a verified
 SHA-256 checksum. Phase 7 is complete; this is the final planned Version 2 phase.
+
+
+## Phase orchestration refinement
+
+The single-agent orchestration contract now has four deterministic cases:
+
+| Case | Expected sequence |
+| --- | --- |
+| Backend + UI + spec | plan → backend → UI → UI audit → spec audit → final verification |
+| Unresolved UI direction | plan → design → UI → UI audit → final verification |
+| Backend only | plan → backend + transaction support → final verification |
+| Browser failure + UI fix | browser diagnosis + systematic debugging support → UI fix → UI audit → final verification |
+
+The phase-plan validator rejects unknown skills, the router in primary **or support**,
+missing dependencies, dependencies on a later phase, more than two support skills,
+malformed phase mappings, and a final verification that does not depend on all work
+phases. The four fixtures use the documented browser route (`browser-diagnostics` primary,
+`systematic-debugging` support).
+
+The adaptive workflow instructs the agent to record a skill trace, report a phase table,
+and continue an already-authorized next phase without asking. This is a static
+contract plus a deterministic mock executor. **No live agent execution, no runtime
+enforcement, and no live model routing are claimed.** The evidence records
+`live_agent_execution: not_tested` and `runtime_enforcement: absent`.
+
+Final current checks: validator passed for **16 skills** and local links, **175 unit
+tests** passed, and the reproducible archive contains **190 files** with a verified
+SHA-256 checksum.

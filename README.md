@@ -122,8 +122,20 @@ flowchart TD
 
 High-confidence routing does not create an extra approval ritual. Diagnosis, review,
 and planning requests keep their requested scope: “diagnose only” produces findings,
-not an unauthorized fix. The router normally selects one primary skill and no more
-than two supporting skills.
+not an unauthorized fix. Each phase uses one primary skill and at most two supporting
+skills.
+
+For substantial multi-stage implementation, the agent can plan phases with explicit
+dependencies and exit evidence, load the next phase's skill at the boundary, and report
+the resulting phase trace. It should continue within the authorized scope without asking
+for permission between phases. Backend or design contracts are frozen before dependent
+work begins. Simple tasks do not need a full phase plan.
+
+These are instructions for an agent, not a runtime enforcement engine. The phase-plan
+validator checks structural rules and a deterministic mock produces example traces;
+neither proves that a live model loads skills or follows the sequence. See the
+[phase orchestration validation](docs/VALIDATION.md#phase-orchestration-refinement)
+for the tested cases and limitations.
 
 ## Try a task
 
@@ -249,6 +261,8 @@ python3 -m venv .venv
 # macOS/Linux:
 .venv/bin/python -m pip install -r requirements-dev.txt
 .venv/bin/python scripts/validate_skills.py
+.venv/bin/python scripts/validate_phase_plan.py
+.venv/bin/python scripts/simulate_phase_orchestration.py
 .venv/bin/python -m unittest discover -s tests -v
 .venv/bin/python scripts/build_release.py
 ```

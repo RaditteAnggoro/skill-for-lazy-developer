@@ -59,7 +59,7 @@ Use these routes as defaults, then adapt to the actual repository and request:
 | Diagnose or fix an unexplained failure | `systematic-debugging` | `verification-before-completion` after a fix |
 | Reproduce a browser-visible failure | `browser-diagnostics` | `systematic-debugging`, then verification after a fix; use `ui-quality-verification` only for a separate planned audit |
 | Clarify a feature whose choices change the result | `feature-discovery` | implementation and verification only when requested |
-| Complete a substantial multi-module or multi-session change | `research-plan-implement` | verification at implementation handoff |
+| Complete a substantial multi-module or multi-session change | `research-plan-implement` | phase plan with explicit skills and verification |
 | Explain architecture, data flow, or impact | `architecture-map` | none unless the user separately requests a change |
 | Assess a release candidate | `release-readiness` | focused verification when evidence is missing |
 | Verify an existing change | `verification-before-completion` | none by default |
@@ -72,6 +72,48 @@ Avoid redundant workflow chains. `systematic-debugging` already owns an authoriz
 focused fix after it locates the cause, so do not add `lean-senior-engineering` merely
 because the investigation may end with a code change. Add a supporting workflow only
 for a separate responsibility the primary workflow does not cover.
+
+## Phase orchestration
+
+A substantial implementation can change skill at phase boundaries without reloading the
+whole skill pack or asking after each phase. Use one agent as the orchestrator:
+
+1. Route the task to a planning skill, normally `research-plan-implement`.
+2. Require a phase plan with one primary skill, optional support, entry/exit evidence, and
+   dependencies. The per-phase limit is one primary plus at most two support skills.
+3. At each boundary, verify the predecessor's exit evidence, append a skill trace, load
+   the next `SKILL.md`, announce the phase briefly, and continue.
+4. Use the planned next skill instead of asking “should I continue?” when the work remains
+   inside the authorized scope.
+5. Re-route only when new evidence changes the plan. Ask once only when the next phase
+   changes product scope, external effects, or a safety/data/financial decision.
+
+Typical mixed backend/UI sequence:
+
+```text
+research-plan-implement       plan and acceptance criteria
+lean-senior-engineering       backend and contract tests
+ui-design-intelligence        only if the UI direction is unresolved
+ui-implementation             UI using the frozen contract
+ui-quality-verification       visual, responsive, keyboard, and state checks
+spec-to-code-verification     requirement-to-evidence matrix
+verification-before-completion final checks and residual gaps
+```
+
+Do not load every skill up front. Load each selected skill when its phase starts. Do not
+start a dependent UI phase before the backend contract is frozen; sequential orchestration
+is the default when phases share files, contracts, or data. Use parallel work only for
+genuinely independent, disjoint ownership.
+
+Record a compact trace:
+
+```json
+[
+  {"phase": "plan", "skill": "research-plan-implement", "status": "completed", "evidence": "plan.md"},
+  {"phase": "backend", "skill": "lean-senior-engineering", "status": "completed", "evidence": "backend tests"},
+  {"phase": "ui", "skill": "ui-implementation", "status": "completed", "evidence": "interaction checks"}
+]
+```
 
 ## Announce and continue
 
@@ -114,6 +156,16 @@ exists when the current runtime has not provided it.
 
 ## Finish with evidence
 
-The selected workflows own their normal output and checks. Report actual results,
-blocked checks, and remaining uncertainty. Never claim the router, a skill, or a
-mentioned tool was used merely because its name appeared in the task.
+Close with the phase trace, not only a success sentence:
+
+| Phase | Skill | Support | Evidence |
+| --- | --- | --- | --- |
+| plan | `research-plan-implement` | — | plan and acceptance criteria |
+| backend | `lean-senior-engineering` | — | test result |
+| ui | `ui-implementation` | — | interaction result |
+| ui-audit | `ui-quality-verification` | — | screenshots and keyboard result |
+| final | `verification-before-completion` | — | final checks and gaps |
+
+Report skipped phases, blocked checks, and remaining uncertainty. Do not list a skill
+that was not actually loaded or used. Do not ask whether to continue an already-authorized
+next phase after the work is complete.

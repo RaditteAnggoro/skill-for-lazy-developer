@@ -44,6 +44,7 @@ machine-checked ownership record is
 | Phase 6 checker suite | Evaluation harness | Validates domain models, spec traceability, skill security, and transaction controls |
 | Cross-agent support | Adapter layer | Each host has different permissions and lifecycle capabilities |
 | Portable skill pack | Packaging layer | Host-neutral skills, snippet, docs, manifest, backup, import, and rollback |
+| Phase orchestration | Skill behavior | Single-agent phase plan, re-routing, skill trace, and per-phase evidence |
 | DSH adapter | Adapter layer | Skill discovery, routing, guarded MCP, and lifecycle hooks are implemented and live-verified |
 | Codex lifecycle adapter | Runtime integration | `SessionStart` recall, explicit remember, opt-out, fail-open, verified handoff, and confirmed forget are implemented |
 | Claude lifecycle adapter | Runtime integration | Settings merge, hook contract, controls, fail-open, and uninstall are tested; live verification is deferred |

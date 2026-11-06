@@ -1,0 +1,180 @@
+cases:
+  - id: invoice-backend-and-ui
+    task: Add server-side invoice approval and an approval queue in the existing web UI, then verify the result.
+    authorized_scope: [backend, ui, verification]
+    require_final: true
+    expected_phases:
+      - research-plan-implement
+      - lean-senior-engineering
+      - ui-implementation
+      - ui-quality-verification
+      - spec-to-code-verification
+      - verification-before-completion
+    plan:
+      task: Add invoice approval backend and UI.
+      authorized_scope: [backend, ui, verification]
+      phases:
+        - id: plan
+          primary: research-plan-implement
+          support: []
+          entry: Task and repository context are available.
+          exit: Phase plan and acceptance criteria are recorded.
+          evidence: plan.md
+        - id: backend
+          primary: lean-senior-engineering
+          support: []
+          depends_on: [plan]
+          entry: Approval contract and persistence choice are decided.
+          exit: Backend tests pass and the API contract is frozen.
+          evidence: test output; contract note
+        - id: ui
+          primary: ui-implementation
+          support: []
+          depends_on: [backend]
+          entry: API contract and design tokens are frozen.
+          exit: Approval queue renders all states and keyboard paths.
+          evidence: interaction check
+        - id: ui-audit
+          primary: ui-quality-verification
+          support: []
+          depends_on: [ui]
+          entry: UI build is available.
+          exit: Visual, responsive, keyboard, and state checks pass.
+          evidence: screenshots and interaction results
+        - id: spec-audit
+          primary: spec-to-code-verification
+          support: []
+          depends_on: [ui]
+          entry: Implementation evidence exists.
+          exit: Every approval requirement maps to evidence.
+          evidence: traceability matrix
+        - id: final
+          primary: verification-before-completion
+          support: []
+          depends_on: [ui-audit, spec-audit]
+          entry: All implementation phases are complete.
+          exit: Final checks pass and gaps are recorded.
+          evidence: final verification record
+
+  - id: unresolved-ui-direction
+    task: Add a reconciliation workspace; the information architecture and visual direction are not settled yet.
+    authorized_scope: [design, ui, verification]
+    require_final: true
+    expected_phases:
+      - research-plan-implement
+      - ui-design-intelligence
+      - ui-implementation
+      - ui-quality-verification
+      - verification-before-completion
+    plan:
+      task: Design and implement a reconciliation workspace.
+      authorized_scope: [design, ui, verification]
+      phases:
+        - id: plan
+          primary: research-plan-implement
+          support: []
+          entry: Task and constraints are available.
+          exit: Design questions and phase plan are recorded.
+          evidence: plan.md
+        - id: design
+          primary: ui-design-intelligence
+          support: [feature-discovery]
+          depends_on: [plan]
+          entry: Current components and user outcomes are understood.
+          exit: Direction, tokens, states, and responsive rules are agreed.
+          evidence: design brief
+        - id: ui
+          primary: ui-implementation
+          support: []
+          depends_on: [design]
+          entry: Design brief and data contract are frozen.
+          exit: Workspace renders and interactions work.
+          evidence: interaction check
+        - id: ui-audit
+          primary: ui-quality-verification
+          support: []
+          depends_on: [ui]
+          entry: UI build is available.
+          exit: Visual, keyboard, responsive, and state checks pass.
+          evidence: screenshots and keyboard result
+        - id: final
+          primary: verification-before-completion
+          support: []
+          depends_on: [ui-audit]
+          entry: Implementation is complete.
+          exit: Final checks pass and limits are recorded.
+          evidence: final verification record
+
+  - id: backend-contract-only
+    task: Add an idempotent ledger batch endpoint. No UI change is requested.
+    authorized_scope: [backend, verification]
+    require_final: true
+    expected_phases:
+      - research-plan-implement
+      - lean-senior-engineering
+      - verification-before-completion
+    plan:
+      task: Add an idempotent ledger batch endpoint.
+      authorized_scope: [backend, verification]
+      phases:
+        - id: plan
+          primary: research-plan-implement
+          support: []
+          entry: Ledger contract and repository context are available.
+          exit: Phase plan and invariant checks are recorded.
+          evidence: plan.md
+        - id: backend
+          primary: lean-senior-engineering
+          support: [transaction-safe-engineering]
+          depends_on: [plan]
+          entry: Contract and invariants are decided.
+          exit: Duplicate/replay tests pass.
+          evidence: test output
+        - id: final
+          primary: verification-before-completion
+          support: []
+          depends_on: [backend]
+          entry: Backend implementation is complete.
+          exit: Final checks pass and limits are recorded.
+          evidence: final verification record
+
+  - id: browser-failure-and-ui-fix
+    task: The approval page goes blank after refresh. Diagnose it, fix it, and verify the original interaction and UI states.
+    authorized_scope: [diagnosis, ui, verification]
+    require_final: true
+    expected_phases:
+      - browser-diagnostics
+      - ui-implementation
+      - ui-quality-verification
+      - verification-before-completion
+    plan:
+      task: Repair the blank approval page after refresh.
+      authorized_scope: [diagnosis, ui, verification]
+      phases:
+        - id: diagnose
+          primary: browser-diagnostics
+          support: [systematic-debugging]
+          entry: The failing route and reproduction steps are known.
+          exit: A supported cause is recorded.
+          evidence: reproduction and cause
+        - id: fix
+          primary: ui-implementation
+          support: []
+          depends_on: [diagnose]
+          entry: The responsible change is known.
+          exit: The original refresh path renders correctly.
+          evidence: interaction check
+        - id: ui-audit
+          primary: ui-quality-verification
+          support: []
+          depends_on: [fix]
+          entry: The fixed build is available.
+          exit: Keyboard and empty/loading/error states pass.
+          evidence: screenshots and interaction result
+        - id: final
+          primary: verification-before-completion
+          support: []
+          depends_on: [ui-audit]
+          entry: The original failure and affected states are covered.
+          exit: Final checks pass and gaps are recorded.
+          evidence: final verification record

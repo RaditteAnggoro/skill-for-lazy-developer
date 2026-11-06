@@ -13,7 +13,7 @@ Route by outcome and consequence:
 - **Missing information blocks safe progress:** ask one concise question and continue
   read-only inspection when possible.
 
-Use one primary and no more than two supporting skills. Do not run all skills. Preserve boundaries such as diagnosis only. A named skill overrides routing; add another only when necessary.
+Use one primary and no more than two supporting skills per phase. Do not run all skills. Preserve boundaries such as diagnosis only. A named skill overrides routing; add another only when necessary.
 
 If a request has neither an identifiable target nor an observed symptom, keep
 `adaptive-workflow` primary and ask one question instead of guessing a debugging
@@ -42,7 +42,7 @@ because an authorized diagnosis may end in a focused code fix.
 Keep checks proportional; reuse project commands. A simple fix needs focused checks, not a specification or map. A diagnosis or review request produces findings
 unless changes are also requested. Prefer outcome-based labels such as **Diagnose only** or **Fix and verify**.
 
-User choices and repository conventions override skill defaults. Continue authorized work; do not add approval steps. Report actual checks and limitations. Do not invent unavailable tools, completed tests, or runtime evidence.
+User choices and repository conventions override skill defaults. Continue authorized work; do not add approval steps. Report actual checks. Do not invent unavailable tools, completed tests, or runtime evidence.
 
 ## Working relationship
 

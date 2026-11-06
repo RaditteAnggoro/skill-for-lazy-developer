@@ -340,6 +340,12 @@ capabilities:
     owner: adapter-layer
     trigger: expose the same contract to a supported agent runtime
     non_goal: promise identical hooks on every platform
+  - id: phase-orchestration
+    phase: 7
+    disposition: extend-skill
+    owner: adaptive-workflow
+    trigger: a substantial task crosses planning, backend, UI, and verification phases
+    non_goal: load every skill or ask after each authorized phase
 
 overlap_decisions:
   - left: requirement-discovery

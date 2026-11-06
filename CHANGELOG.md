@@ -2,6 +2,20 @@
 
 ## Unreleased
 
+- Harden phase-plan validation: reject the router as support, require explicit
+  dependencies, reject dependencies on later phases, require final verification to
+  depend on all work, and return readable errors for malformed phases.
+- Align the browser-failure orchestration fixture with the documented routing:
+  `browser-diagnostics` primary, `systematic-debugging` support.
+- Separate static plan/mock-trace evidence from live behaviour; record that live agent
+  execution and runtime enforcement are not tested.
+- Add single-agent phase orchestration: `research-plan-implement` emits a phase plan,
+  `adaptive-workflow` re-routes at boundaries and records a skill trace, and final reports
+  name the skill and evidence per phase.
+- Add a four-case mixed backend/UI orchestration corpus and a phase-plan validator that
+  rejects unknown skills, cycles, excess support, and a missing final verification.
+- Keep the per-phase skill budget at one primary plus two support skills; do not load the
+  whole pack or ask after an already-authorized phase.
 - Preserve unrelated files during skill-pack rollback and block unsafe legacy rollback.
 - Honor DeepSeek project memory opt-out within the current session before recall and handoff.
 - Add a Codex compatibility manifest; clarify token-optimizer runtime limitations.

@@ -292,6 +292,31 @@ license inventory covers the development/test dependencies and states their limi
 Phase 7 is the final phase. The project is complete for the assessed local scope; host
 runtime behavior and live Claude delivery remain scoped by their recorded evidence.
 
+## Phase orchestration refinement
+
+The single-agent orchestration contract is now explicit:
+
+- `research-plan-implement` writes a phase plan with one primary skill, optional support,
+  dependencies, entry/exit evidence, and frozen contracts.
+- `adaptive-workflow` re-routes at phase boundaries, records a skill trace, and continues
+  within the authorized scope instead of asking after each phase.
+- The per-phase limit is one primary and at most two support skills; the whole pack is
+  never loaded up front.
+- A mixed backend/UI task can move from plan to backend, UI implementation, UI audit,
+  specification verification, and final verification without a new user prompt.
+- The final response is a phase table naming only skills actually used and the evidence
+  for each.
+
+The deterministic corpus has four cases: mixed backend/UI, unresolved design direction,
+backend-only, and browser-failure repair. The phase-plan validator rejects unknown skills,
+the router in either primary or support, missing dependencies, dependencies on a later
+phase, more than two support skills, malformed phase mappings, and a final verification
+that does not depend on all work phases.
+
+The reported evidence distinguishes the static plan contract and mock trace execution
+from live agent behaviour. No runtime enforces phase boundaries yet, and no live model
+run claims that an agent will never ask between phases.
+
 ## Advancement rule
 
 To open the next phase:
