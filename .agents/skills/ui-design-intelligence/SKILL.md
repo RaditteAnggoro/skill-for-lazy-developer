@@ -20,6 +20,10 @@ asks for a redesign. For a new interface, state the direction in a few concrete 
 calm or dense, editorial or operational, high-trust or exploratory. Do not substitute
 generic “modern” or “clean” labels for decisions.
 
+Capture concrete references and acceptance checks for hierarchy, content, density, and
+primary flows. Identify repeated actions or copy and generic decoration that add no user
+value; preserve intentional repetition and established product conventions.
+
 ## Define the system
 
 Specify only the decisions needed for the interface:

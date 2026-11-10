@@ -33,7 +33,7 @@ because an authorized diagnosis may end in a focused code fix.
 | Reproduce a web UI issue using browser evidence | `browser-diagnostics` |
 | Define UI direction and enterprise data patterns | `ui-design-intelligence` |
 | Implement agreed responsive UI states | `ui-implementation` |
-| Audit visual and interaction quality | `ui-quality-verification` |
+| Browser journeys; UI audit | `browser-journey-testing`; `ui-quality-verification` |
 | Clarify domain terms and invariants | `domain-modeling` |
 | Trace requirements to evidence | `spec-to-code-verification` |
 | Review third-party skills before adoption | `skill-security-guard` |

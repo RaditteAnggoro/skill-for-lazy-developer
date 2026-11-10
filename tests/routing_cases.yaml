@@ -315,3 +315,10 @@ cases:
     language: en
     question: forbidden
     max_words: 55
+
+- id: browser-journey-review
+  kind: direct
+  prompt: Test the checkout journey in a real browser against the agreed design, including errors and mobile. Report findings without changing code.
+  interaction: automatic
+  primary: browser-journey-testing
+  supporting: []

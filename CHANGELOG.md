@@ -2,6 +2,9 @@
 
 ## Unreleased
 
+- Add browser journey testing and connect meaningful UI changes to real-browser checks,
+  design expectations, and explicit reporting of untested paths.
+
 - Harden phase-plan validation: reject the router as support, require explicit
   dependencies, reject dependencies on later phases, require final verification to
   depend on all work, and return readable errors for malformed phases.

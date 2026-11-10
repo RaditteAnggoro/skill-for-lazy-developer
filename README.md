@@ -2,7 +2,7 @@
 <!-- Author: Raditte Anggoro | Provenance: RA.CODEXSKILLS.2026.10 | Metadata: docs/provenance.json -->
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
-[![Workflows](https://img.shields.io/badge/adaptive%20router%20%2B%20skills-16-6C5CE7)](#skills)
+[![Workflows](https://img.shields.io/badge/adaptive%20router%20%2B%20skills-17-6C5CE7)](#skills)
 [![Maintenance](https://img.shields.io/badge/maintenance-Python%203.9%2B-3776AB?logo=python&logoColor=white)](#development)
 
 **Describe the task. The right workflow finds you.**
@@ -129,7 +129,9 @@ For substantial multi-stage implementation, the agent can plan phases with expli
 dependencies and exit evidence, load the next phase's skill at the boundary, and report
 the resulting phase trace. It should continue within the authorized scope without asking
 for permission between phases. Backend or design contracts are frozen before dependent
-work begins. Simple tasks do not need a full phase plan.
+work begins. Simple tasks do not need a full phase plan. For meaningful UI changes, exercise affected
+user journeys in a real browser and compare the result with the agreed design and product
+conventions. Report browser verification as unperformed when tooling is unavailable.
 
 These are instructions for an agent, not a runtime enforcement engine. The phase-plan
 validator checks structural rules and a deterministic mock produces example traces;
@@ -193,6 +195,7 @@ For more prompts, including review, browser diagnosis and resumable work, see [T
 | [research-plan-implement](.agents/skills/research-plan-implement/SKILL.md) | Changes across modules or sessions | Code-backed research, execution plan, resumable handoff |
 | [architecture-map](.agents/skills/architecture-map/SKILL.md) | Architecture, data processing, change impact | Diagrams connected to real source evidence |
 | [release-readiness](.agents/skills/release-readiness/SKILL.md) | Pre-release assessment | Scoped readiness decision, blockers, rollout considerations |
+| [browser-journey-testing](.agents/skills/browser-journey-testing/SKILL.md) | Real-browser user journeys and design expectations | Journey evidence, findings, and untested gaps |
 | [browser-diagnostics](.agents/skills/browser-diagnostics/SKILL.md) | UI, console, network, browser performance | Reproduction evidence and an explanation of the failing path |
 | [ui-design-intelligence](.agents/skills/ui-design-intelligence/SKILL.md) | UI direction, hierarchy, and enterprise data behavior | A concrete design brief and implementation handoff |
 | [ui-implementation](.agents/skills/ui-implementation/SKILL.md) | Agreed responsive interfaces and states | Implemented UI with keyboard and state coverage |

@@ -32,6 +32,10 @@ Use browser evidence and the project's existing automation where available:
 - **Data journeys:** for approvals, reconciliation, and financial data, verify totals,
   selected records, confirmation, and audit evidence.
 
+Compare the rendered result with the agreed design and product conventions; inspect
+redundant actions, duplicate content, generic decoration, and hierarchy in context.
+Use `browser-journey-testing` for end-to-end user journeys.
+
 For enterprise profiles, use the selected checks in
 [`references/verification-checklist.md`](references/verification-checklist.md).
 

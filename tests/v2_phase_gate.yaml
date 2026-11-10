@@ -298,6 +298,12 @@ capabilities:
     owner: ui-quality-verification
     trigger: audit responsive, visual, interaction, and accessibility quality
     non_goal: replace browser-diagnostics for unexplained browser failures
+  - id: browser-journey-testing
+    phase: 5
+    disposition: new-skill
+    owner: browser-journey-testing
+    trigger: exercise affected user journeys and design expectations in a browser
+    non_goal: replace failure diagnosis or claim a browser run when unavailable
   - id: enterprise-data-ux
     phase: 5
     disposition: supporting-reference

@@ -28,7 +28,7 @@ class DshAdapterTests(unittest.TestCase):
     def test_detects_nine_skills_and_installs_current_block(self):
         before = check_project(self.root)
         self.assertFalse(before["ok"])
-        self.assertEqual(before["skill_count"], 16)
+        self.assertEqual(before["skill_count"], len(list((ROOT / ".agents/skills").glob("*/SKILL.md"))))
         self.assertEqual(before["block"], "missing")
 
         result = install(self.root)

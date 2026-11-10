@@ -54,6 +54,7 @@ Use these routes as defaults, then adapt to the actual repository and request:
 | Trace requirements to implementation evidence | `spec-to-code-verification` | `systematic-debugging` only for an unexplained failure |
 | Review a third-party skill before adoption | `skill-security-guard` | none; adoption needs explicit user authorization |
 | Protect money, ledger, retry, or batch integrity | `transaction-safe-engineering` | `spec-to-code-verification` for requirement evidence; no default loading |
+| Exercise user journeys in a browser | `browser-journey-testing` | `browser-diagnostics` for an unexplained failure; `ui-quality-verification` for a broader audit |
 | Implement an agreed interface | `ui-implementation` | `ui-quality-verification` after a material UI change |
 | Audit an existing interface visually and interactively | `ui-quality-verification` | `browser-diagnostics` only for an unexplained failure |
 | Diagnose or fix an unexplained failure | `systematic-debugging` | `verification-before-completion` after a fix |
@@ -95,6 +96,7 @@ research-plan-implement       plan and acceptance criteria
 lean-senior-engineering       backend and contract tests
 ui-design-intelligence        only if the UI direction is unresolved
 ui-implementation             UI using the frozen contract
+browser-journey-testing       exercise affected user journeys in a real browser
 ui-quality-verification       visual, responsive, keyboard, and state checks
 spec-to-code-verification     requirement-to-evidence matrix
 verification-before-completion final checks and residual gaps

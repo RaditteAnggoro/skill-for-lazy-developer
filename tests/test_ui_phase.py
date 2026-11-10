@@ -9,6 +9,13 @@ SKILLS = ROOT / ".agents/skills"
 
 
 class UiPhaseTests(unittest.TestCase):
+    def test_journey_workflow_covers_design_and_browser_gaps(self):
+        journey = (SKILLS / "browser-journey-testing/SKILL.md").read_text(encoding="utf-8").lower()
+        for phrase in ("primary journey", "design", "repeated controls", "keyboard", "no browser", "not a browser test"):
+            self.assertIn(phrase, journey)
+        implementation = (SKILLS / "ui-implementation/SKILL.md").read_text(encoding="utf-8")
+        self.assertIn("browser-journey-testing", implementation)
+
     def test_ui_skills_exist_with_focused_boundaries(self):
         for name, phrases in (
             ("ui-design-intelligence", ("direction", "enterprise data")),

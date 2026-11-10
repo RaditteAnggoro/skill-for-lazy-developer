@@ -1,0 +1,6 @@
+interface:
+  display_name: "Browser Journey Testing"
+  short_description: "Test user journeys in a real browser"
+  default_prompt: "Test the affected user journeys in a browser, compare them with the design expectations, and report evidence and gaps."
+policy:
+  allow_implicit_invocation: true

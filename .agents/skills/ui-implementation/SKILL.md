@@ -48,3 +48,8 @@ behavior, not snapshots of every static element. Check at minimum:
 
 Hand the result to `ui-quality-verification` when a visual/interaction audit is
 requested or when the change affects a critical enterprise workflow.
+
+For a meaningful UI change, use `browser-journey-testing` after implementation to
+exercise affected journeys and compare the result with the agreed design and existing
+product conventions. If browser verification is unavailable, report the gap explicitly.
+Small static edits need only proportional checks.
