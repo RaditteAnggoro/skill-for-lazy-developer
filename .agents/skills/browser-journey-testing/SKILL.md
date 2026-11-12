@@ -19,6 +19,8 @@ available browser connection or existing automation; Playwright or an MCP server
 options, not assumed capabilities. Inspect start commands before running them. Use a
 development or authorized test environment and isolated data. Do not send messages,
 change real records, or perform financial actions without relevant authorization.
+Use the shared [tool selection guide](../adaptive-workflow/references/tool-selection.md)
+when choosing among browser capabilities; avoid duplicate automation for the same check.
 
 ## Exercise and compare
 

@@ -15,6 +15,8 @@ If reproduction is unavailable, inspect the supplied evidence, state the limitat
 
 ## Locate the cause
 
+Choose diagnostics from the capabilities actually available; use the shared [tool selection guide](../adaptive-workflow/references/tool-selection.md) when specialized code, browser, documentation, or database evidence could help.
+
 Trace the faulty value or state through callers and boundaries. Compare a working path and inspect recent relevant changes. Distinguish application logic, configuration, dependency, and environmental failures.
 
 For diagnosis-only work, use existing logs, read-only inspection, or isolated scratch experiments without editing repository source or configuration. When code changes are authorized, add narrow temporary instrumentation if a boundary is uncertain. Capture field names, types, timing, and redacted identifiers as needed; do not print credentials or complete sensitive payloads. Avoid permanent instrumentation unless it serves the requested fix.

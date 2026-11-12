@@ -17,6 +17,7 @@ into a broad design audit.
 
 ## Check the interface
 
+Choose an adequate browser capability using the shared [tool selection guide](../adaptive-workflow/references/tool-selection.md) when needed; avoid repeating equivalent checks across tools.
 Use browser evidence and the project's existing automation where available:
 
 - **Visual:** compare screenshots at representative desktop, tablet, and mobile widths;

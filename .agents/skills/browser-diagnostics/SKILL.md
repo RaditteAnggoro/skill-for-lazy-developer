@@ -11,6 +11,8 @@ Inspect the requested web behaviour in a development or user-authorized test env
 
 Discover available browser/DevTools tools and existing browser-test scripts. Use the connected browser tool or the repository's configured automation. Do not invent tool names or assume Chrome DevTools MCP is installed.
 
+Choose one adequate diagnostics capability first; use [tool selection](../adaptive-workflow/references/tool-selection.md) when comparing native browser, DevTools, and Playwright options.
+
 Confirm the target URL from project configuration or the user. Inspect a start script before launching it. Prefer a separate development browser context with test data. Record relevant browser, route, viewport, and authentication setup without copying session tokens.
 
 If browser control is unavailable, inspect relevant source and existing tests, provide a concrete reproduction/checklist, and clearly mark live UI verification as not performed. Never treat static reasoning or a mock response as a browser run.

@@ -1,5 +1,15 @@
 # Validation scope
 
+## Native and MCP tool selection
+
+The shared tool-selection reference describes capability discovery, native-first
+selection, fallback, browser boundaries, and database/remote safety. The synthetic
+cases in `tests/tool_selection_cases.yaml` and their test-only simulation exercise
+expected decisions and edge states. Codex, Claude and DSH share portable instructions;
+each host supplies its own compatible, authorized capabilities. Tool selection remains
+capability-based: an agent verifies what is available before using it and falls back to
+repository-native evidence when necessary.
+
 ## Automated checks
 
 Run `python scripts/validate_skills.py` after installing `requirements-dev.txt`.
@@ -398,10 +408,10 @@ The single-agent orchestration contract now has four deterministic cases:
 
 | Case | Expected sequence |
 | --- | --- |
-| Backend + UI + spec | plan → backend → UI → UI audit → spec audit → final verification |
-| Unresolved UI direction | plan → design → UI → UI audit → final verification |
+| Backend + UI + spec | plan → backend → UI → browser journey → UI audit → spec audit → final verification |
+| Unresolved UI direction | plan → design → UI → browser journey → UI audit → final verification |
 | Backend only | plan → backend + transaction support → final verification |
-| Browser failure + UI fix | browser diagnosis + systematic debugging support → UI fix → UI audit → final verification |
+| Browser failure + UI fix | browser diagnosis + systematic debugging support → UI fix → browser journey → UI audit → final verification |
 
 The phase-plan validator rejects unknown skills, the router in primary **or support**,
 missing dependencies, dependencies on a later phase, more than two support skills,
@@ -415,6 +425,6 @@ contract plus a deterministic mock executor. **No live agent execution, no runti
 enforcement, and no live model routing are claimed.** The evidence records
 `live_agent_execution: not_tested` and `runtime_enforcement: absent`.
 
-Final current checks: validator passed for **16 skills** and local links, **175 unit
+Checks recorded at that refinement: validator passed for **16 skills** and local links, **175 unit
 tests** passed, and the reproducible archive contains **190 files** with a verified
 SHA-256 checksum.

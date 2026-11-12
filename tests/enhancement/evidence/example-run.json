@@ -1,0 +1,18 @@
+{
+  "schema_version": 1,
+  "case_id": "example-routing",
+  "variant": "baseline",
+  "repository_commit": "5b6f66debd23681d1b057e6dff9bfcdfb08d7c7f",
+  "fixture_commit": "5b6f66debd23681d1b057e6dff9bfcdfb08d7c7f",
+  "fixture_sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+  "model": null,
+  "host": "example fixture, not an observed run",
+  "tool_availability": {},
+  "trial": 1,
+  "outcome": "not_run",
+  "checks": [{"id": "routing", "status": "not_run", "evidence": null}],
+  "routing": null,
+  "metrics": {"tool_calls": null, "context_tokens": null, "wall_ms": null},
+  "safety": {"unauthorized_writes": null, "prohibited_egress": null},
+  "limitations": ["Synthetic schema example; no trial was run."]
+}

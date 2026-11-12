@@ -322,3 +322,146 @@ cases:
   interaction: automatic
   primary: browser-journey-testing
   supporting: []
+
+- id: v3-typo
+  kind: direct
+  prompt: Correct a typo in the README only.
+  interaction: automatic
+  primary: lean-senior-engineering
+  supporting: []
+
+- id: v3-trace-impact
+  kind: direct
+  prompt: Map the effect of changing the repayment schedule across services and SQL. Analysis only.
+  interaction: automatic
+  primary: architecture-map
+  supporting: []
+
+- id: v3-design-direction
+  kind: direct
+  prompt: Define a visual direction for the new approval queue without implementing it.
+  interaction: automatic
+  primary: ui-design-intelligence
+  supporting: []
+
+- id: v3-browser-journey
+  kind: direct
+  prompt: Exercise the account creation journey in the browser and report failures only.
+  interaction: automatic
+  primary: browser-journey-testing
+  supporting: []
+
+- id: v3-accessibility-audit
+  kind: direct
+  prompt: Audit the existing page for keyboard and responsive problems without changing it.
+  interaction: automatic
+  primary: ui-quality-verification
+  supporting: []
+
+- id: v3-debug-batch
+  kind: direct
+  prompt: Diagnose why the batch job fails at restart; do not modify code.
+  interaction: automatic
+  primary: systematic-debugging
+  supporting: []
+
+- id: v3-review-code
+  kind: direct
+  prompt: Review the retry implementation and report concrete findings only.
+  interaction: automatic
+  primary: lean-senior-engineering
+  supporting: []
+
+- id: v3-financial-review
+  kind: direct
+  prompt: Review ledger replay for duplicate postings and reconciliation gaps. Findings only.
+  interaction: automatic
+  primary: transaction-safe-engineering
+  supporting: []
+
+- id: v3-privacy-review
+  kind: direct
+  prompt: Review this third-party plugin for network exfiltration without installing it.
+  interaction: automatic
+  primary: skill-security-guard
+  supporting: []
+
+- id: v3-domain-states
+  kind: direct
+  prompt: Map the payment lifecycle and its invariants before design.
+  interaction: automatic
+  primary: domain-modeling
+  supporting: []
+
+- id: v3-spec-mapping
+  kind: direct
+  prompt: Trace these requirements to actual implementation and test evidence without edits.
+  interaction: automatic
+  primary: spec-to-code-verification
+  supporting: []
+
+- id: v3-release
+  kind: direct
+  prompt: Assess this release for migrations, rollback and missing verification.
+  interaction: automatic
+  primary: release-readiness
+  supporting: []
+
+- id: v3-plan-only
+  kind: direct
+  prompt: Plan a substantial migration across the API and storage layers; do not implement it.
+  interaction: automatic
+  primary: research-plan-implement
+  supporting: []
+
+- id: v3-ui-build
+  kind: direct
+  prompt: Implement the agreed settings form, including its error and loading states.
+  interaction: automatic
+  primary: ui-implementation
+  supporting:
+  - verification-before-completion
+
+- id: v3-discovery
+  kind: direct
+  prompt: Clarify the competing workflow options for the new approval feature before design.
+  interaction: automatic
+  primary: feature-discovery
+  supporting: []
+
+- id: v3-verify-existing
+  kind: direct
+  prompt: Check whether the existing patch fixes the reported refresh bug; do not investigate other causes.
+  interaction: automatic
+  primary: verification-before-completion
+  supporting: []
+
+- id: v3-browser-failure
+  kind: direct
+  prompt: The login page is blank; reproduce the browser failure and diagnose its cause without editing.
+  interaction: automatic
+  primary: browser-diagnostics
+  supporting:
+  - systematic-debugging
+
+- id: v3-no-target
+  kind: direct
+  prompt: Please fix the system.
+  interaction: question
+  primary: adaptive-workflow
+  supporting: []
+
+- id: v3-ui-small
+  kind: direct
+  prompt: Change only the Save label to Submit on the settings page.
+  interaction: automatic
+  primary: lean-senior-engineering
+  supporting:
+  - verification-before-completion
+
+- id: v3-product-writing
+  kind: direct
+  prompt: Edit only the README wording to be clearer while preserving all facts.
+  interaction: automatic
+  primary: lean-senior-engineering
+  supporting: []

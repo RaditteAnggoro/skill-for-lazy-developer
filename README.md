@@ -28,7 +28,7 @@ financial correctness, data integrity, or recovery.
 
 *Workflow illustration, not an application screenshot. The skills guide the agent inside your existing development project.*
 
-[Get started](#quick-start) · [Automatic routing](#how-automatic-routing-works) · [Try a task](#try-a-task) · [All workflows](#skills) · [Version 2 plan](docs/V2_DEVELOPMENT_PLAN.md) · [Development](#development) · [License](LICENSE) · [Credits](docs/SOURCES.md)
+[Get started](#quick-start) · [Automatic routing](#how-automatic-routing-works) · [Try a task](#try-a-task) · [All workflows](#skills) · [Development](#development) · [License](LICENSE) · [Credits](docs/SOURCES.md)
 
 ## Use it in another project or agent
 
@@ -63,11 +63,11 @@ the skill files and `AGENTS.snippet.md`; it does **not** merge instructions into
 project's existing instruction file. Keep the printed backup path for rollback.
 See [portable pack guide](docs/PORTABLE_PACK.md) before applying it.
 
-| Agent | Next step in the target project | Verification and limits |
-| --- | --- | --- |
-| Codex | Merge `AGENTS.snippet.md` into `AGENTS.md`; open the project in Codex. | Local plugin installation was verified with the CLI; desktop UI installation and every model are not guaranteed. [Codex guide](adapters/codex/README.md) |
-| Claude Code | Configure Claude's supported skill discovery and add the applicable instructions to `CLAUDE.md`. | Installer and hook contract tested; live Claude session not yet tested. [Claude guide](adapters/claude/README.md) |
-| DeepSeek Harness | Use a DSH profile with skill/instruction plugins and install the DSH instruction adapter. | Tested with one DSH profile and model; other DeepSeek clients can have different discovery and hooks. [DSH guide](adapters/dsh/README.md) |
+| Agent | Next step in the target project |
+| --- | --- |
+| Codex | Merge `AGENTS.snippet.md` into `AGENTS.md`; open the project in Codex. [Codex guide](adapters/codex/README.md) |
+| Claude Code | Configure Claude's supported skill discovery and add the applicable instructions to `CLAUDE.md`. [Claude guide](adapters/claude/README.md) |
+| DeepSeek Harness | Use a DSH profile with skill/instruction plugins and install the DSH instruction adapter. [DSH guide](adapters/dsh/README.md) |
 
 Memory and lifecycle adapters are optional, host-specific setup. Installing the skill
 pack alone does not install Engram or enable automatic memory. See the complete
@@ -133,11 +133,19 @@ work begins. Simple tasks do not need a full phase plan. For meaningful UI chang
 user journeys in a real browser and compare the result with the agreed design and product
 conventions. Report browser verification as unperformed when tooling is unavailable.
 
-These are instructions for an agent, not a runtime enforcement engine. The phase-plan
-validator checks structural rules and a deterministic mock produces example traces;
-neither proves that a live model loads skills or follows the sequence. See the
-[phase orchestration validation](docs/VALIDATION.md#phase-orchestration-refinement)
-for the tested cases and limitations.
+Phase plans make dependencies, skill boundaries, and exit evidence explicit. The
+phase-plan validator and trace simulator support a consistent implementation workflow.
+See [phase orchestration validation](docs/VALIDATION.md#phase-orchestration-refinement)
+for implementation details.
+
+For tools, the agent discovers what the host actually exposes and normally uses native
+capabilities or existing project tests when they are sufficient. It can choose a
+specialized MCP capability when that adds useful evidence, such as symbol tracing,
+current documentation, browser diagnostics, or a safely authorized database check.
+If a tool is missing or fails, it falls back where possible and reports evidence that
+could not be obtained. The policy does not install or configure MCP servers, and its
+behavior depends on the host and available tools. See the
+[tool-selection reference](.agents/skills/adaptive-workflow/references/tool-selection.md).
 
 ## Try a task
 
@@ -224,10 +232,10 @@ UI fixtures use local Chrome and Playwright tooling when available. Browser diag
 
 These workflows are independently maintained files informed by the projects credited in [Sources](docs/SOURCES.md). This is an independent project, with no affiliation with OpenAI or the credited upstream projects. It does not reproduce their full plugins, dashboards, or benchmark results.
 
-## What's in Version 2
+## What the project provides
 
-Version 2 brings together practical workflows for development, design, and everyday
-problem-solving:
+Skills for Lazy Developer brings together practical workflows for development, design,
+and everyday problem-solving:
 
 - **A friendly companion** that adapts to your request and helps choose a focused workflow.
 - **Project memory adapters** for saving and recalling useful context across sessions.
@@ -277,16 +285,16 @@ optional invocation policy, portable references, and local links. Routing tests 
 the installed names, chain-size rule, interaction modes, consuming-project policy,
 and a natural-language prompt corpus. Memory contract tests check schema alignment,
 lifecycle links, privacy rejection, context filtering, and recovery-gate evidence.
-Structural checks do not prove that every model will make the same routing decision;
-representative model trials are recorded in [validation scope](docs/VALIDATION.md).
-Provider bake-off tests require locally supplied provider binaries and are not run by
-CI. CI runs the same validation and unit tests on pushes and pull requests.
+For enhancement work, `scripts/run_enhancement_benchmark.py` compares routing across
+isolated Git snapshots with fixed corpus and model settings. The validation guide
+describes the available checks and evidence format.
+CI runs validation and unit tests on pushes and pull requests.
 
 The archive builder writes a versioned source ZIP and SHA-256 checksum to `dist/`, using an explicit list of distributable paths. It excludes local Git history, virtual environments, working artifacts, and operating-system files.
 
 ## Status and contributing
 
-Initial version: **0.1.0**. Read [validation scope](docs/VALIDATION.md), [change history](CHANGELOG.md), and the [contribution guide](CONTRIBUTING.md). Behaviour varies with the model, application, and available tools; report a reproducible example when a workflow misbehaves.
+Read [validation scope](docs/VALIDATION.md), [change history](CHANGELOG.md), and the [contribution guide](CONTRIBUTING.md). The workflows adapt to the model, application, and available tools; report a reproducible example when a workflow needs refinement.
 
 To publish your own copy, follow [Publishing to GitHub](docs/PUBLISHING.md). For vulnerabilities or unintended sensitive-data exposure, see [Security](SECURITY.md).
 

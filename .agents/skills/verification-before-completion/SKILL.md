@@ -10,6 +10,7 @@ Make the completion claim no broader than the observed evidence. This workflow c
 ## Match evidence to the claim
 
 Choose checks from the repository's documented workflow, manifests, CI, and changed behaviour. Inspect commands when their side effects are unclear.
+When tool availability or specialized evidence matters, consult [tool selection](../adaptive-workflow/references/tool-selection.md); report only capabilities and checks actually observed.
 
 | Claim | Relevant evidence |
 | --- | --- |

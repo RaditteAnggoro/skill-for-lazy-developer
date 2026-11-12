@@ -2,6 +2,12 @@
 
 ## Unreleased
 
+- Make browser journeys explicit phases in the UI orchestration examples and preserve
+  separate verification and visual-audit phases.
+- Add provider-neutral, native-first tool selection with safe fallback and explicit
+  browser, database, remote repository, privacy, and authorization boundaries.
+- Add an isolated, read-only routing A/B runner and an enhancement evidence schema;
+  record the selected baseline and preserve unknown measurements as unknown.
 - Add browser journey testing and connect meaningful UI changes to real-browser checks,
   design expectations, and explicit reporting of untested paths.
 

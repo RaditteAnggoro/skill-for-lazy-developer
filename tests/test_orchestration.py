@@ -27,6 +27,7 @@ class PhaseOrchestrationTests(unittest.TestCase):
             "research-plan-implement",
             "lean-senior-engineering",
             "ui-implementation",
+            "browser-journey-testing",
             "ui-quality-verification",
             "spec-to-code-verification",
             "verification-before-completion",
@@ -46,6 +47,17 @@ class PhaseOrchestrationTests(unittest.TestCase):
         case = next(item for item in self.cases if item["id"] == "unresolved-ui-direction")
         primaries = [phase["primary"] for phase in case["plan"]["phases"]]
         self.assertLess(primaries.index("ui-design-intelligence"), primaries.index("ui-implementation"))
+
+    def test_ui_journey_and_audit_are_separate_dependent_phases(self):
+        for case in self.cases:
+            phases = case["plan"]["phases"]
+            implementation = next((p for p in phases if p["primary"] == "ui-implementation"), None)
+            if implementation is None:
+                continue
+            journey = next(p for p in phases if p["primary"] == "browser-journey-testing")
+            audit = next(p for p in phases if p["primary"] == "ui-quality-verification")
+            self.assertIn(implementation["id"], journey["depends_on"], case["id"])
+            self.assertIn(journey["id"], audit["depends_on"], case["id"])
 
     def test_invalid_plans_are_rejected(self):
         base = {
@@ -109,6 +121,7 @@ class PhaseOrchestrationTests(unittest.TestCase):
                 "research-plan-implement",
                 "lean-senior-engineering",
                 "ui-implementation",
+                "browser-journey-testing",
                 "ui-quality-verification",
                 "spec-to-code-verification",
                 "verification-before-completion",

@@ -15,6 +15,7 @@ are not copied into the distributed skill instructions.
 | --- | --- | --- | --- |
 | [PyYAML](https://github.com/yaml/pyyaml) | 6.0.3 | MIT | Repository and fixture validation |
 | [tiktoken](https://github.com/openai/tiktoken) | 0.12.0 | MIT | Optional token measurement |
+| [jsonschema](https://github.com/python-jsonschema/jsonschema) | 4.25.1 | MIT | Enhancement evidence schema tests |
 | [playwright-core](https://github.com/microsoft/playwright) | 1.56.0 | Apache-2.0 | UI fixture browser checks |
 | [pngjs](https://github.com/pngjs/pngjs) | 7.0.0 | MIT | Screenshot decoding |
 | [pixelmatch](https://github.com/mapbox/pixelmatch) | 6.0.0 | ISC | Screenshot comparison |
@@ -23,7 +24,9 @@ are not copied into the distributed skill instructions.
 | [Next.js](https://github.com/vercel/next.js) | 15.5.29 | MIT | Next.js fixture |
 
 `tiktoken` may install `requests`, `regex`, `certifi`, `idna`, `urllib3`, and
-`charset-normalizer` as transitive development dependencies. `next` may install
+`charset-normalizer` as transitive development dependencies. `jsonschema` uses
+`attrs`, `referencing`, `jsonschema-specifications`, `rpds-py`, and, on some Python
+versions, `typing-extensions`. `next` may install
 `sharp` as an optional image dependency. Review the installed package metadata and
 license texts before redistributing a modified tool bundle.
 

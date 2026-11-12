@@ -184,6 +184,11 @@ class CodexAdapterTests(unittest.TestCase):
             {"cwd": str(self.project), "hook_event_name": "SessionStart", "source": "startup"},
         )
         self.assertEqual(started.stdout.strip(), "")
+        before = self.log.read_text(encoding="utf-8")
+        for prompt in ("Show what you remember", "Remember this: do not save", "Forget billing"):
+            result = self.runtime("user-prompt", {"cwd": str(self.project), "prompt": prompt})
+            self.assertEqual(result.stdout.strip(), "")
+        self.assertEqual(self.log.read_text(encoding="utf-8"), before)
 
     def test_sensitive_remember_and_handoff_are_not_written(self):
         install(self.home, str(self.engram))

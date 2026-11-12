@@ -41,6 +41,8 @@ must not reset missing values to zero. Reconcile totals before and after recover
 
 ## Verify
 
+If live database evidence is necessary, follow the database safeguards in the shared [tool selection guide](../adaptive-workflow/references/tool-selection.md); never assume a connection or treat a client read-only flag as a security boundary.
+
 Test duplicate requests, timeout-after-commit, crash-before-commit, concurrent writers,
 partial batch failure, replay, and rollback/compensation. Verify ledger totals and audit
 records, not just HTTP 200. Record the actual failure injection and remaining gaps.

@@ -16,6 +16,7 @@ Reuse the project's planning conventions. For authorized implementation or a req
 ## Research and plan
 
 Trace affected components, public contracts, persistence, and integration boundaries. Record code locations, facts, assumptions, unresolved decisions, and the smallest coherent design. Avoid a full repository survey when only one subsystem matters.
+For version-sensitive documentation or complex code exploration, use the shared [tool selection guide](../adaptive-workflow/references/tool-selection.md) when a specialized capability adds evidence.
 
 Break implementation into increments that can be exercised end to end. State each increment's outcome, dependencies, likely files, and verification. Use actual project commands when known; mark unknown commands as unresolved instead of inventing them. Account for compatibility and data migration where needed.
 

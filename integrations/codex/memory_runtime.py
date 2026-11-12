@@ -226,6 +226,9 @@ def user_prompt(event):
         emit_context("UserPromptSubmit", "Memory is disabled for this project.")
         return 0
 
+    if project["root"] in config["opt_outs"]:
+        return 0
+
     if re.search(r"(show|what).*(remember|memory)|apa yang kamu ingat|tampilkan memori", lowered):
         text = recall(config, project, cwd)
         if text:

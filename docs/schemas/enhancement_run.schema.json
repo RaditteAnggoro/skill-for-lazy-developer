@@ -1,0 +1,25 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Enhancement trial evidence",
+  "type": "object",
+  "required": ["schema_version", "case_id", "variant", "repository_commit", "fixture_commit", "fixture_sha256", "model", "host", "tool_availability", "trial", "outcome", "checks", "metrics", "safety", "limitations"],
+  "properties": {
+    "schema_version": {"const": 1},
+    "case_id": {"type": "string", "minLength": 1},
+    "variant": {"enum": ["baseline", "candidate"]},
+    "repository_commit": {"type": "string", "pattern": "^[0-9a-f]{40}$"},
+    "fixture_commit": {"type": ["string", "null"], "pattern": "^[0-9a-f]{40}$"},
+    "fixture_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "model": {"type": ["string", "null"]},
+    "host": {"type": "string", "minLength": 1},
+    "tool_availability": {"type": "object", "additionalProperties": {"type": "boolean"}},
+    "trial": {"type": "integer", "minimum": 1},
+    "outcome": {"enum": ["pass", "fail", "blocked", "not_run"]},
+    "checks": {"type": "array", "items": {"type": "object", "required": ["id", "status", "evidence"], "properties": {"id": {"type": "string", "minLength": 1}, "status": {"enum": ["pass", "fail", "blocked", "not_run"]}, "evidence": {"type": ["string", "null"], "pattern": "^(?!/)(?![A-Za-z][A-Za-z0-9+.-]*:)(?!.*\\\\)(?!.*(?:^|/)\\.\\.(?:/|$)).+$"}}, "additionalProperties": false}},
+    "routing": {"type": ["object", "null"]},
+    "metrics": {"type": "object", "properties": {"tool_calls": {"type": ["integer", "null"], "minimum": 0}, "context_tokens": {"type": ["integer", "null"], "minimum": 0}, "wall_ms": {"type": ["integer", "null"], "minimum": 0}}, "additionalProperties": false},
+    "safety": {"type": "object", "properties": {"unauthorized_writes": {"type": ["integer", "null"], "minimum": 0}, "prohibited_egress": {"type": ["integer", "null"], "minimum": 0}}, "required": ["unauthorized_writes", "prohibited_egress"], "additionalProperties": false},
+    "limitations": {"type": "array", "items": {"type": "string"}}
+  },
+  "additionalProperties": false
+}

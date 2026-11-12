@@ -1,0 +1,22 @@
+# Synthetic decision cases; these do not call an agent, a provider, or a live database.
+cases:
+- {id: small-edit, need: code, native_ok: true, provider: serena, state: working, gain: false, expected: native}
+- {id: complex-java, need: code, native_ok: true, provider: serena, state: working, gain: true, expected: serena}
+- {id: current-api, need: docs, native_ok: false, provider: context7, state: working, gain: true, expected: context7}
+- {id: browser-journey, need: journey, native_ok: false, provider: playwright, state: working, gain: true, expected: playwright}
+- {id: browser-diagnostics, need: diagnostics, native_ok: false, provider: devtools, state: working, gain: true, expected: devtools}
+- {id: db-readonly, need: database, native_ok: false, provider: dbhub, state: working, gain: true, db_env: development, db_readonly: true, db_authorized: true, expected: dbhub}
+- {id: remote-pr, need: remote, native_ok: false, provider: github, state: working, gain: true, expected: github}
+- {id: overlapping-browsers, need: journey, native_ok: true, provider: playwright, state: working, gain: false, expected: native}
+- {id: missing-mcp, need: journey, native_ok: true, provider: playwright, state: missing, gain: true, expected: native}
+- {id: disabled-mcp, need: code, native_ok: true, provider: serena, state: disabled, gain: true, expected: native}
+- {id: unauthenticated, need: remote, native_ok: true, provider: github, state: authentication_required, gain: true, expected: native}
+- {id: invocation-failed, need: docs, native_ok: true, provider: context7, state: failed, gain: true, expected: native}
+- {id: diagnosis-only, need: code, native_ok: true, provider: serena, state: unknown, gain: false, scope: diagnosis_only, expected: native}
+- {id: production-db, need: database, native_ok: true, provider: dbhub, state: working, gain: true, db_env: production, db_readonly: true, expected: native}
+- {id: database-unproven-credentials, need: database, native_ok: true, provider: dbhub, state: working, gain: true, db_env: development, db_readonly: false, expected: native}
+- {id: database-not-authorized, need: database, native_ok: false, provider: dbhub, state: working, gain: true, db_env: development, db_readonly: true, db_authorized: false, expected: blocked}
+- {id: no-browser, need: journey, native_ok: false, provider: playwright, state: unsupported, gain: true, expected: blocked}
+- {id: simple-class, need: code, native_ok: true, provider: serena, state: registered_disconnected, gain: false, expected: native}
+- {id: missing-dependency, need: docs, native_ok: false, provider: context7, state: missing_dependency, gain: true, expected: blocked}
+- {id: unverified-mcp, need: remote, native_ok: false, provider: github, state: unknown, discovery: remains_unknown, gain: true, expected: blocked}

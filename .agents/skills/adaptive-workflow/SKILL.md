@@ -55,7 +55,7 @@ Use these routes as defaults, then adapt to the actual repository and request:
 | Review a third-party skill before adoption | `skill-security-guard` | none; adoption needs explicit user authorization |
 | Protect money, ledger, retry, or batch integrity | `transaction-safe-engineering` | `spec-to-code-verification` for requirement evidence; no default loading |
 | Exercise user journeys in a browser | `browser-journey-testing` | `browser-diagnostics` for an unexplained failure; `ui-quality-verification` for a broader audit |
-| Implement an agreed interface | `ui-implementation` | `ui-quality-verification` after a material UI change |
+| Implement an agreed interface | `ui-implementation` | `verification-before-completion` after a change; journey and quality checks as needed |
 | Audit an existing interface visually and interactively | `ui-quality-verification` | `browser-diagnostics` only for an unexplained failure |
 | Diagnose or fix an unexplained failure | `systematic-debugging` | `verification-before-completion` after a fix |
 | Reproduce a browser-visible failure | `browser-diagnostics` | `systematic-debugging`, then verification after a fix; use `ui-quality-verification` only for a separate planned audit |
@@ -73,6 +73,20 @@ Avoid redundant workflow chains. `systematic-debugging` already owns an authoriz
 focused fix after it locates the cause, so do not add `lean-senior-engineering` merely
 because the investigation may end with a code change. Add a supporting workflow only
 for a separate responsibility the primary workflow does not cover.
+
+## Select tools by capability
+
+After selecting the workflow, discover the capabilities actually available when the
+task needs them. Prefer native tools or existing project automation when adequate; use
+a specialized tool directly when it provides meaningfully better evidence or avoids
+duplicate work. Tool choices do not count as additional skills. Never assume a listed
+MCP is connected, authenticated, or successful. Do not install or configure one as a
+side effect. Fall back safely and report missing evidence when needed.
+
+For code intelligence, current documentation, browser work, live database access,
+remote repository work, or a failed provider, load the shared
+[`tool-selection.md`](references/tool-selection.md) only when relevant. Preserve user
+scope, database safety, private data, and remote-action authorization.
 
 ## Phase orchestration
 
@@ -106,6 +120,11 @@ Do not load every skill up front. Load each selected skill when its phase starts
 start a dependent UI phase before the backend contract is frozen; sequential orchestration
 is the default when phases share files, contracts, or data. Use parallel work only for
 genuinely independent, disjoint ownership.
+
+For substantial UI work, schedule the requested or needed browser journey and quality
+audit as subsequent phases, followed by verification. Do not omit a required check merely
+to fit every activity into one phase's support list. A small UI edit still gets focused
+verification without a compulsory broad audit.
 
 Record a compact trace:
 

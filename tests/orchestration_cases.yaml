@@ -7,6 +7,7 @@ cases:
       - research-plan-implement
       - lean-senior-engineering
       - ui-implementation
+      - browser-journey-testing
       - ui-quality-verification
       - spec-to-code-verification
       - verification-before-completion
@@ -34,10 +35,17 @@ cases:
           entry: API contract and design tokens are frozen.
           exit: Approval queue renders all states and keyboard paths.
           evidence: interaction check
+        - id: ui-journey
+          primary: browser-journey-testing
+          support: []
+          depends_on: [ui]
+          entry: The implemented UI and test data are available.
+          exit: The authorized approval journey is exercised.
+          evidence: browser interaction results
         - id: ui-audit
           primary: ui-quality-verification
           support: []
-          depends_on: [ui]
+          depends_on: [ui-journey]
           entry: UI build is available.
           exit: Visual, responsive, keyboard, and state checks pass.
           evidence: screenshots and interaction results
@@ -64,6 +72,7 @@ cases:
       - research-plan-implement
       - ui-design-intelligence
       - ui-implementation
+      - browser-journey-testing
       - ui-quality-verification
       - verification-before-completion
     plan:
@@ -90,10 +99,17 @@ cases:
           entry: Design brief and data contract are frozen.
           exit: Workspace renders and interactions work.
           evidence: interaction check
+        - id: ui-journey
+          primary: browser-journey-testing
+          support: []
+          depends_on: [ui]
+          entry: The implemented workspace and test data are available.
+          exit: The authorized workspace journey is exercised.
+          evidence: browser interaction results
         - id: ui-audit
           primary: ui-quality-verification
           support: []
-          depends_on: [ui]
+          depends_on: [ui-journey]
           entry: UI build is available.
           exit: Visual, keyboard, responsive, and state checks pass.
           evidence: screenshots and keyboard result
@@ -145,6 +161,7 @@ cases:
     expected_phases:
       - browser-diagnostics
       - ui-implementation
+      - browser-journey-testing
       - ui-quality-verification
       - verification-before-completion
     plan:
@@ -164,10 +181,17 @@ cases:
           entry: The responsible change is known.
           exit: The original refresh path renders correctly.
           evidence: interaction check
+        - id: ui-journey
+          primary: browser-journey-testing
+          support: []
+          depends_on: [fix]
+          entry: The fixed route and test data are available.
+          exit: The original refresh journey is exercised.
+          evidence: browser interaction results
         - id: ui-audit
           primary: ui-quality-verification
           support: []
-          depends_on: [fix]
+          depends_on: [ui-journey]
           entry: The fixed build is available.
           exit: Keyboard and empty/loading/error states pass.
           evidence: screenshots and interaction result

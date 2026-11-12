@@ -11,6 +11,8 @@ Answer a specific architecture question using source evidence. User instructions
 
 Resolve the requested flow: a screen action, endpoint, background task, import, or whole-system overview. Inspect actual entry points, callers, dependencies, and configuration. Trace input validation, authorization where present, state changes, reads/writes, external calls, and failure or retry paths relevant to the question.
 
+For complex symbol or dependency tracing, consult the shared [tool selection guide](../adaptive-workflow/references/tool-selection.md) when useful; verify index results against source and fall back to native search.
+
 Distinguish observed execution from inferred static paths. Label conditional and asynchronous edges. State unresolved dynamic routing or unavailable services. Do not invent infrastructure from directory names, package dependencies, or an outdated design document.
 
 For a whole-repository request, produce an overview first and show which areas were sampled. Expand when needed to answer the question; do not imply exhaustive tracing from a partial scan.

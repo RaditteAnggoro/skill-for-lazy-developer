@@ -1,0 +1,27 @@
+# Ground truth is reviewed against this synthetic fixture; never expose it to the model.
+fixture: fixtures/impact
+cases:
+- id: web-approval-path
+  prompt: Trace the source path from approve_request to its returned posting statement, including its authorization check. List only files on that path.
+  files: [web.py, auth.py, payment.py, schedule.py, ledger.py, statements.py]
+- id: batch-replay-path
+  prompt: Trace the source path from batch replay to its returned posting statement. List only files on that path.
+  files: [batch.py, payment.py, schedule.py, ledger.py, statements.py]
+- id: report-path
+  prompt: Trace daily_report to its returned query string. List only files on that path.
+  files: [report.py, ledger.py, statements.py]
+- id: amount-callers
+  prompt: Identify files containing normalize_amount and its direct and transitive source callers. List only those files.
+  files: [schedule.py, payment.py, web.py, batch.py]
+- id: insert-callers
+  prompt: Identify the file defining INSERT_POSTING and its direct and transitive source callers. List only those files.
+  files: [statements.py, ledger.py, payment.py, web.py, batch.py]
+- id: auth-callers
+  prompt: Identify the file defining may_approve and source files that directly call it. List only those files.
+  files: [auth.py, web.py]
+- id: report-read-callers
+  prompt: Identify the file defining read_postings and source files that directly call it. List only those files.
+  files: [ledger.py, report.py]
+- id: payment-callers
+  prompt: Identify the file defining approve_repayment and source files that directly call it. List only those files.
+  files: [payment.py, web.py, batch.py]

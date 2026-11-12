@@ -1,9 +1,9 @@
 ## Development skills
 
-Repository skills are in `.agents/skills/`. Users can describe a task normally; they
-do not need to know or type a skill name. When no workflow is named, use
-`adaptive-workflow` to select the smallest useful ordered set. Read only the selected
-skills and relevant references. State the selected workflow briefly and continue.
+Repository skills are in `.agents/skills/`. Describe tasks normally; when no workflow
+is named, `adaptive-workflow` selects the smallest useful ordered set. Read selected skills
+and relevant references. Announce the workflow briefly and continue. Discover available
+tools when needed; prefer native capabilities when adequate.
 
 Route by outcome and consequence:
 

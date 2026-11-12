@@ -57,10 +57,10 @@ an automated disposable test; normal users must review the exact hooks.
 
 ## Maintenance checks
 
-The current repository checks validate sixteen skills and local links, pass 161 unit
-tests, and build a reproducible 183-file archive. The Codex verification used a
-disposable home, project, Engram data directory, and session; no user memory data or
-credentials were copied into the repository.
+Repository checks validate the skill bundle, local links, adapter behavior, and release
+archive reproducibility. The Codex verification uses a disposable home, project,
+Engram data directory, and session; no user memory data or credentials are copied into
+the repository.
 
 ## Limits
 

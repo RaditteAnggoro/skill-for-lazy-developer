@@ -21,6 +21,12 @@ without an adapter and what each host needs.
 A check mark for "workflow content" means the instructions are portable. It does not
 mean a host automatically discovers every file or provides the same tools.
 
+The shared [tool-selection policy](../.agents/skills/adaptive-workflow/references/tool-selection.md)
+uses capabilities rather than host-specific MCP names. Each host must expose and
+authenticate its own tools; the portable pack neither installs nor configures them.
+Fallback and security instructions are portable guidance, not a runtime guarantee.
+Live MCP invocation and cross-host model adherence require separate verification.
+
 ## Portable skill layer
 
 The host-neutral layer can be exported and imported without copying hooks or memory:
