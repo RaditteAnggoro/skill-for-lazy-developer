@@ -32,7 +32,7 @@ class AdaptiveVoiceTests(unittest.TestCase):
         text = " ".join(README.read_text(encoding="utf-8").lower().split())
         self.assertIn("threads conversation", text)
         self.assertIn("slang naturally", text)
-        self.assertIn("doesn't pretend to be human", text)
+        self.assertIn("does not pretend to be human", text)
 
 
 if __name__ == "__main__":

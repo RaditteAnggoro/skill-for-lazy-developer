@@ -7,237 +7,554 @@
 
 **Describe the task. The right workflow finds you.**
 
-An adaptive router and sixteen focused Codex engineering skills for debugging,
-implementation, architecture, browser diagnostics, planning, release review, and
-evidence-backed verification. Write a normal software request; the router selects one
-workflow or a small ordered combination.
-
-**Best for:** developers who want useful workflow guidance without memorizing skill
-names or adding one large instruction pack to every coding session.
-
-Each workflow has its own `SKILL.md`. Clear requests continue automatically. When a
-request could mean materially different work, the user sees two or three plain-language
-outcomes instead of an internal list of skill names.
+17 skills: one adaptive router and sixteen focused workflows for implementation,
+debugging, architecture, browser and UI quality, domain modeling, requirements,
+security, and transaction safety.
 
 The companion sounds like a sharp friend in a casual Threads conversation: short,
-direct, code-switches with you, and uses slang naturally without forcing it. No corporate
-openings or canned praise. It doesn't pretend to be human, and it drops the jokes when a
-shortcut could harm security, privacy, financial correctness, data integrity, or recovery.
+direct, code-switches with you, and uses slang naturally without forcing it. It does not
+pretend to be human, and it drops the jokes when a shortcut could hurt security, privacy,
+financial correctness, data integrity, or recovery.
 
-![Automatic workflow: describe a task normally, let the adaptive router select and combine focused skills, and receive an evidence-backed result.](docs/assets/skills-workflow.svg)
+![Skills for Lazy Developer workflow](docs/assets/skills-workflow.svg)
 
-*Workflow illustration, not an application screenshot. The skills guide the agent inside your existing development project.*
+*Workflow illustration, not an application screenshot. The pack guides an existing agent;
+it is not a standalone app.*
 
-[Get started](#quick-start) · [Automatic routing](#how-automatic-routing-works) · [Try a task](#try-a-task) · [All workflows](#skills) · [Development](#development) · [License](LICENSE) · [Credits](docs/SOURCES.md)
+**Jump to:** [At a glance](#at-a-glance) · [Quick start](#quick-start) · [How routing works](#how-routing-works) · [Install preview](#install-preview) · [Skills](#skills) · [Roles](#specialist-roles) · [Repository layout](#repository-layout) · [Development](#development) · [Status](#status-and-evidence) · [License](#license)
 
-## Use it in another project or agent
+---
 
-The skills in this repository do not automatically appear in every project or AI
-agent. Copy the skill layer into the project you want to use, then follow that host's
-instructions. Your existing project files, hooks and credentials are not imported by
-the portable pack.
+## At a glance
 
-```mermaid
-flowchart LR
-    A[Skills for Lazy Developer] --> B[Export portable skill pack]
-    B --> C[Another project]
-    C --> D[Codex: AGENTS.md]
-    C --> E[Claude Code: CLAUDE.md and skill discovery]
-    C --> F[DeepSeek Harness: AGENTS.md and DSH profile]
-    D --> G[Ask in your own words]
-    E --> G
-    F --> G
+| | |
+| --- | --- |
+| **Skills** | 17: `adaptive-workflow` + 16 focused workflows |
+| **Optional specialist roles** | 4 read-only contracts |
+| **Host wrappers** | 4 Codex TOML + 4 Claude Markdown |
+| **Memory** | Optional Engram adapters; no credentials imported |
+| **Packaging** | Portable pack with deterministic manifest, checksum, backup, and rollback |
+| **Last local verification** | **258 tests passed**; **294-file archive**; checksum valid |
+| **Host integration** | Static wrapper validation only; live role dispatch is not claimed |
+
+> **Read this first:** installing the skill pack does **not** install an agent, Engram,
+> Chrome, Playwright, plugins, or MCP servers. Use the preview to see what is required for
+> the capabilities you choose.
+
+### What is new
+
+- **Specialist roles** — four read-only contracts, rendered deterministically into
+  project-scoped Codex and Claude wrappers.
+- **Selective delegation** — single-agent stays the default; delegation is bounded and
+  has explicit fallback states.
+- **Evidence-gated learning** — lessons become local proposals, never automatic edits to
+  active skills.
+- **Setup preview** — dry-run before import: would import, conflicts, skipped items, and
+  missing support.
+- **Humanized voice** — casual register and slang when appropriate; formal and precise
+  for high-risk work.
+
+---
+
+## Quick start
+
+### 1. Get the repository
+
+```sh
+git clone https://github.com/RaditteAnggoro/skill-for-lazy-developer.git
+cd skill-for-lazy-developer
 ```
 
-Before importing, preview the target, conflicts, and optional support requirements:
+You can also use the source ZIP, the Codex plugin manifest at
+[`.codex-plugin/plugin.json`](.codex-plugin/plugin.json), or the portable pack described
+below.
+
+### 2. Preview the target
 
 ```sh
 python scripts/agent_setup_preview.py --target /path/to/your-project
 ```
 
-This command only previews; it does not install anything. See [setup preview](docs/SETUP_PREVIEW.md).
+Include optional capabilities to see their requirements:
 
-From this repository, create the pack and preview the import before applying it:
+```sh
+python scripts/agent_setup_preview.py \
+  --target /path/to/your-project \
+  --with-roles --with-memory --with-ui
+```
+
+The preview is read-only. It tells you:
+
+- which skills and instructions would be imported;
+- which existing skills conflict;
+- what is skipped;
+- which app, plugin, binary, or browser dependency is missing;
+- that credentials, `.env`, API keys, and `Authorization` headers are never imported.
+
+### 3. Import the skill layer
 
 ```sh
 python scripts/package_skill_pack.py export --output dist/skill-pack.zip
 python scripts/package_skill_pack.py verify dist/skill-pack.zip
 python scripts/package_skill_pack.py import dist/skill-pack.zip --target /path/to/your-project
-python scripts/package_skill_pack.py import dist/skill-pack.zip --target /path/to/your-project --apply
 ```
 
-Replace `/path/to/your-project` with the actual project directory. The import copies
-the skill files and `AGENTS.snippet.md`; it does **not** merge instructions into your
-project's existing instruction file. Keep the printed backup path for rollback.
-See [portable pack guide](docs/PORTABLE_PACK.md) before applying it. Optional role
-contracts can be included with `--with-roles`; they are not installed by default. The
-[agent role architecture](docs/AGENT_ROLE_ARCHITECTURE.md) explains the read-only contracts and host fallback.
+Review the dry-run. Then apply:
 
-| Agent | Next step in the target project |
-| --- | --- |
-| Codex | Merge `AGENTS.snippet.md` into `AGENTS.md`; open the project in Codex. [Codex guide](adapters/codex/README.md) |
-| Claude Code | Configure Claude's supported skill discovery and add the applicable instructions to `CLAUDE.md`. [Claude guide](adapters/claude/README.md) |
-| DeepSeek Harness | Use a DSH profile with skill/instruction plugins and install the DSH instruction adapter. [DSH guide](adapters/dsh/README.md) |
+```sh
+python scripts/package_skill_pack.py import \
+  dist/skill-pack.zip \
+  --target /path/to/your-project \
+  --apply
+```
 
-Memory and lifecycle adapters are optional, host-specific setup. Installing the skill
-pack alone does not install Engram or enable automatic memory. See the complete
-[host adapter guide](docs/ADAPTERS.md) before configuring them.
+The import backs up replaced files and prints the backup directory. Optional role
+contracts use `--with-roles`:
 
-## Quick start
+```sh
+python scripts/package_skill_pack.py import \
+  dist/skill-pack.zip \
+  --target /path/to/your-project \
+  --with-roles --apply
+```
 
-For Codex plugin installation, the repository includes a compatibility manifest at
-`.codex-plugin/plugin.json`. Plugin installation makes the packaged skills available;
-the companion instructions in `AGENTS.snippet.md` still need to be merged into the
-target project's `AGENTS.md` as described below. Plugin installation from GitHub uses
-the committed remote version; local changes are not available there until published.
+### 4. Merge the consuming instructions
 
-1. Clone this repository or download its source ZIP.
-2. Copy the skill folders you want from `.agents/skills/` into the same location in your project. Copy the whole folder, including `references/` and `agents/` when present.
-3. Merge [AGENTS.snippet.md](AGENTS.snippet.md) into your project's existing `AGENTS.md`. If the project has none, create it from the snippet.
-4. Open Codex in your project and describe the task normally:
+The pack writes `AGENTS.snippet.md`; it does **not** overwrite your `AGENTS.md`.
+
+- **Codex / DSH:** merge the snippet into `AGENTS.md`.
+- **Claude Code:** add the applicable instructions to `CLAUDE.md` and configure the
+  host's supported skill/plugin path.
+- **Project roles:** render or update project wrappers as described in
+  [Specialist roles](#specialist-roles).
+
+### 5. Ask normally
 
 ```text
-The checkout page becomes blank after a browser refresh. Reproduce the problem,
-fix its cause, and verify the original flow.
+The checkout page becomes blank after a browser refresh. Reproduce it, fix the cause,
+and verify the original flow.
 ```
 
-The router should announce a short workflow such as **Browser Diagnostics →
-Systematic Debugging → Verification**, then continue. If “improve the checkout page”
-could mean a bug fix, a visual change, or a redesign, it should recommend a
-plain-language outcome and let the user choose.
+No skill names, commands, or role names are required. The router selects the smallest
+useful chain and continues within the requested scope. More prompts: [Try the skills](docs/TRY-IT.md).
 
-The discovery path in the target project must be `.agents/skills/<skill-name>/SKILL.md`. Do not copy this repository as an extra nested folder and expect its skills to apply to the parent project. Codex detects skill changes; restart it if the new skills do not appear. See the [official local-skills documentation](https://learn.chatgpt.com/docs/build-skills).
+---
 
-On macOS, press Command-Shift-period to show the hidden `.agents` folder. Merge existing directories carefully. Same-name skills from different locations do not merge; keep one active copy.
+## Install preview
 
-## How automatic routing works
+The preview is designed for the “what do I still need to install?” moment.
 
-The router uses the request, repository instructions, and skill descriptions. It does
-not use a fixed keyword list and it does not treat choosing a workflow as permission
-for broader work.
+```mermaid
+flowchart LR
+    A[Choose target and capabilities] --> B[agent_setup_preview.py]
+    B --> C{Required support present?}
+    C -->|Yes| D[Review import plan]
+    C -->|No| E[Show missing app, plugin, binary, or browser]
+    E --> F[User installs deliberately]
+    F --> B
+    D --> G[package_skill_pack.py dry-run]
+    G --> H[Apply with backup]
+    H --> I[Rollback if needed]
+```
+
+| Capability | Preview flag | Required support | Optional? |
+| --- | --- | --- | --- |
+| Core skills | none | Python 3.9+, target directory, skill source | No |
+| Role contracts | `--with-roles` | Nothing beyond the repository | Yes |
+| Project memory | `--with-memory` | Engram binary and target `.engram/config.json` | Yes |
+| UI verification | `--with-ui` | Node, Chrome/Chromium, Playwright fixture deps | Yes |
+| Codex wrappers | detected | Codex CLI and project `.codex/agents/` | Yes |
+| Claude wrappers | detected | Claude Code and project `.claude/agents/` | Yes |
+
+Use `--strict` when a requested capability must fail the preflight if missing:
+
+```sh
+python scripts/agent_setup_preview.py --target /path/to/project --with-memory --strict
+```
+
+`--json` is available for automation. Full guide:
+[Setup preview](docs/SETUP_PREVIEW.md).
+
+---
+
+## How routing works
+
+`adaptive-workflow` is the **single routing authority**. It chooses one primary skill
+and at most two supporting skills per phase. It reads only the selected skills and
+references.
 
 ```mermaid
 flowchart TD
-    A[Describe the task normally] --> B[Adaptive workflow reads intent and boundaries]
+    A[Describe the task normally] --> B[adaptive-workflow reads intent and boundaries]
     B --> C{How clear is the outcome?}
-    C -->|Clear| D[Announce the smallest skill chain and continue]
-    C -->|Several different outcomes| E[Recommend 2 or 3 outcome-based choices]
-    C -->|Missing information blocks progress| F[Ask one concise question]
+    C -->|Clear| D[Announce the smallest useful chain and continue]
+    C -->|Several materially different outcomes| E[Offer 2–3 outcome-based choices]
+    C -->|Missing context blocks safe progress| F[Ask one concise question]
     E -->|User chooses| B
     F -->|User clarifies| B
-    D --> G[Read only the selected skill instructions]
-    G --> H[Work within the requested scope]
-    H --> I[Report evidence, checks, and gaps]
+    D --> G[Load the selected skill only]
+    G --> H[Use native tools first; specialized capability if it adds evidence]
+    H --> I[Implement only if authorized]
+    I --> J[Verify with observed evidence]
+    J --> K[Report result, phase trace, gaps, and limits]
 ```
 
-High-confidence routing does not create an extra approval ritual. Diagnosis, review,
-and planning requests keep their requested scope: “diagnose only” produces findings,
-not an unauthorized fix. Each phase uses one primary skill and at most two supporting
-skills.
+### Phase orchestration
 
-For substantial multi-stage implementation, the agent can plan phases with explicit
-dependencies and exit evidence, load the next phase's skill at the boundary, and report
-the resulting phase trace. It should continue within the authorized scope without asking
-for permission between phases. Backend or design contracts are frozen before dependent
-work begins. Simple tasks do not need a full phase plan. For meaningful UI changes, exercise affected
-user journeys in a real browser and compare the result with the agreed design and product
-conventions. Report browser verification as unperformed when tooling is unavailable.
+For substantial work, the agent can plan phases with explicit dependencies and exit
+evidence. It loads the next skill at the phase boundary, continues inside the authorized
+scope, and closes with a phase table rather than asking after every step.
 
-Phase plans make dependencies, skill boundaries, and exit evidence explicit. The
-phase-plan validator and trace simulator support a consistent implementation workflow.
-See [phase orchestration validation](docs/VALIDATION.md#phase-orchestration-refinement)
-for implementation details.
-
-Specialist roles are optional. The agent normally stays single-agent; it may use a
-bounded read-only reviewer when independent evidence or context isolation is materially
-useful. Roles never replace the router, skills, or user scope. See
-[agent role architecture](docs/AGENT_ROLE_ARCHITECTURE.md); no host role is installed
-into user home by this repository.
-
-For tools, the agent discovers what the host actually exposes and normally uses native
-capabilities or existing project tests when they are sufficient. It can choose a
-specialized MCP capability when that adds useful evidence, such as symbol tracing,
-current documentation, browser diagnostics, or a safely authorized database check.
-If a tool is missing or fails, it falls back where possible and reports evidence that
-could not be obtained. The policy does not install or configure MCP servers, and its
-behavior depends on the host and available tools. See the
-[tool-selection reference](.agents/skills/adaptive-workflow/references/tool-selection.md).
-
-## Try a task
-
-Open a scenario below, replace the bracketed input, and paste the prompt into Codex from your project. These are illustrative walkthroughs, not recorded executions or guaranteed results.
-
-<details>
-<summary><strong>Fix a failing test</strong> — reproduce → explain → change → verify</summary>
-
-```text
-[Failing scenario] now fails with this output: [relevant output].
-Reproduce it, find the cause, make the smallest appropriate fix, and check the
-original case before handing it back.
+```mermaid
+flowchart LR
+    P[research-plan-implement<br/>plan + acceptance] --> B[backend<br/>contract tests]
+    B --> U[ui-implementation<br/>states + interactions]
+    U --> J[browser-journey-testing<br/>real journey]
+    J --> Q[ui-quality-verification<br/>visual + keyboard + responsive]
+    Q --> S[spec-to-code-verification<br/>requirement evidence]
+    S --> V[verification-before-completion<br/>final checks + gaps]
 ```
 
-Look for a reproduction when the environment permits, a cause tied to the affected code, a focused fix and a check of the original case. If a dependency is unavailable, the agent should say which check it could not run.
+Simple tasks do not need a phase plan. A phase plan is a contract, not a reason to load
+every skill. See [phase orchestration evidence](docs/VALIDATION.md#phase-orchestration-refinement) and the [capability matrix](docs/V2_CAPABILITY_MATRIX.md)
+and the validator at [`scripts/validate_phase_plan.py`](scripts/validate_phase_plan.py).
 
-</details>
+### Single-agent first
 
-<details>
-<summary><strong>Understand an unfamiliar app</strong> — input → processing → storage → response</summary>
+Delegation is optional and evidence-driven. The default is one agent. Read-only
+specialists can help when independent review or context isolation materially improves the
+result; they never replace the router, the skill quota, or user scope.
 
-```text
-Trace [endpoint or UI action] through validation, transformations, storage, and the
-response. Show a diagram and link the explanation to the relevant source. Do not
-edit code.
+```mermaid
+flowchart TD
+    A[Task] --> B{Independent review or bounded exploration materially useful?}
+    B -->|No| C[Single agent + selected skills]
+    B -->|Yes| D{Host supports a bounded read-only role?}
+    D -->|No| E[Single-agent role-guided fallback]
+    D -->|Yes| F[Dispatch bounded specialist]
+    F --> G[Verify findings against source/tests]
+    G --> H[Parent owns implementation and final result]
 ```
 
-Look for a source-backed flow with unknowns labeled. Static inspection explains the implementation; it should not be presented as a captured runtime trace.
+Host role dispatch is not claimed as live in this repository. See
+[tests/host_integration_status.yaml](tests/host_integration_status.yaml).
 
-</details>
-
-<details>
-<summary><strong>Shape a feature before building it</strong> — inspect → decide → define acceptance</summary>
-
-```text
-Plan [feature]. Inspect the current flow, ask only questions that would change the
-design, and produce observable acceptance criteria. Planning only.
-```
-
-Look for the decisions that affect scope and a small set of testable outcomes. When you are ready to implement, ask for the chosen change explicitly.
-
-</details>
-
-For more prompts, including review, browser diagnosis and resumable work, see [Try the skills in Codex](docs/TRY-IT.md).
+---
 
 ## Skills
 
-| Skill | Use it for | What you get |
+All 17 skill identities are preserved. The links go to the exact `SKILL.md`.
+
+### Routing and execution
+
+| Skill | Use it for | Output |
 | --- | --- | --- |
-| [adaptive-workflow](.agents/skills/adaptive-workflow/SKILL.md) | Natural-language routing and multi-skill composition | Automatic continuation or a small outcome-based choice |
-| [lean-senior-engineering](.agents/skills/lean-senior-engineering/SKILL.md) | Implementation, refactoring, review, audit, technical debt | Small complete changes, focused checks, prioritized findings |
-| [systematic-debugging](.agents/skills/systematic-debugging/SKILL.md) | Bugs, failing tests, build failures | Reproduction, supported cause, focused fix when requested |
-| [verification-before-completion](.agents/skills/verification-before-completion/SKILL.md) | Implementation handoff, verification requests | Actual check results and clearly stated gaps |
-| [feature-discovery](.agents/skills/feature-discovery/SKILL.md) | Ambiguous features, consequential design choices | Decisions and observable acceptance criteria |
-| [research-plan-implement](.agents/skills/research-plan-implement/SKILL.md) | Changes across modules or sessions | Code-backed research, execution plan, resumable handoff |
-| [architecture-map](.agents/skills/architecture-map/SKILL.md) | Architecture, data processing, change impact | Diagrams connected to real source evidence |
-| [release-readiness](.agents/skills/release-readiness/SKILL.md) | Pre-release assessment | Scoped readiness decision, blockers, rollout considerations |
-| [browser-journey-testing](.agents/skills/browser-journey-testing/SKILL.md) | Real-browser user journeys and design expectations | Journey evidence, findings, and untested gaps |
-| [browser-diagnostics](.agents/skills/browser-diagnostics/SKILL.md) | UI, console, network, browser performance | Reproduction evidence and an explanation of the failing path |
-| [ui-design-intelligence](.agents/skills/ui-design-intelligence/SKILL.md) | UI direction, hierarchy, and enterprise data behavior | A concrete design brief and implementation handoff |
-| [ui-implementation](.agents/skills/ui-implementation/SKILL.md) | Agreed responsive interfaces and states | Implemented UI with keyboard and state coverage |
-| [ui-quality-verification](.agents/skills/ui-quality-verification/SKILL.md) | Visual, responsive, keyboard, and state audits | Screenshot and interaction evidence with limitations |
-| [domain-modeling](.agents/skills/domain-modeling/SKILL.md) | Ambiguous domain terms, states, and invariants | Glossary, lifecycle, events, and invariants |
-| [spec-to-code-verification](.agents/skills/spec-to-code-verification/SKILL.md) | Requirement-to-implementation evidence audits | Traceability matrix with pass/fail/partial/untested status |
-| [skill-security-guard](.agents/skills/skill-security-guard/SKILL.md) | Pre-adoption review of third-party skills | Injection, permission, exfiltration, and supply-chain findings |
-| [transaction-safe-engineering](.agents/skills/transaction-safe-engineering/SKILL.md) | Money, ledger, retry, or batch integrity risk | Idempotency, concurrency, approval, and recovery checks |
+| [`adaptive-workflow`](.agents/skills/adaptive-workflow/SKILL.md) | Natural-language routing and composition | Small ordered workflow and phase trace |
+| [`lean-senior-engineering`](.agents/skills/lean-senior-engineering/SKILL.md) | Implementation, refactoring, review, debt | Small complete change, focused checks |
+| [`systematic-debugging`](.agents/skills/systematic-debugging/SKILL.md) | Bugs, failed tests, unexplained behaviour | Reproduction, cause, focused fix |
+| [`verification-before-completion`](.agents/skills/verification-before-completion/SKILL.md) | Pre-handoff verification | Observed checks and explicit gaps |
+| [`research-plan-implement`](.agents/skills/research-plan-implement/SKILL.md) | Multi-module or multi-session work | Phased plan, implementation, handoff |
+| [`feature-discovery`](.agents/skills/feature-discovery/SKILL.md) | Ambiguous or consequential feature choices | Acceptance criteria and scope |
+| [`architecture-map`](.agents/skills/architecture-map/SKILL.md) | Architecture, data flow, impact | Source-backed diagrams and anchors |
+| [`release-readiness`](.agents/skills/release-readiness/SKILL.md) | Pre-release assessment | Readiness decision, blockers, rollback |
 
-Start with a representative task in ordinary language. The router and concise skill
-descriptions let Codex select matching workflows automatically. See [natural-language
-examples and expected behaviour](docs/TRY-IT.md).
+### Browser, UI, and design
 
-## Design
+| Skill | Use it for | Output |
+| --- | --- | --- |
+| [`browser-journey-testing`](.agents/skills/browser-journey-testing/SKILL.md) | Real user journeys | Journey evidence and regressions |
+| [`browser-diagnostics`](.agents/skills/browser-diagnostics/SKILL.md) | Unexplained browser failures | Console/network/DOM evidence and cause |
+| [`ui-design-intelligence`](.agents/skills/ui-design-intelligence/SKILL.md) | UI direction and enterprise data UX | Design brief and implementation handoff |
+| [`ui-implementation`](.agents/skills/ui-implementation/SKILL.md) | Agreed responsive UI | Implemented states, keyboard, and data journeys |
+| [`ui-quality-verification`](.agents/skills/ui-quality-verification/SKILL.md) | Visual and interaction audit | Screenshots, keyboard, responsive, state findings |
 
-Phase records live in the [development plan](docs/V2_DEVELOPMENT_PLAN.md) and [capability matrix](docs/V2_CAPABILITY_MATRIX.md).
+### Domain, evidence, and safety
 
-### Voice
+| Skill | Use it for | Output |
+| --- | --- | --- |
+| [`domain-modeling`](.agents/skills/domain-modeling/SKILL.md) | Ambiguous terms, states, events, invariants | Glossary, lifecycle, and invariants |
+| [`spec-to-code-verification`](.agents/skills/spec-to-code-verification/SKILL.md) | Requirements-to-evidence audit | Traceability matrix with status |
+| [`skill-security-guard`](.agents/skills/skill-security-guard/SKILL.md) | Third-party skill review | Injection, permission, and supply-chain findings |
+| [`transaction-safe-engineering`](.agents/skills/transaction-safe-engineering/SKILL.md) | Money, ledger, retry, batch integrity | Idempotency, concurrency, approval, recovery |
+
+Each skill is an instruction file plus optional references. References load only when
+relevant.
+
+---
+
+## Specialist roles
+
+Four provider-neutral, read-only role contracts live in
+[`.agents/roles/`](.agents/roles/). They are **not** skills, a second router, or a
+permission sandbox.
+
+| Role | Use when | Output contract |
+| --- | --- | --- |
+| [`ld-codebase-explorer`](.agents/roles/ld-codebase-explorer.yaml) | Large bounded impact/caller mapping | Source anchors, call paths, unknowns |
+| [`ld-independent-test-reviewer`](.agents/roles/ld-independent-test-reviewer.yaml) | A meaningful change needs independent evidence review | PASS/FAIL/BLOCKED/NOT_TESTED per scenario |
+| [`ld-financial-integrity-reviewer`](.agents/roles/ld-financial-integrity-reviewer.yaml) | Money, ledger, retry, batch, reconciliation | Invariants, failure scenarios, required tests |
+| [`ld-workflow-tool-evaluator`](.agents/roles/ld-workflow-tool-evaluator.yaml) | Measured routing/tool comparison | Baseline, candidate, metrics, limits |
+
+```sh
+python scripts/validate_roles.py
+python scripts/render_agent_adapters.py --host codex --check
+python scripts/render_agent_adapters.py --host claude --check
+```
+
+Generated project wrappers:
+
+- [`Codex TOML`](.codex/agents/) — name, description, developer instructions; no model,
+  sandbox mode, or user-home values.
+- [`Claude Markdown`](.claude/agents/) — read-only `Read, Grep, Glob` only.
+
+`write_permission: false` is policy metadata, not runtime enforcement. If the host cannot
+enforce read-only behavior, do not dispatch the role; use the main-agent fallback.
+Roles are opt-in in the portable pack (`--with-roles`).
+
+---
+
+## Install in another agent
+
+| Host | Discovery | Instructions | Optional extras |
+| --- | --- | --- | --- |
+| **Codex** | `.agents/skills/` | Merge `AGENTS.snippet.md` into `AGENTS.md` | `.codex/agents/`, Codex hooks |
+| **Claude Code** | Host skill/plugin path | Add applicable instructions to `CLAUDE.md` | `.claude/agents/`, hooks |
+| **DeepSeek Harness** | `.agents/skills/` | `AGENTS.md` or project instructions | DSH profile, memory bundle |
+| **Plain repo** | Files are portable Markdown | Read `SKILL.md` selectively | No runtime required |
+
+### Import flow
+
+```mermaid
+sequenceDiagram
+    participant You
+    participant Preview as Setup preview
+    participant Pack as Portable pack
+    participant Target as Target project
+    You->>Preview: --target project
+    Preview-->>You: Would import / conflicts / missing support
+    You->>Pack: import without --apply
+    Pack-->>You: Exact file plan and backup path
+    You->>Pack: import --apply
+    Pack->>Target: Backup and write
+    Pack-->>You: Imported + backup location
+    You->>Pack: rollback --backup ...
+    Pack->>Target: Restore previous state
+```
+
+Optional memory setup is host-specific. Installing skills does not install Engram.
+See [Adapting to hosts](docs/ADAPTERS.md), [Portable pack](docs/PORTABLE_PACK.md), and
+[Setup preview](docs/SETUP_PREVIEW.md).
+
+<details>
+<summary><strong>What the preview never imports</strong></summary>
+
+- credentials, `.env`, API keys, OAuth tokens, or `Authorization` headers;
+- another project's memory database or local Engram data;
+- user-home hooks or global agent settings;
+- browser profiles, cookies, or session data;
+- package-manager lockfiles from a consuming project.
+
+The preview reports secrets as excluded; the importer does not copy them.
+
+</details>
+
+---
+
+## Repository layout
+
+This tree matches the current source tree; generated `dist/` and ignored local state
+(`.venv/`, `.engram/`, `.serena/`) are intentionally not shown.
+
+```text
+.
+├── .agents/
+│   ├── plugins/marketplace.json      # plugin marketplace metadata
+│   ├── roles/                        # 4 read-only role contracts + schema
+│   │   ├── schema.yaml
+│   │   ├── ld-codebase-explorer.yaml
+│   │   ├── ld-independent-test-reviewer.yaml
+│   │   ├── ld-financial-integrity-reviewer.yaml
+│   │   └── ld-workflow-tool-evaluator.yaml
+│   └── skills/                       # 17 skill directories
+│       ├── adaptive-workflow/
+│       │   └── references/           # tool, delegation, learning, voice policies
+│       ├── architecture-map/
+│       ├── browser-diagnostics/
+│       ├── browser-journey-testing/
+│       ├── domain-modeling/
+│       ├── feature-discovery/
+│       ├── lean-senior-engineering/
+│       ├── release-readiness/
+│       ├── research-plan-implement/
+│       ├── skill-security-guard/
+│       ├── spec-to-code-verification/
+│       ├── systematic-debugging/
+│       ├── transaction-safe-engineering/
+│       ├── ui-design-intelligence/
+│       ├── ui-implementation/
+│       ├── ui-quality-verification/
+│       └── verification-before-completion/
+├── .claude/agents/                   # 4 generated read-only Markdown wrappers
+├── .codex/agents/                    # 4 generated Codex TOML wrappers
+├── .codex-plugin/plugin.json         # Codex plugin compatibility manifest
+├── .github/                          # CI, issue forms, PR template
+├── adapters/
+│   ├── codex/                        # Codex lifecycle/role setup
+│   ├── claude/                       # Claude lifecycle/role setup
+│   ├── dsh/                          # DSH instruction adapter + fallback
+│   └── portable/                     # host-neutral pack usage
+├── integrations/
+│   ├── codex/memory_runtime.py       # lifecycle memory runtime
+│   └── dsh/companion-memory/         # DSH Host plugin + memory bundle
+├── docs/
+│   ├── assets/                       # workflow illustration
+│   ├── schemas/                      # memory, enhancement, learning schemas
+│   ├── ADAPTERS.md                   # host compatibility matrix
+│   ├── AGENT_ROLE_ARCHITECTURE.md    # roles, fallback, host limits
+│   ├── PHASE*_EVIDENCE.md            # phase evidence 1–6
+│   ├── HERMES_*                      # baseline, mapping, report
+│   ├── LEARNING_AND_EVALUATION.md   # proposal/evaluation policy
+│   ├── PORTABLE_PACK.md              # export/import/backup/rollback
+│   ├── SETUP_PREVIEW.md              # install preflight
+│   ├── SOURCES.md                    # attribution
+│   ├── VALIDATION.md                 # validation scope/results
+│   └── V2_*                          # memory, capability, phase records
+├── scripts/
+│   ├── agent_setup_preview.py        # read-only install/support preview
+│   ├── package_skill_pack.py         # export/verify/import/rollback
+│   ├── validate_skills.py            # skill metadata and link checks
+│   ├── validate_roles.py             # strict role contract checks
+│   ├── render_agent_adapters.py      # deterministic host wrappers
+│   ├── propose_skill_learning.py     # local proposal staging
+│   ├── evaluate_phase1_enhancements.py
+│   ├── evaluate_delegation.py
+│   ├── validate_phase_plan.py
+│   ├── build_release.py              # deterministic archive
+│   └── ...                           # memory, routing, benchmark, adapter scripts
+├── tests/
+│   ├── fixtures/                     # security/spec/domain/transaction fixtures
+│   ├── roles/                        # invalid role fixture
+│   ├── ui/                           # plain/React/Next fixture checks
+│   ├── hermes_*                      # enhancement/spec matrices
+│   └── test_*.py                     # 258 tests
+├── AGENTS.md                         # maintainer instructions
+├── AGENTS.snippet.md                 # consuming-project instructions
+├── README.md
+├── CHANGELOG.md
+├── SECURITY.md
+├── CONTRIBUTING.md
+├── THIRD_PARTY_NOTICES.md
+├── LICENSE
+├── NOTICE.md
+├── CITATION.cff
+├── requirements-dev.txt
+└── VERSION
+```
+
+### What goes where
+
+- **`.agents/skills/`** — the portable instruction layer; no daemon and no hidden runtime.
+- **`.agents/roles/`** — advisory contracts; not skills and not automatically installed.
+- **`.codex/agents/` and `.claude/agents/`** — project-scoped generated wrappers.
+- **`adapters/`** — host-specific setup and lifecycle docs.
+- **`integrations/`** — optional memory runtimes; never imported by the skill pack.
+- **`docs/`** — evidence, setup, licensing, and design records.
+- **`scripts/`** — validators, previews, renderers, packagers, and benchmarks.
+- **`tests/`** — deterministic verification and synthetic fixtures.
+
+---
+
+## Development
+
+Using the skills requires no Python packages. Maintaining this repository requires
+Python 3.9+ and the development requirements.
+
+```sh
+python3 -m venv .venv
+# macOS/Linux
+.venv/bin/python -m pip install -r requirements-dev.txt
+
+# validate source and contracts
+.venv/bin/python scripts/validate_skills.py
+.venv/bin/python scripts/validate_roles.py
+.venv/bin/python scripts/render_agent_adapters.py --host codex --check
+.venv/bin/python scripts/render_agent_adapters.py --host claude --check
+.venv/bin/python scripts/validate_phase_plan.py
+
+# deterministic gates
+.venv/bin/python scripts/evaluate_phase1_enhancements.py
+.venv/bin/python scripts/evaluate_delegation.py
+.venv/bin/python -m unittest discover -s tests -v
+
+# build the deterministic archive
+.venv/bin/python scripts/build_release.py
+```
+
+On Windows use `.venv\Scripts\python.exe`.
+
+### What each check proves
+
+| Check | Proves | Does not prove |
+| --- | --- | --- |
+| `validate_skills.py` | metadata, names, local links | model compliance |
+| `validate_roles.py` | strict role schema and safety fields | runtime sandboxing |
+| wrapper `--check` | deterministic TOML/Markdown output | host dispatch |
+| `evaluate_phase1_enhancements.py` | correct use vs overuse | live model behavior |
+| `evaluate_delegation.py` | selective policy and fallback | actual subagent execution |
+| `unittest` | repository contracts and fixtures | production behavior |
+| `build_release.py` | deterministic archive and checksum | deployment |
+
+### Preview and test the installer
+
+```sh
+.venv/bin/python scripts/agent_setup_preview.py --target /tmp/project --with-roles
+.venv/bin/python scripts/package_skill_pack.py export --output dist/skill-pack.zip
+.venv/bin/python scripts/package_skill_pack.py verify dist/skill-pack.zip
+```
+
+The release archive is generated at `dist/codex-developer-skills-0.1.0.zip`; it is
+ignored by Git and should be attached to a release separately.
+
+---
+
+## Status and evidence
+
+| Area | Current evidence |
+| --- | --- |
+| Skills | 17 identities validated |
+| Roles | 4 contracts; 4 Codex TOML + 4 Claude Markdown wrappers parse |
+| Delegation | 8/8 simulated cases; `live_dispatch: false` |
+| Learning | 5/5 proposal cases; staging never edits active skills |
+| Phase 1 | 10/10 use-vs-overuse cases |
+| Phase plans | 4/4 valid |
+| Phase 6 | 8/8 deterministic checks |
+| Tests | **258 passed** |
+| Archive | **294 files**, SHA-256 valid |
+| Codex host | wrapper parse pass; custom role dispatch **NOT_RUN** |
+| Claude host | wrapper parse pass; live dispatch **AUTH_REQUIRED** |
+| DSH | no verified subagent API; **UNSUPPORTED**, single-agent fallback |
+
+Evidence levels are deliberately separated: `STATIC`, `SIMULATED`,
+`REPOSITORY_INTEGRATION`, `HOST_INTEGRATION`, and `REAL_USER_JOURNEY`. A static test is not
+a live host run. Read:
+
+- [Implementation report](docs/HERMES_IMPLEMENTATION_REPORT.md)
+- [48-case evidence matrix](tests/hermes_spec_matrix.yaml)
+- [Validation scope](docs/VALIDATION.md)
+- [Host status](tests/host_integration_status.yaml)
+
+### Known limits
+
+- Live Codex/Claude/DSH role dispatch is not claimed.
+- No live A/B model benchmark, production database, payment, or browser checkout journey
+  is claimed here.
+- Role contracts are policy metadata, not a sandbox.
+- Memory and browser capabilities are optional and host-dependent.
+- `qmd`, evolutionary scoring, and humanizer/style injection remain deferred.
+
+---
+
+## Voice
 
 The companion mirrors the user's register. Casual Indonesian can use `aku`, `kita`,
 `nih`, `sih`, `ya`, `kan`, `deh`, and light slang; English can use contractions and
@@ -245,93 +562,85 @@ sparing casual phrases. It should not force slang, imitate emotions, claim to be
 or open with corporate boilerplate. Formal users get formal language. Safety, financial,
 security, and data-integrity warnings drop the jokes and stay precise.
 
+See [voice-and-humanizer examples](.agents/skills/adaptive-workflow/references/voice-and-humanizer.md).
+
+---
+
+## Design principles
+
 - Reuse the repository's patterns and dependencies before introducing new ones.
-- Route by user outcome and consequence, not a hard-coded keyword count.
-- Continue automatically for a clear task; offer choices only when outcomes differ.
-- Complete the requested behaviour, including affected callers and meaningful checks.
-- Diagnose from evidence and report the scope of verification.
-- Keep reviews and diagnosis separate from implementation when the user requests findings only.
-- Keep detailed references out of the initial skill context until needed.
+- Route by outcome and consequence, not a keyword count.
+- Continue automatically for clear, authorized work; ask only when the answer changes the
+  safe result.
+- Keep diagnosis, review, planning, and implementation boundaries intact.
+- Verify with observed evidence; label blocked and unverified checks.
+- Keep detailed references out of the initial context until needed.
+- Prefer one agent; delegate only when independent evidence justifies it.
+- Never auto-install external systems, modify user-global settings, or auto-promote a
+  skill lesson.
 
-The pack contains workflow instructions and optional UI metadata. It does not install hooks, a browser, an MCP server, or an application test framework;
-UI fixtures use local Chrome and Playwright tooling when available. Browser diagnostics requires available browser tooling or an existing browser-test setup. Architecture diagrams use available rendering tools and disclose when rendering was not verified.
+The pack contains workflow instructions and optional metadata. It does not install hooks,
+a browser, an MCP server, an application test framework, or a model provider. Browser
+examples require an available browser or project automation; otherwise the check is
+reported as blocked.
 
-These workflows are independently maintained files informed by the projects credited in [Sources](docs/SOURCES.md). This is an independent project, with no affiliation with OpenAI or the credited upstream projects. It does not reproduce their full plugins, dashboards, or benchmark results.
+---
 
-## What the project provides
+## Troubleshooting
 
-Skills for Lazy Developer brings together practical workflows for development, design,
-and everyday problem-solving:
+<details>
+<summary><strong>The target does not see the skills</strong></summary>
 
-- **A friendly companion** that adapts to your request and helps choose a focused workflow.
-- **Project memory adapters** for saving and recalling useful context across sessions.
-- **UI/UX skills** for design direction, implementation, and quality checks.
-- **Engineering skills** for domain modeling, security review, and transaction safety.
-- **A portable skill pack** for moving workflows between projects and supported agents.
+Check that the target has `.agents/skills/<name>/SKILL.md`; do not nest this repository
+inside another folder and expect the parent project to discover it. Codex may detect
+changes automatically, but restart if needed. Claude uses its own skill/plugin discovery
+path; follow [Claude setup](adapters/claude/README.md).
 
-Explore the [host adapter guide](docs/ADAPTERS.md) and [portable pack guide](docs/PORTABLE_PACK.md)
-to choose the setup that fits your project.
+</details>
 
-## Repository layout
+<details>
+<summary><strong>The import says a skill conflicts</strong></summary>
 
-```text
-.agents/skills/       Adaptive router, workflow skills, references, and UI metadata
-.github/             CI, issue forms, and pull-request template
-docs/                Trial prompts, sources, publishing, validation, memory contract
-docs/schemas/        Provider-neutral memory record and bundle schemas
-adapters/              Per-host instruction/runtime adapters (Codex, DSH)
-integrations/           Codex lifecycle runtime and DSH memory bundle
-scripts/             Validators, routing evaluation, memory, adapters, bake-off, archive
-tests/               Validation, routing, memory, adapter, bake-off, and packaging tests
-AGENTS.md            Guidance for maintaining this repository
-AGENTS.snippet.md    Guidance to merge into a consuming project
-```
+The real import backs up the existing skill before replacing it. Use the dry-run output
+to review conflicts; keep a backup path for rollback. Do not force-overwrite a custom
+skill you have not reviewed.
 
-Copy the skills and snippet into your application. Keep this repository's maintenance `AGENTS.md`, CI, and tooling in the skills repository.
+</details>
 
-## Development
+<details>
+<summary><strong>Memory does not work</strong></summary>
 
-Using the skills requires no Python packages. Maintaining this repository requires Python 3.9+ and the development dependency below:
+Memory is optional. Run the preview with `--with-memory`; ensure Engram is installed and
+the target has `.engram/config.json`. Installing the skill pack alone does not install
+Engram or enable lifecycle hooks. Review the host adapter before trusting hooks.
 
-```sh
-python3 -m venv .venv
-# macOS/Linux:
-.venv/bin/python -m pip install -r requirements-dev.txt
-.venv/bin/python scripts/validate_skills.py
-.venv/bin/python scripts/validate_phase_plan.py
-.venv/bin/python scripts/simulate_phase_orchestration.py
-.venv/bin/python -m unittest discover -s tests -v
-.venv/bin/python scripts/build_release.py
-```
+</details>
 
-On Windows, replace `.venv/bin/python` with `.venv\Scripts\python.exe`.
+<details>
+<summary><strong>A role is not dispatched</strong></summary>
 
-The validator checks metadata, directory/name agreement, natural default prompts,
-optional invocation policy, portable references, and local links. Routing tests check
-the installed names, chain-size rule, interaction modes, consuming-project policy,
-and a natural-language prompt corpus. Memory contract tests check schema alignment,
-lifecycle links, privacy rejection, context filtering, and recovery-gate evidence.
-For enhancement work, `scripts/run_enhancement_benchmark.py` compares routing across
-isolated Git snapshots with fixed corpus and model settings. The validation guide
-describes the available checks and evidence format.
-CI runs validation and unit tests on pushes and pull requests.
+A Markdown or TOML wrapper is not a runtime sandbox or a guarantee that the host exposes
+subagents. Check the host status and actual permissions. If dispatch is unavailable or
+restrictions cannot be enforced, continue with the single-agent fallback.
 
-The archive builder writes a versioned source ZIP and SHA-256 checksum to `dist/`, using an explicit list of distributable paths. It excludes local Git history, virtual environments, working artifacts, and operating-system files.
+</details>
 
-## Status and contributing
+---
 
-Read [validation scope](docs/VALIDATION.md), [change history](CHANGELOG.md), and the [contribution guide](CONTRIBUTING.md). The workflows adapt to the model, application, and available tools; report a reproducible example when a workflow needs refinement.
+## Contributing
 
-To publish your own copy, follow [Publishing to GitHub](docs/PUBLISHING.md). For vulnerabilities or unintended sensitive-data exposure, see [Security](SECURITY.md).
+Read [CONTRIBUTING.md](CONTRIBUTING.md), [AGENTS.md](AGENTS.md), and
+[Validation scope](docs/VALIDATION.md). For a workflow change, add a representative
+case and run the relevant validator, unit tests, and archive build. Do not add a skill
+just to increase the count; extend an existing owner when it is the same responsibility.
+
+For vulnerabilities or sensitive-data exposure, follow [SECURITY.md](SECURITY.md). To publish your own copy, follow [Publishing to GitHub](docs/PUBLISHING.md).
+
+---
 
 ## License
 
-[MIT](LICENSE), copyright 2026 Raditte Anggoro and contributors. Read the
-[project notice](NOTICE.md), [third-party notices](THIRD_PARTY_NOTICES.md), and
-[inspiration/source record](docs/SOURCES.md). Credits acknowledge ideas and capability
-comparisons; they do not claim affiliation or import upstream code into this project.
-
-The MIT license requires the copyright and permission notice to accompany copies or
-substantial portions. The provenance identifier in [NOTICE.md](NOTICE.md), citation
-metadata in [CITATION.cff](CITATION.cff), and Git history help identify the original
-project; they cannot technically prevent a third party from modifying a copy.
+[MIT](LICENSE), copyright 2026 Raditte Anggoro and contributors. See
+[NOTICE.md](NOTICE.md), [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md), and
+[Sources](docs/SOURCES.md). The project credits ideas and capability comparisons; it does
+not claim affiliation with OpenAI, Anthropic, Nous Research, or any upstream project.
