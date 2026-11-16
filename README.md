@@ -21,7 +21,7 @@ financial correctness, data integrity, or recovery.
 *Workflow illustration, not an application screenshot. The pack guides an existing agent;
 it is not a standalone app.*
 
-**Jump to:** [At a glance](#at-a-glance) · [Quick start](#quick-start) · [How routing works](#how-routing-works) · [Install preview](#install-preview) · [Skills](#skills) · [Roles](#specialist-roles) · [Repository layout](#repository-layout) · [Development](#development) · [Status](#status-and-evidence) · [License](#license)
+**Jump to:** [At a glance](#at-a-glance) · [Quick start](#quick-start) · [How routing works](#how-routing-works) · [Install preview](#install-preview) · [Skills](#skills) · [Roles](#specialist-roles) · [Repository layout](#repository-layout) · [Development](#development) · [License](#license)
 
 ---
 
@@ -34,8 +34,6 @@ it is not a standalone app.*
 | **Host wrappers** | 4 Codex TOML + 4 Claude Markdown |
 | **Memory** | Optional Engram adapters; no credentials imported |
 | **Packaging** | Portable pack with deterministic manifest, checksum, backup, and rollback |
-| **Last local verification** | **258 tests passed**; **294-file archive**; checksum valid |
-| **Host integration** | Static wrapper validation only; live role dispatch is not claimed |
 
 > **Read this first:** installing the skill pack does **not** install an agent, Engram,
 > Chrome, Playwright, plugins, or MCP servers. Use the preview to see what is required for
@@ -216,7 +214,7 @@ flowchart LR
 ```
 
 Simple tasks do not need a phase plan. A phase plan is a contract, not a reason to load
-every skill. See [phase orchestration evidence](docs/VALIDATION.md#phase-orchestration-refinement) and the [capability matrix](docs/V2_CAPABILITY_MATRIX.md)
+every skill. See the [capability matrix](docs/V2_CAPABILITY_MATRIX.md) for capability boundaries.
 and the validator at [`scripts/validate_phase_plan.py`](scripts/validate_phase_plan.py).
 
 ### Single-agent first
@@ -236,8 +234,8 @@ flowchart TD
     G --> H[Parent owns implementation and final result]
 ```
 
-Host role dispatch is not claimed as live in this repository. See
-[tests/host_integration_status.yaml](tests/host_integration_status.yaml).
+Host support and permissions vary by runtime; use the single-agent fallback when a
+bounded role cannot be enforced.
 
 ---
 
@@ -362,8 +360,8 @@ The preview reports secrets as excluded; the importer does not copy them.
 
 ## Repository layout
 
-This tree matches the current source tree; generated `dist/` and ignored local state
-(`.venv/`, `.engram/`, `.serena/`) are intentionally not shown.
+This tree shows the major source paths; generated `dist/`, local state (`.venv/`,
+`.engram/`, `.serena/`), and private working evidence are intentionally not shown.
 
 ```text
 .
@@ -411,13 +409,10 @@ This tree matches the current source tree; generated `dist/` and ignored local s
 │   ├── schemas/                      # memory, enhancement, learning schemas
 │   ├── ADAPTERS.md                   # host compatibility matrix
 │   ├── AGENT_ROLE_ARCHITECTURE.md    # roles, fallback, host limits
-│   ├── PHASE*_EVIDENCE.md            # phase evidence 1–6
-│   ├── HERMES_*                      # baseline, mapping, report
 │   ├── LEARNING_AND_EVALUATION.md   # proposal/evaluation policy
 │   ├── PORTABLE_PACK.md              # export/import/backup/rollback
 │   ├── SETUP_PREVIEW.md              # install preflight
 │   ├── SOURCES.md                    # attribution
-│   ├── VALIDATION.md                 # validation scope/results
 │   └── V2_*                          # memory, capability, phase records
 ├── scripts/
 │   ├── agent_setup_preview.py        # read-only install/support preview
@@ -436,7 +431,7 @@ This tree matches the current source tree; generated `dist/` and ignored local s
 │   ├── roles/                        # invalid role fixture
 │   ├── ui/                           # plain/React/Next fixture checks
 │   ├── hermes_*                      # enhancement/spec matrices
-│   └── test_*.py                     # 258 tests
+│   └── test_*.py
 ├── AGENTS.md                         # maintainer instructions
 ├── AGENTS.snippet.md                 # consuming-project instructions
 ├── README.md
@@ -458,7 +453,7 @@ This tree matches the current source tree; generated `dist/` and ignored local s
 - **`.codex/agents/` and `.claude/agents/`** — project-scoped generated wrappers.
 - **`adapters/`** — host-specific setup and lifecycle docs.
 - **`integrations/`** — optional memory runtimes; never imported by the skill pack.
-- **`docs/`** — evidence, setup, licensing, and design records.
+- **`docs/`** — setup, licensing, design, and project records.
 - **`scripts/`** — validators, previews, renderers, packagers, and benchmarks.
 - **`tests/`** — deterministic verification and synthetic fixtures.
 
@@ -484,7 +479,6 @@ python3 -m venv .venv
 # deterministic gates
 .venv/bin/python scripts/evaluate_phase1_enhancements.py
 .venv/bin/python scripts/evaluate_delegation.py
-.venv/bin/python -m unittest discover -s tests -v
 
 # build the deterministic archive
 .venv/bin/python scripts/build_release.py
@@ -492,19 +486,7 @@ python3 -m venv .venv
 
 On Windows use `.venv\Scripts\python.exe`.
 
-### What each check proves
-
-| Check | Proves | Does not prove |
-| --- | --- | --- |
-| `validate_skills.py` | metadata, names, local links | model compliance |
-| `validate_roles.py` | strict role schema and safety fields | runtime sandboxing |
-| wrapper `--check` | deterministic TOML/Markdown output | host dispatch |
-| `evaluate_phase1_enhancements.py` | correct use vs overuse | live model behavior |
-| `evaluate_delegation.py` | selective policy and fallback | actual subagent execution |
-| `unittest` | repository contracts and fixtures | production behavior |
-| `build_release.py` | deterministic archive and checksum | deployment |
-
-### Preview and test the installer
+### Preview the installer
 
 ```sh
 .venv/bin/python scripts/agent_setup_preview.py --target /tmp/project --with-roles
@@ -514,43 +496,6 @@ On Windows use `.venv\Scripts\python.exe`.
 
 The release archive is generated at `dist/codex-developer-skills-0.1.0.zip`; it is
 ignored by Git and should be attached to a release separately.
-
----
-
-## Status and evidence
-
-| Area | Current evidence |
-| --- | --- |
-| Skills | 17 identities validated |
-| Roles | 4 contracts; 4 Codex TOML + 4 Claude Markdown wrappers parse |
-| Delegation | 8/8 simulated cases; `live_dispatch: false` |
-| Learning | 5/5 proposal cases; staging never edits active skills |
-| Phase 1 | 10/10 use-vs-overuse cases |
-| Phase plans | 4/4 valid |
-| Phase 6 | 8/8 deterministic checks |
-| Tests | **258 passed** |
-| Archive | **294 files**, SHA-256 valid |
-| Codex host | wrapper parse pass; custom role dispatch **NOT_RUN** |
-| Claude host | wrapper parse pass; live dispatch **AUTH_REQUIRED** |
-| DSH | no verified subagent API; **UNSUPPORTED**, single-agent fallback |
-
-Evidence levels are deliberately separated: `STATIC`, `SIMULATED`,
-`REPOSITORY_INTEGRATION`, `HOST_INTEGRATION`, and `REAL_USER_JOURNEY`. A static test is not
-a live host run. Read:
-
-- [Implementation report](docs/HERMES_IMPLEMENTATION_REPORT.md)
-- [48-case evidence matrix](tests/hermes_spec_matrix.yaml)
-- [Validation scope](docs/VALIDATION.md)
-- [Host status](tests/host_integration_status.yaml)
-
-### Known limits
-
-- Live Codex/Claude/DSH role dispatch is not claimed.
-- No live A/B model benchmark, production database, payment, or browser checkout journey
-  is claimed here.
-- Role contracts are policy metadata, not a sandbox.
-- Memory and browser capabilities are optional and host-dependent.
-- `qmd`, evolutionary scoring, and humanizer/style injection remain deferred.
 
 ---
 
@@ -629,10 +574,10 @@ restrictions cannot be enforced, continue with the single-agent fallback.
 
 ## Contributing
 
-Read [CONTRIBUTING.md](CONTRIBUTING.md), [AGENTS.md](AGENTS.md), and
-[Validation scope](docs/VALIDATION.md). For a workflow change, add a representative
-case and run the relevant validator, unit tests, and archive build. Do not add a skill
-just to increase the count; extend an existing owner when it is the same responsibility.
+Read [CONTRIBUTING.md](CONTRIBUTING.md) and [AGENTS.md](AGENTS.md). For a workflow
+change, follow the contribution guide and run the relevant repository checks. Do not add
+a skill just to increase the count; extend an existing owner when it is the same
+responsibility.
 
 For vulnerabilities or sensitive-data exposure, follow [SECURITY.md](SECURITY.md). To publish your own copy, follow [Publishing to GitHub](docs/PUBLISHING.md).
 

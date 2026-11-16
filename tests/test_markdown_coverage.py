@@ -15,6 +15,8 @@ STANDALONE = (
     "tests/fixtures/security/",
     "tests/roles/",
     "tests/ui/",
+    # Developer evidence is intentionally not linked from the public README.
+    "docs/VALIDATION.md",
 )
 
 
