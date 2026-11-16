@@ -13,8 +13,8 @@ class DshEvidenceTests(unittest.TestCase):
         self.data = yaml.safe_load(EVIDENCE.read_text(encoding="utf-8"))
 
     def test_catalog_reports_nine_skills(self):
-        self.assertEqual(self.data["skill_catalog"]["observed"], 16)
-        self.assertEqual(len(self.data["skill_catalog"]["names"]), 16)
+        self.assertEqual(self.data["skill_catalog"]["observed"], 17)
+        self.assertEqual(len(self.data["skill_catalog"]["names"]), 17)
         self.assertLessEqual(
             set(self.data["skill_catalog"]["names"]),
             {

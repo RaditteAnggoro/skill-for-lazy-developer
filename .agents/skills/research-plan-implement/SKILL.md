@@ -20,6 +20,9 @@ For version-sensitive documentation or complex code exploration, use the shared 
 
 Break implementation into increments that can be exercised end to end. State each increment's outcome, dependencies, likely files, and verification. Use actual project commands when known; mark unknown commands as unresolved instead of inventing them. Account for compatibility and data migration where needed.
 
+Read [spike-contract.md](references/spike-contract.md) when one uncertain technical
+question needs a disposable experiment before the plan is reliable.
+
 ## Phase plan
 
 For a multi-stage implementation, the plan is also the orchestration contract. Write a

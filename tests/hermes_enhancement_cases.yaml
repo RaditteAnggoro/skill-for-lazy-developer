@@ -1,0 +1,74 @@
+# Static/simulated contract cases; no model or browser is executed here.
+cases:
+  - id: one-line-copy
+    request: Change a button label from Save to Simpan.
+    primary: lean-senior-engineering
+    support: []
+    reference: .agents/skills/lean-senior-engineering/references/review-and-simplify.md
+    expected: no delegation and proportionate check
+  - id: financial-retry
+    request: Diagnose duplicate posting after a batch restart.
+    primary: transaction-safe-engineering
+    support: [systematic-debugging]
+    reference: .agents/skills/transaction-safe-engineering/references/transaction-checklist.md
+    expected: invariant and rollback evidence
+  - id: api-layer
+    request: Diagnose an HTTP 401 that only occurs through the gateway.
+    primary: systematic-debugging
+    support: [browser-diagnostics]
+    reference: .agents/skills/systematic-debugging/references/api-debugging.md
+    expected: transport/auth/contract/persistence layers separated
+  - id: exploratory-ui
+    request: Exploratory-test the new drag-and-drop report editor and saving.
+    primary: browser-journey-testing
+    support: [ui-quality-verification]
+    reference: .agents/skills/browser-journey-testing/references/exploratory-charter.md
+    expected: journey evidence and no fake screenshots
+  - id: adversarial-ui
+    request: Challenge the approval screen for duplicate controls and lost state.
+    primary: ui-quality-verification
+    support: [ui-design-intelligence]
+    reference: .agents/skills/ui-quality-verification/references/exploratory-qa.md
+    expected: friction evidence with counterexamples
+  - id: grounded-requirements
+    request: Map the repayment FRD requirements to code and tests.
+    primary: spec-to-code-verification
+    support: [architecture-map]
+    reference: .agents/skills/spec-to-code-verification/references/evidence-ledger.md
+    expected: source IDs and COVERED/PARTIAL/MISSING statuses
+  - id: document-actions
+    request: Extract action items from these meeting notes and mark unknowns.
+    primary: feature-discovery
+    support: [spec-to-code-verification]
+    reference: .agents/skills/feature-discovery/references/spikes-and-actions.md
+    expected: provenance without fabricated owners or dates
+  - id: spike
+    request: Run a disposable spike to compare two rendering approaches.
+    primary: research-plan-implement
+    support: [feature-discovery]
+    reference: .agents/skills/research-plan-implement/references/spike-contract.md
+    expected: bounded experiment and cleanup decision
+  - id: ast-structural
+    request: Find every repeated Transactional controller pattern before a rewrite.
+    primary: architecture-map
+    support: [lean-senior-engineering]
+    reference: .agents/skills/adaptive-workflow/references/tool-selection.md
+    expected: dry-run AST matches; no mass rewrite
+  - id: simple-no-browser
+    request: Explain a short utility function.
+    primary: architecture-map
+    support: []
+    reference: .agents/skills/adaptive-workflow/references/tool-selection.md
+    expected: native read-only; no browser or MCP
+  - id: delegation-financial
+    request: Independently review a ledger retry path without editing it.
+    primary: transaction-safe-engineering
+    support: []
+    reference: .agents/skills/adaptive-workflow/references/delegation-policy.md
+    expected: optional read-only specialist
+  - id: learning-proposal
+    request: Propose a reusable lesson from a verified drag-and-drop regression.
+    primary: adaptive-workflow
+    support: []
+    reference: .agents/skills/adaptive-workflow/references/learning-proposal-policy.md
+    expected: local proposal only; human review before skill edit

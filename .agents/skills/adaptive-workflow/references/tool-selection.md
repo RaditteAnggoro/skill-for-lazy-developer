@@ -18,9 +18,11 @@ multiple heavyweight tools for the same evidence without a reason.
 | Browser diagnosis | Chrome DevTools or equivalent for console, network, rendering, and performance evidence | Existing browser diagnostics or automation that captures the required evidence. Do not automatically run it alongside Playwright. |
 | Database evidence | DBHub or equivalent for live schema, index, query-plan, or reconciliation evidence when needed | Inspect repository SQL and migrations; identify runtime evidence as unavailable. |
 | Remote repository | GitHub MCP or equivalent for remote PRs, issues, and CI | Native Git for local status, diffs and history; another authorized remote interface when available. |
+| Structural pattern | ast-grep or an equivalent AST tool when installed and a repeatable syntax pattern is needed | Native search and source inspection; dry-run matches and counts before any rewrite. |
 
 These are examples of capabilities, not guarantees of availability or a requirement to
-use a named vendor. A server being listed does not establish that it works or is
+use a named vendor. AST matching is not equivalent to full semantic analysis; do not
+mass-rewrite critical code from pattern matches without review and tests. A server being listed does not establish that it works or is
 authenticated. Distinguish available and working, registered but disconnected,
 authentication required, disabled, unsupported, missing dependency, invocation failure,
 and unknown. Check only what the task needs. Do not install, enable, configure,

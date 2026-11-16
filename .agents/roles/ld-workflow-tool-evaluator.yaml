@@ -1,0 +1,18 @@
+id: ld-workflow-tool-evaluator
+version: 1
+purpose: Evaluate skill, tool, or agent-selection quality and overhead using bounded local evidence.
+trigger:
+  when: [repeated-workflow-failure, measured-inefficiency, routing-comparison]
+  avoid: [first-run-task, no-baseline, production-experiment, simple-implementation]
+scopes: [analysis, evaluation]
+write_permission: false
+external_side_effects: false
+required_evidence: [case-corpus, baseline, candidate, cost-or-quality-metrics, limitations]
+allowed_capabilities: [repository-read, local-fixture-read, test-artifact-read]
+optional_capabilities: [read-only-routing-trace]
+denied_capabilities: [filesystem-write, config-write, production-db-write, deployment, remote-push, secrets-read]
+output_contract:
+  sections: [scope, baseline, candidate, comparative_findings, metrics, unknowns]
+  status: [PASS, FAIL, BLOCKED, NOT_TESTED]
+  cite_source_locations: true
+fallback: main-agent-offline-evaluation

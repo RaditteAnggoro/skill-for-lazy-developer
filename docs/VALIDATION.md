@@ -428,3 +428,52 @@ enforcement, and no live model routing are claimed.** The evidence records
 Checks recorded at that refinement: validator passed for **16 skills** and local links, **175 unit
 tests** passed, and the reproducible archive contains **190 files** with a verified
 SHA-256 checksum.
+
+
+## Hermes evolution implementation
+
+The repository now includes:
+
+- quality references for exploratory UI QA, risk-weighted TDD, review/simplification,
+  API-layer diagnosis, spikes, grounded evidence, document actions, and AST search;
+- four provider-neutral read-only role contracts, deterministic Codex/Claude wrappers,
+  strict role validation, and opt-in portable-pack roles;
+- selective delegation policy and an eight-case decision table;
+- evidence-gated learning proposals with secret/PII/injection/duplicate rejection and
+  no auto-application to active skills;
+- a 48-case specification evidence matrix distinguishing STATIC, SIMULATED, repository
+  integration, and NOT_RUN/AUTH_REQUIRED/UNSUPPORTED host evidence.
+
+Final current checks: 17 skills validated, 4 roles validated, both wrapper sets
+deterministic/current, **258 unit tests passed**, and a **294-file** archive with a
+valid SHA-256 checksum. Host role dispatch remains unexecuted; see
+[HERMES_IMPLEMENTATION_REPORT.md](HERMES_IMPLEMENTATION_REPORT.md).
+
+
+## Phase 1 use-vs-overuse gate
+
+`scripts/evaluate_phase1_enhancements.py` passes ten deterministic cases covering
+simple copy, financial retry, UI journey, requirement mapping, explanation, API failure,
+structural search, spike, substantial review, and docs typo. Simple tasks apply no
+extra ceremony; high-risk work applies TDD/review; UI, requirements, API, AST, and spike
+enhancements apply only to their trigger. Evidence: [PHASE1_HERMES_EVIDENCE.md](PHASE1_HERMES_EVIDENCE.md).
+
+
+## Phase 2–3 role/delegation gate
+
+Four role contracts validate; unknown/unsafe fields are rejected; Codex and Claude
+wrappers parse deterministically; optional role-pack import maintains backups and
+rollback on collision. Delegation passes 8/8 cases with labelled simulated traces and
+explicit single-agent/fallback modes. No live host dispatch is claimed. See
+[PHASE2_3_EVIDENCE.md](PHASE2_3_EVIDENCE.md).
+
+
+## Phase 4–6 gates
+
+- Phase 4: five proposal cases pass; staging does not touch active skills.
+- Phase 5: twelve Hermes contract cases and the 48-ID evidence matrix cover the advanced
+  references; qmd/evolver/humanizer remain deferred.
+- Phase 6: four Codex TOML and four Claude Markdown wrappers parse; host dispatch is
+  `NOT_RUN` (Codex), `AUTH_REQUIRED` (Claude), and `UNSUPPORTED` (DSH).
+  See [PHASE4_EVIDENCE.md](PHASE4_EVIDENCE.md), [PHASE5_EVIDENCE.md](PHASE5_EVIDENCE.md),
+  and [PHASE6_EVIDENCE.md](PHASE6_EVIDENCE.md).

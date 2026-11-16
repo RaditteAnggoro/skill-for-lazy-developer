@@ -20,3 +20,4 @@ cases:
 - {id: simple-class, need: code, native_ok: true, provider: serena, state: registered_disconnected, gain: false, expected: native}
 - {id: missing-dependency, need: docs, native_ok: false, provider: context7, state: missing_dependency, gain: true, expected: blocked}
 - {id: unverified-mcp, need: remote, native_ok: false, provider: github, state: unknown, discovery: remains_unknown, gain: true, expected: blocked}
+- {id: ast-pattern, need: code, native_ok: true, provider: ast-grep, state: working, gain: true, expected: ast-grep}

@@ -1,0 +1,18 @@
+id: ld-codebase-explorer
+version: 1
+purpose: Locate code ownership, symbols, callers, dependencies, and API/data flow in a bounded repository area.
+trigger:
+  when: [multi-module-codebase, cross-module-impact, large-read-only-exploration]
+  avoid: [one-line-edit, simple-read-only-explanation, small-interface-change]
+scopes: [analysis, exploration]
+write_permission: false
+external_side_effects: false
+required_evidence: [source-anchors, verified-call-paths, unknowns, confidence]
+allowed_capabilities: [repository-read, native-search]
+optional_capabilities: [semantic-symbol-search, ast-structural-search]
+denied_capabilities: [filesystem-write, remote-push, secrets-read, production-db-write, deployment]
+output_contract:
+  sections: [scope, confirmed_findings, candidate_risks, unknowns, evidence]
+  status: [PASS, FAIL, BLOCKED, NOT_TESTED]
+  cite_source_locations: true
+fallback: main-agent-read-only-impact-map

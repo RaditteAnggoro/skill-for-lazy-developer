@@ -27,6 +27,7 @@ PACK_PATHS = (
     "docs/ADAPTERS.md",
     "docs/SOURCES.md",
 )
+ROLE_PATH = ".agents/roles"
 IMPORT_ROOTS = (".agents/skills",)
 IMPORT_FILES = ("AGENTS.snippet.md",)
 
@@ -39,10 +40,11 @@ def _sha256(data):
     return hashlib.sha256(data).hexdigest()
 
 
-def _collect(root):
+def _collect(root, include_roles=False):
     root = Path(root).resolve()
     files = {}
-    for relative in PACK_PATHS:
+    paths = PACK_PATHS + ((ROLE_PATH,) if include_roles else ())
+    for relative in paths:
         path = root / relative
         if not path.exists():
             raise PackError("missing pack path: {}".format(relative))
@@ -55,10 +57,10 @@ def _collect(root):
     return files
 
 
-def export_pack(root, output):
+def export_pack(root, output, include_roles=False):
     root = Path(root).resolve()
     output = Path(output)
-    files = _collect(root)
+    files = _collect(root, include_roles=include_roles)
     skills = sorted(
         Path(rel).parts[2]
         for rel in files
@@ -68,6 +70,11 @@ def export_pack(root, output):
         "format": FORMAT,
         "version": (root / "VERSION").read_text(encoding="utf-8").strip(),
         "skills": skills,
+        "features": ["roles"] if include_roles else [],
+        "roles": sorted(
+            Path(rel).stem for rel in files
+            if rel.startswith(ROLE_PATH + "/") and rel.endswith(".yaml") and Path(rel).name != "schema.yaml"
+        ) if include_roles else [],
         "files": {rel: _sha256(data) for rel, data in sorted(files.items())},
     }
     output.parent.mkdir(parents=True, exist_ok=True)
@@ -124,7 +131,7 @@ def verify_pack(archive):
     return manifest
 
 
-def import_pack(archive, target, apply=False):
+def import_pack(archive, target, apply=False, include_roles=False):
     manifest = verify_pack(archive)
     target = Path(target).resolve()
     if not target.is_dir():
@@ -136,6 +143,8 @@ def import_pack(archive, target, apply=False):
                 parts = PurePosixPath(name).parts
                 if len(parts) >= 3:
                     plan.append("/".join(parts[:3]))
+            elif include_roles and "roles" in manifest.get("features", []) and name.startswith(ROLE_PATH + "/"):
+                plan.append(ROLE_PATH)
             elif name in IMPORT_FILES:
                 plan.append(name)
     unique = sorted(set(plan))
@@ -152,7 +161,9 @@ def import_pack(archive, target, apply=False):
     imported_files = []
     with zipfile.ZipFile(archive) as bundle:
         for name in manifest["files"]:
-            if not name.startswith(".agents/skills/") and name not in IMPORT_FILES:
+            if include_roles and "roles" in manifest.get("features", []) and name.startswith(ROLE_PATH + "/"):
+                pass
+            elif not name.startswith(".agents/skills/") and name not in IMPORT_FILES:
                 continue
             destination = target / name
             if not destination.resolve().is_relative_to(target):
@@ -204,6 +215,7 @@ def main(argv=None):
     export = sub.add_parser("export")
     export.add_argument("--root", type=Path, default=Path(__file__).resolve().parents[1])
     export.add_argument("--output", type=Path, required=True)
+    export.add_argument("--with-roles", action="store_true")
     verify = sub.add_parser("verify")
     verify.add_argument("archive", type=Path)
     verify.add_argument("--json", action="store_true")
@@ -211,6 +223,7 @@ def main(argv=None):
     imp.add_argument("archive", type=Path)
     imp.add_argument("--target", type=Path, required=True)
     imp.add_argument("--apply", action="store_true")
+    imp.add_argument("--with-roles", action="store_true")
     imp.add_argument("--json", action="store_true")
     roll = sub.add_parser("rollback")
     roll.add_argument("--backup", type=Path, required=True)
@@ -219,11 +232,11 @@ def main(argv=None):
     args = parser.parse_args(argv)
     try:
         if args.command == "export":
-            result = export_pack(args.root, args.output)
+            result = export_pack(args.root, args.output, include_roles=args.with_roles)
         elif args.command == "verify":
             result = verify_pack(args.archive)
         elif args.command == "import":
-            result = import_pack(args.archive, args.target, apply=args.apply)
+            result = import_pack(args.archive, args.target, apply=args.apply, include_roles=args.with_roles)
         else:
             result = rollback(args.backup, args.target)
     except (OSError, PackError, ValueError, json.JSONDecodeError) as exc:

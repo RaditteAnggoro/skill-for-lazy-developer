@@ -38,7 +38,7 @@ class ToolSelectionContractTests(unittest.TestCase):
     def test_relevant_capability_states_and_boundaries_are_documented(self):
         text = REFERENCE.read_text(encoding='utf-8').casefold()
         for phrase in ('serena', 'context7', 'playwright', 'chrome devtools', 'dbhub',
-                       'github', 'disconnected', 'authentication required', 'disabled',
+                       'github', 'ast-grep', 'disconnected', 'authentication required', 'disabled',
                        'unsupported', 'missing dependency', 'invocation failure', 'unknown',
                        'read-only credentials', 'side-effecting', 'explain', 'production',
                        'native fallback', 'diagnosis-only', 'not runtime enforcement'):

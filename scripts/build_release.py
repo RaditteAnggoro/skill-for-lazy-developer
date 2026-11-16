@@ -9,8 +9,8 @@ from zipfile import ZipFile, ZipInfo, ZIP_DEFLATED
 
 
 PATHS = (
-    ".agents/skills", ".github", "docs", "scripts", "tests",
-    "adapters", "integrations", ".codex-plugin/plugin.json",
+    ".agents/skills", ".agents/roles", ".github", "docs", "scripts", "tests",
+    "adapters", "integrations", ".codex", ".claude", ".codex-plugin/plugin.json",
     "AGENTS.md", "AGENTS.snippet.md", "README.md", "LICENSE", "NOTICE.md",
     "THIRD_PARTY_NOTICES.md", "CITATION.cff", "VERSION",
     "CHANGELOG.md", "CONTRIBUTING.md", "SECURITY.md", ".gitignore",

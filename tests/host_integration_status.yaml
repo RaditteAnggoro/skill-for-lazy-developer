@@ -1,0 +1,17 @@
+# Honest host status; static wrapper parsing is not a live role dispatch.
+hosts:
+  codex:
+    version: 0.167.0
+    wrapper_parse: pass
+    host_role_dispatch: NOT_RUN
+    reason: No supported non-interactive custom-agent dispatch was exercised in this implementation.
+  claude:
+    version: 2.1.322
+    wrapper_parse: pass
+    host_role_dispatch: AUTH_REQUIRED
+    reason: The installed CLI reports loggedIn false; no live session was run.
+  dsh:
+    version: observed adapter target
+    wrapper_parse: not_applicable
+    host_role_dispatch: UNSUPPORTED
+    reason: No verified DSH subagent API in the implemented adapter; use single-agent role guidance.

@@ -17,6 +17,30 @@ without an adapter and what each host needs.
 | Lifecycle hooks | Codex hooks implemented | Claude hooks implemented | DSH agent lifecycle implemented |
 | Automatic recall | Codex `SessionStart` | Claude `SessionStart` | DSH pre-step with prompt |
 | Handoff | Codex `Stop` conditional | Claude `Stop` conditional | DSH `agent/turn-stopping` conditional |
+| Specialist roles | Project `.codex/agents/*.toml` | Project `.claude/agents/*.md` | Single-agent role-guided fallback; no verified subagent API |
+
+## Optional specialist roles
+
+The provider-neutral role layer lives in [`.agents/roles/`](../.agents/roles/). It is
+separate from skills and is not another router. Validate and render project-scoped
+wrappers without touching user home:
+
+```sh
+python scripts/validate_roles.py
+python scripts/render_agent_adapters.py --host codex --check
+python scripts/render_agent_adapters.py --host claude --check
+```
+
+- Codex wrappers: `.codex/agents/ld-*.toml` (name, description, developer instructions;
+  no model or sandbox mode).
+- Claude wrappers: `.claude/agents/ld-*.md` (read-only `Read, Grep, Glob`).
+- DSH: no verified subagent API in the implemented adapter. Use the role as a sequential
+  rubric and label the trace `execution_mode=single-agent-role-guided`; never claim a
+  real subagent. Memory hooks remain unchanged.
+- Role policy (`write_permission: false`) is not a sandbox. If the host cannot enforce
+  read-only behavior, do not dispatch; use the main-agent fallback.
+
+See [AGENT_ROLE_ARCHITECTURE.md](AGENT_ROLE_ARCHITECTURE.md) for the full contract.
 
 A check mark for "workflow content" means the instructions are portable. It does not
 mean a host automatically discovers every file or provides the same tools.

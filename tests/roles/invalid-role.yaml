@@ -1,0 +1,14 @@
+id: ld-invalid
+version: 1
+purpose: Invalid fixture.
+trigger: {when: [], avoid: []}
+scopes: [unknown]
+write_permission: true
+external_side_effects: true
+required_evidence: []
+allowed_capabilities: [filesystem-write]
+optional_capabilities: []
+denied_capabilities: []
+output_contract: {sections: [], status: [PASS, OK], cite_source_locations: false}
+fallback: ""
+surprise: true

@@ -91,10 +91,10 @@ class RoutingPolicyTests(unittest.TestCase):
         text = (ROOT / "AGENTS.snippet.md").read_text(encoding="utf-8")
         normalized = " ".join(text.split()).casefold()
         for phrase in (
-            "trusted, approachable friend",
+            "sharp friend",
             "not a formal support agent",
             "comfortable to ask a basic question",
-            "do not force slang",
+            "use slang naturally when it fits",
             "Never claim human identity",
         ):
             self.assertIn(phrase.casefold(), normalized)

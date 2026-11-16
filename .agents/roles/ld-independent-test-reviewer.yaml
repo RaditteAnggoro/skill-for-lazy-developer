@@ -1,0 +1,18 @@
+id: ld-independent-test-reviewer
+version: 1
+purpose: Independently inspect test coverage and change evidence without editing source or trusting a green build alone.
+trigger:
+  when: [meaningful-change, high-consequence-review, independent-verification]
+  avoid: [trivial-doc-edit, simple-ui-copy-change, no-change-to-verify]
+scopes: [review, verification]
+write_permission: false
+external_side_effects: false
+required_evidence: [scenario-matrix, executed-vs-inspected, source-references, missing-cases]
+allowed_capabilities: [repository-read, test-artifact-read]
+optional_capabilities: [safe-test-execution]
+denied_capabilities: [filesystem-write, source-write, test-write, remote-push, production-db-write, deployment]
+output_contract:
+  sections: [scope, scenario_results, missing_coverage, contradictions, unknowns]
+  status: [PASS, FAIL, BLOCKED, NOT_TESTED]
+  cite_source_locations: true
+fallback: main-agent-read-only-verification

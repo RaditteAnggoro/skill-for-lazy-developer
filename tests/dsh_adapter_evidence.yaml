@@ -9,11 +9,12 @@ host:
   node: v24.22.1
   python: 3.9.6
 skill_catalog:
-  expected: 16
-  observed: 16
+  expected: 17
+  observed: 17
   live_catalog_reverified: true
   names:
     - adaptive-workflow
+    - browser-journey-testing
     - architecture-map
     - browser-diagnostics
     - feature-discovery

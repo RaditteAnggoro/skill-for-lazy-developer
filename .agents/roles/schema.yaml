@@ -1,0 +1,27 @@
+schema_version: 1
+id_pattern: '^ld-[a-z0-9-]+$'
+required_fields:
+  - id
+  - version
+  - purpose
+  - trigger
+  - scopes
+  - write_permission
+  - external_side_effects
+  - required_evidence
+  - allowed_capabilities
+  - optional_capabilities
+  - denied_capabilities
+  - output_contract
+  - fallback
+trigger_fields: [when, avoid]
+output_fields: [sections, status, cite_source_locations]
+status_values: [PASS, FAIL, BLOCKED, NOT_TESTED]
+scopes: [analysis, review, verification, exploration, evaluation]
+rules:
+  - write_permission must be false for every initial role
+  - external_side_effects must be false for every initial role
+  - allowed and denied capabilities must not overlap
+  - denied capabilities must include filesystem-write and remote-push
+  - output_contract must require source locations
+  - role files are policy metadata, not a runtime sandbox

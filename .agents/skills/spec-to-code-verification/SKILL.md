@@ -34,6 +34,10 @@ residual risk.
 
 Read [traceability-matrix.md](references/traceability-matrix.md) for the output format.
 
+Use [evidence-ledger.md](references/evidence-ledger.md) for grounded citations and the
+COVERED/PARTIAL/MISSING/UNCLEAR/NOT_TESTED/NOT_APPLICABLE states. Never turn a missing
+source detail into an invented requirement.
+
 ## Report and verify fixes
 
 Report pass, fail, partial, untested, and out-of-scope requirements. Include orphan tests

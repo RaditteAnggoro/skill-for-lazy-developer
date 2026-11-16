@@ -86,6 +86,21 @@ python scripts/install_codex_adapter.py rollback \
 `uninstall` removes only this adapter's hook handlers and runtime/config files. It
 preserves unrelated hooks.
 
+## Optional specialist roles
+
+Project-scoped role wrappers are generated under `.codex/agents/` from
+`.agents/roles/`; they are not installed into `~/.codex` and do not include a model or
+sandbox mode. Validate them before use:
+
+```sh
+python scripts/validate_roles.py
+python scripts/render_agent_adapters.py --host codex --check
+```
+
+The installed Codex version must support project custom-agent discovery; verify its
+documented behavior and trust settings. Role policy is not a sandbox. If read-only
+behavior cannot be enforced, do not dispatch the role; use the main-agent fallback.
+
 ## Verification
 
 The standard end-to-end check uses a disposable `CODEX_HOME`, a real Engram store,

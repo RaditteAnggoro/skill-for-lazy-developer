@@ -18,6 +18,9 @@ question or two or three outcome-based choices. Use the shorter form that makes 
 decision easiest. Do not run a questionnaire, expose internal skill names, or ask the
 user to explain implementation concepts that can be learned from the repository.
 
+Read [spikes-and-actions.md](references/spikes-and-actions.md) for bounded spikes and
+document-to-action extraction with provenance.
+
 ## Describe the feature
 
 Keep the specification proportional. For a small feature, a few lines in the conversation are sufficient. For larger work, use the repository's existing documentation location when a saved plan is requested or needed for execution.

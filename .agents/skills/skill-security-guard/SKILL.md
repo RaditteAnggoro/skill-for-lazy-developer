@@ -38,7 +38,9 @@ Look for:
 
 Use the repository scanner when available:
 `python scripts/scan_skill_security.py <candidate>`.
-The scanner is a triage aid, not proof of safety.
+The scanner is a triage aid, not proof of safety. Also review generated role wrappers
+and any proposed skill-learning diff for permission broadening, hidden instructions,
+and out-of-scope writes; a role label is policy metadata, not a sandbox.
 
 Read [review-checklist.md](references/review-checklist.md) for the decision record.
 

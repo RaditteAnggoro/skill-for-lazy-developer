@@ -1,0 +1,52 @@
+# Deterministic Phase 1 use-vs-overuse cases. No model or browser is executed.
+cases:
+  - id: one-line-copy
+    task_kind: simple_copy
+    risk: low
+    change_scope: tiny
+    expected: []
+  - id: financial-retry
+    task_kind: financial
+    risk: high
+    change_scope: substantial
+    expected: [tdd, review]
+  - id: ui-journey
+    task_kind: ui_journey
+    risk: medium
+    change_scope: substantial
+    expected: [exploratory_qa]
+  - id: requirements-map
+    task_kind: requirements
+    risk: medium
+    change_scope: substantial
+    expected: [evidence_ledger]
+  - id: simple-explanation
+    task_kind: explanation
+    risk: low
+    change_scope: none
+    expected: []
+  - id: api-401
+    task_kind: api_failure
+    risk: medium
+    change_scope: substantial
+    expected: [api_layers]
+  - id: structural-search
+    task_kind: structural
+    risk: medium
+    change_scope: substantial
+    expected: [ast]
+  - id: uncertain-rendering
+    task_kind: spike
+    risk: medium
+    change_scope: substantial
+    expected: [spike]
+  - id: substantial-review
+    task_kind: code_review
+    risk: medium
+    change_scope: substantial
+    expected: [review, simplify]
+  - id: docs-typo
+    task_kind: docs
+    risk: low
+    change_scope: tiny
+    expected: []

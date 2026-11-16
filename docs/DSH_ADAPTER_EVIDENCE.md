@@ -28,7 +28,7 @@ smoke test.
 
 | Area | Result |
 | --- | --- |
-| Skill discovery | 16 workflows detected in the live DSH catalog and by the adapter tests |
+| Skill discovery | 17 workflows detected in the live DSH catalog and by the adapter tests |
 | Instruction installer | Create, check, idempotent install, uninstall, rollback, and user-content preservation pass |
 | DSH routing corpus | 24 / 24 passed |
 | Read-only boundaries | Included in routing cases |
@@ -143,8 +143,8 @@ python scripts/verify_dsh_bundle_lifecycle.py \
 
 ## Maintenance checks
 
-The current repository checks validate sixteen skills and local links, pass 145 unit
-tests, and build a reproducible 91-file archive with a verified SHA-256 checksum. The
+The current repository checks validate seventeen skills and local links, pass 258 unit
+tests, and build a reproducible 294-file archive with a verified SHA-256 checksum. The
 DSH profile, model credentials, Engram data, and provider binaries remain local test
 artifacts and are not distributed.
 

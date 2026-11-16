@@ -21,6 +21,10 @@ Trace the faulty value or state through callers and boundaries. Compare a workin
 
 For diagnosis-only work, use existing logs, read-only inspection, or isolated scratch experiments without editing repository source or configuration. When code changes are authorized, add narrow temporary instrumentation if a boundary is uncertain. Capture field names, types, timing, and redacted identifiers as needed; do not print credentials or complete sensitive payloads. Avoid permanent instrumentation unless it serves the requested fix.
 
+Read [api-debugging.md](references/api-debugging.md) when the failure crosses HTTP,
+authentication, schema, GraphQL, or a downstream service; keep transport, contract, and
+persistence causes separate.
+
 ## Test a hypothesis
 
 State a concrete explanation and the observation that would confirm or reject it. Use a small experiment that isolates the relevant variable. Read the result before changing the explanation. Preserve useful evidence and remove temporary changes that no longer serve the task.

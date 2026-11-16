@@ -2,6 +2,15 @@
 
 ## Unreleased
 
+- Add Hermes-inspired quality enhancements without new skills: exploratory UI QA,
+  risk-weighted TDD, review/simplification, API-layer debugging, spikes, grounded
+  evidence, document actions, and optional AST structural search.
+- Add four provider-neutral read-only role contracts, strict role validation, and
+  deterministic Codex/Claude project wrappers. No user-home installation.
+- Add selective delegation policy, bounded decision cases, and host/DSH fallback rules.
+- Add evidence-gated skill-learning proposals with local staging, privacy/security
+  scanning, deduplication, and no automatic active-skill modification.
+- Extend the portable pack with opt-in role contracts while preserving default behavior.
 - Make browser journeys explicit phases in the UI orchestration examples and preserve
   separate verification and visual-audit phases.
 - Add provider-neutral, native-first tool selection with safe fallback and explicit

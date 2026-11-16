@@ -33,6 +33,14 @@ Inspect the final diff for accidental edits. When delegated work was used, inspe
 
 Fix failures introduced by the requested change when authorized, then rerun the affected check. Do not weaken checks or expand into unrelated repair work to create a clean report.
 
+## Pre-commit evidence gate
+
+Before a completion claim, check the changed files and direct consumers for correctness,
+regression risk, security, public contracts, error handling, transaction boundaries,
+and test evidence. A review suggestion is not an executed test. For a high-consequence
+change, an independent read-only review may be useful; it is optional, not a default
+fan-out. Report blocker/improvement/question/not-verified separately.
+
 ## Handoff
 
 Give the result and a concise evidence statement: command or interaction checked, result, and material gaps. If the environment prevents a check, explain the blocker and the remaining action precisely. Do not describe code as deployed, secure, compatible, or fully tested on the strength of a narrower check.

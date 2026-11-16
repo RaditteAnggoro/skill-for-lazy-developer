@@ -12,7 +12,25 @@ plain repositories that can read `.agents/skills/`.
 - `VERSION` and a canonical `manifest.json`.
 
 The manifest records every file hash, the pack format, and the skill names. A sibling
-`.sha256` file records the archive digest.
+`.sha256` file records the archive digest. Role contracts are **optional**:
+
+```sh
+python scripts/package_skill_pack.py export --output dist/skill-pack.zip --with-roles
+python scripts/package_skill_pack.py import dist/skill-pack.zip --target /path/to/project --with-roles
+```
+
+Without `--with-roles`, the default pack and import behave exactly as before.
+
+## Preview first
+
+```sh
+python scripts/agent_setup_preview.py --target /path/to/project
+python scripts/agent_setup_preview.py --target /path/to/project --with-roles --with-memory --with-ui
+```
+
+The preview lists conflicts, skipped host-specific files, required/optional apps and
+plugins, and the fact that credentials are never imported. It does not modify the
+target. See [SETUP_PREVIEW.md](SETUP_PREVIEW.md).
 
 ## Export
 

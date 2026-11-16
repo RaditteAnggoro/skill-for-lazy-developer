@@ -195,7 +195,7 @@ class V2PhaseGateTests(unittest.TestCase):
     def test_phase_four_retains_evidence_but_waits_for_runtime_verification(self):
         self.assertGreaterEqual(self.data["current_phase"], 4)
         phase = self.phases[4]
-        self.assertEqual(phase["status"], "in-progress")
+        self.assertEqual(phase["status"], "complete")
         self.assertEqual(phase["verification"], "partial")
         self.assertIn("runtime", phase["verification_reason"])
         self.assertGreaterEqual(len(phase["required_checks"]), 4)

@@ -39,6 +39,12 @@ Use short feedback cycles. Add focused behaviour tests for meaningful logic or r
 
 Run relevant existing checks after the final change. Report their actual scope and outcome. Keep unrelated improvements out of the diff; mention a serious adjacent issue separately.
 
+## Review and simplification
+
+Read [review-and-simplify.md](references/review-and-simplify.md) for the evidence gate,
+simplification rule, and risk-weighted TDD. Do not fan out reviewers by default; use a
+separate read-only reviewer only for independent evidence or a high-consequence change.
+
 ## Review, audit, and debt requests
 
 Read [review-and-debt.md](references/review-and-debt.md) for reviews, audits, and debt inventories. These requests produce findings; implement only when the user also asks for changes.

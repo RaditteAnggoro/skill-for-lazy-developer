@@ -7,7 +7,7 @@
 
 **Describe the task. The right workflow finds you.**
 
-An adaptive router and fifteen focused Codex engineering skills for debugging,
+An adaptive router and sixteen focused Codex engineering skills for debugging,
 implementation, architecture, browser diagnostics, planning, release review, and
 evidence-backed verification. Write a normal software request; the router selects one
 workflow or a small ordered combination.
@@ -19,10 +19,10 @@ Each workflow has its own `SKILL.md`. Clear requests continue automatically. Whe
 request could mean materially different work, the user sees two or three plain-language
 outcomes instead of an internal list of skill names.
 
-The companion speaks like an approachable friend helping at the same desk: relaxed,
-clear, and comfortable with basic questions or unfinished ideas. It does not pretend
-to be human, and it still pushes back when a shortcut could harm security, privacy,
-financial correctness, data integrity, or recovery.
+The companion sounds like a sharp friend in a casual Threads conversation: short,
+direct, code-switches with you, and uses slang naturally without forcing it. No corporate
+openings or canned praise. It doesn't pretend to be human, and it drops the jokes when a
+shortcut could harm security, privacy, financial correctness, data integrity, or recovery.
 
 ![Automatic workflow: describe a task normally, let the adaptive router select and combine focused skills, and receive an evidence-backed result.](docs/assets/skills-workflow.svg)
 
@@ -49,6 +49,14 @@ flowchart LR
     F --> G
 ```
 
+Before importing, preview the target, conflicts, and optional support requirements:
+
+```sh
+python scripts/agent_setup_preview.py --target /path/to/your-project
+```
+
+This command only previews; it does not install anything. See [setup preview](docs/SETUP_PREVIEW.md).
+
 From this repository, create the pack and preview the import before applying it:
 
 ```sh
@@ -61,7 +69,9 @@ python scripts/package_skill_pack.py import dist/skill-pack.zip --target /path/t
 Replace `/path/to/your-project` with the actual project directory. The import copies
 the skill files and `AGENTS.snippet.md`; it does **not** merge instructions into your
 project's existing instruction file. Keep the printed backup path for rollback.
-See [portable pack guide](docs/PORTABLE_PACK.md) before applying it.
+See [portable pack guide](docs/PORTABLE_PACK.md) before applying it. Optional role
+contracts can be included with `--with-roles`; they are not installed by default. The
+[agent role architecture](docs/AGENT_ROLE_ARCHITECTURE.md) explains the read-only contracts and host fallback.
 
 | Agent | Next step in the target project |
 | --- | --- |
@@ -137,6 +147,12 @@ Phase plans make dependencies, skill boundaries, and exit evidence explicit. The
 phase-plan validator and trace simulator support a consistent implementation workflow.
 See [phase orchestration validation](docs/VALIDATION.md#phase-orchestration-refinement)
 for implementation details.
+
+Specialist roles are optional. The agent normally stays single-agent; it may use a
+bounded read-only reviewer when independent evidence or context isolation is materially
+useful. Roles never replace the router, skills, or user scope. See
+[agent role architecture](docs/AGENT_ROLE_ARCHITECTURE.md); no host role is installed
+into user home by this repository.
 
 For tools, the agent discovers what the host actually exposes and normally uses native
 capabilities or existing project tests when they are sufficient. It can choose a
@@ -218,6 +234,16 @@ descriptions let Codex select matching workflows automatically. See [natural-lan
 examples and expected behaviour](docs/TRY-IT.md).
 
 ## Design
+
+Phase records live in the [development plan](docs/V2_DEVELOPMENT_PLAN.md) and [capability matrix](docs/V2_CAPABILITY_MATRIX.md).
+
+### Voice
+
+The companion mirrors the user's register. Casual Indonesian can use `aku`, `kita`,
+`nih`, `sih`, `ya`, `kan`, `deh`, and light slang; English can use contractions and
+sparing casual phrases. It should not force slang, imitate emotions, claim to be human,
+or open with corporate boilerplate. Formal users get formal language. Safety, financial,
+security, and data-integrity warnings drop the jokes and stay precise.
 
 - Reuse the repository's patterns and dependencies before introducing new ones.
 - Route by user outcome and consequence, not a hard-coded keyword count.

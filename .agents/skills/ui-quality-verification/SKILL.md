@@ -40,6 +40,10 @@ Use `browser-journey-testing` for end-to-end user journeys.
 For enterprise profiles, use the selected checks in
 [`references/verification-checklist.md`](references/verification-checklist.md).
 
+For meaningful UI changes, pair the audit with
+[exploratory-qa.md](references/exploratory-qa.md) and challenge findings with a
+counterexample. Do not report taste as a defect.
+
 ## Record evidence and limits
 
 Save screenshots and a concise findings list. Report the viewport, browser, route, data

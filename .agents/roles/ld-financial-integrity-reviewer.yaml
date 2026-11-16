@@ -1,0 +1,18 @@
+id: ld-financial-integrity-reviewer
+version: 1
+purpose: Challenge idempotency, retries, transaction boundaries, ledger balancing, reconciliation, and auditability; never execute changes.
+trigger:
+  when: [financial-write-path, batch-retry, posting-ledger, reconciliation, money-movement]
+  avoid: [small-ui-change, simple-read-only-explanation, unrelated-frontend-copy]
+scopes: [analysis, review, verification]
+write_permission: false
+external_side_effects: false
+required_evidence: [source-anchors, invariants, failure-scenarios, required-tests, confidence]
+allowed_capabilities: [repository-read, static-sql-review]
+optional_capabilities: [semantic-symbol-search]
+denied_capabilities: [production-db-write, database-connection, filesystem-write, deployment, secrets-read, remote-push]
+output_contract:
+  sections: [scope, confirmed_findings, candidate_risks, required_tests, unknowns]
+  status: [PASS, FAIL, BLOCKED, NOT_TESTED]
+  cite_source_locations: true
+fallback: main-agent-read-only-financial-review

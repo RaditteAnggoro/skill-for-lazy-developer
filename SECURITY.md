@@ -12,6 +12,18 @@ Include the affected skill/tool version, a minimal sanitized reproduction, expec
 
 Reports about unintended tool use, data exposure, filesystem access in repository scripts, or instructions that expand a user's request are useful. The validator checks structure and local links; it is not a security audit of agent behaviour. Browser access and external integrations keep their own permissions and data-handling rules.
 
+## Role wrappers and learning proposals
+
+Role contracts are policy metadata, not runtime sandboxes. Review the actual host
+permissions before dispatch; if read-only execution cannot be enforced, use the
+single-agent fallback. Generated wrappers must stay inside the repository and must not
+specify provider credentials, models, or global settings.
+
+Skill-learning proposals are staged locally and are never applied to active skills
+automatically. The proposal scanner rejects secrets, PII, injection, duplicates, and
+unobserved evidence. Human review and normal repository tests are required before a
+proposal becomes an instruction. See [LEARNING_AND_EVALUATION.md](docs/LEARNING_AND_EVALUATION.md).
+
 ## Third-party skills
 
 Use `python scripts/scan_skill_security.py <path>` as a triage aid before adopting a

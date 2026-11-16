@@ -22,6 +22,7 @@ are not copied into the distributed skill instructions.
 | [React](https://github.com/facebook/react) | 19.1.1 | MIT | React fixture |
 | [Vite](https://github.com/vitejs/vite) | 7.1.7 | MIT | React fixture build |
 | [Next.js](https://github.com/vercel/next.js) | 15.5.29 | MIT | Next.js fixture |
+| [tomli](https://github.com/hukkin/tomli) | 2.0.1 | MIT | TOML role-wrapper validation on Python 3.9 |
 
 `tiktoken` may install `requests`, `regex`, `certifi`, `idna`, `urllib3`, and
 `charset-normalizer` as transitive development dependencies. `jsonschema` uses

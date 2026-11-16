@@ -39,6 +39,11 @@ across systems that cannot provide it.
 For batches, persist checkpoints and a replay marker. Replays must be idempotent and
 must not reset missing values to zero. Reconcile totals before and after recovery.
 
+For a high-consequence financial change, consider one independent read-only integrity
+review of idempotency, replay, transaction boundaries, ledger balance, and auditability.
+It is advisory and must not write production data. Do not delegate every transaction
+change by default.
+
 ## Verify
 
 If live database evidence is necessary, follow the database safeguards in the shared [tool selection guide](../adaptive-workflow/references/tool-selection.md); never assume a connection or treat a client read-only flag as a security boundary.

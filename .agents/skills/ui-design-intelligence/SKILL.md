@@ -47,6 +47,9 @@ contains dense tables, filters, approvals, long forms, reconciliation, or financ
 data. Apply only the profiles relevant to the task; do not turn every screen into a
 dashboard.
 
+Read [adversarial-ux.md](references/adversarial-ux.md) when reviewing a proposed
+interface for duplicated controls, lost state, or safety-eroding simplification.
+
 ## Handoff
 
 Return a compact design brief, the affected components, responsive rules, state

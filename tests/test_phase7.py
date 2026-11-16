@@ -103,6 +103,37 @@ class Phase7Tests(unittest.TestCase):
     def test_pack_skills_pass_security_triage(self):
         self.assertEqual(scan_path(ROOT / ".agents/skills"), [])
 
+    def test_optional_role_pack_is_opt_in_and_imports_safely(self):
+        roles_archive = self.root / "roles.zip"
+        export_pack(ROOT, roles_archive, include_roles=True)
+        manifest = verify_pack(roles_archive)
+        self.assertIn("roles", manifest["features"])
+        self.assertEqual(len(manifest["roles"]), 4)
+        target = self.root / "role-target"
+        target.mkdir()
+        dry = import_pack(roles_archive, target, apply=False, include_roles=True)
+        self.assertIn(".agents/roles", dry["files"])
+        import_pack(roles_archive, target, apply=True, include_roles=True)
+        self.assertTrue((target / ".agents/roles/ld-financial-integrity-reviewer.yaml").is_file())
+        self.assertTrue((target / ".agents/roles/schema.yaml").is_file())
+        plain = self.root / "plain-target"
+        plain.mkdir()
+        import_pack(self.archive, plain, apply=True)
+        self.assertFalse((plain / ".agents/roles").exists())
+
+    def test_optional_role_import_preserves_existing_role_and_rolls_back(self):
+        roles_archive = self.root / "roles-collision.zip"
+        export_pack(ROOT, roles_archive, include_roles=True)
+        target = self.root / "role-collision"
+        existing = target / ".agents/roles/ld-financial-integrity-reviewer.yaml"
+        existing.parent.mkdir(parents=True)
+        existing.write_text("id: custom-role\n", encoding="utf-8")
+        applied = import_pack(roles_archive, target, apply=True, include_roles=True)
+        self.assertTrue(Path(applied["backup"]).is_dir())
+        self.assertNotEqual(existing.read_text(encoding="utf-8"), "id: custom-role\n")
+        rollback(Path(applied["backup"]), target)
+        self.assertEqual(existing.read_text(encoding="utf-8"), "id: custom-role\n")
+
     def test_license_inventory_covers_development_tools(self):
         text = (ROOT / "THIRD_PARTY_NOTICES.md").read_text(encoding="utf-8").lower()
         for name in ("pyyaml", "tiktoken", "playwright-core", "pngjs", "pixelmatch", "react", "vite", "next.js"):

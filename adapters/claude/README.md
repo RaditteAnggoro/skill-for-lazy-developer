@@ -74,6 +74,21 @@ python scripts/install_claude_adapter.py rollback \
 
 Uninstall removes only this adapter's handlers and private runtime/config files.
 
+## Optional specialist roles
+
+Project-scoped role wrappers are generated under `.claude/agents/` from
+`.agents/roles/`. They use only `Read, Grep, Glob` and do not install into user home or
+global settings.
+
+```sh
+python scripts/render_agent_adapters.py --host claude --check
+```
+
+Confirm that the installed Claude Code version discovers project subagents and restart
+or trust-review as required. Claude authentication is host state; this repository does
+not create or store it. The wrappers are read-only by policy, not by a claim of runtime
+sandboxing.
+
 ## Verification status
 
 The hook configuration and shared runtime are unit-tested with real Claude hook JSON

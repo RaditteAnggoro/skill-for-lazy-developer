@@ -65,7 +65,27 @@ Every later phase must re-check current upstream behaviour, license, privacy,
 permissions, and supply-chain risk before adopting a dependency or transforming
 source material.
 
+## Hermes-inspired references
+
+The enhancement specification adapts ideas from the official Hermes documentation,
+not executable source or prompts. Hermes is not a dependency.
+
+- [Skills system](https://hermes-agent.nousresearch.com/docs/user-guide/features/skills)
+- [Bundled catalog](https://hermes-agent.nousresearch.com/docs/reference/skills-catalog)
+- [Optional catalog](https://hermes-agent.nousresearch.com/docs/reference/optional-skills-catalog)
+- [Creating skills](https://hermes-agent.nousresearch.com/docs/developer-guide/creating-skills)
+- [Tools reference](https://hermes-agent.nousresearch.com/docs/reference/tools-reference)
+
+Host role format references: [Codex subagents](https://learn.chatgpt.com/docs/agent-configuration/subagents),
+[Codex config](https://learn.chatgpt.com/docs/config-file/config-basic), and
+[Claude Code subagents](https://code.claude.com/docs/en/sub-agents). No host role was
+installed into a user home or global configuration.
+
+## Test tooling
 ## Test tooling
 
 UI fixture checks use Playwright Core, pngjs, and pixelmatch as development-only
 dependencies. They are not vendored into the distributed skill instructions.
+
+See the [third-party adoption register](THIRD_PARTY_ADOPTION_REGISTER.md) for the
+current deferred evaluation list. It is not a security approval.

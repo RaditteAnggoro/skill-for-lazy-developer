@@ -11,7 +11,7 @@ safe, repeatable merge of the shared instructions.
 python scripts/dsh_adapter.py check --root .
 ```
 
-The check requires the nine workflow directories, valid frontmatter, and one current
+The check requires the seventeen workflow directories, valid frontmatter, and one current
 marked block in `AGENTS.md`. It changes nothing.
 
 ## Install
@@ -48,3 +48,13 @@ installer. Backups stay inside the project.
 
 The DSH memory runtime is a separate bundle under
 [`integrations/dsh/companion-memory`](../../integrations/dsh/companion-memory).
+
+## Optional specialist roles
+
+The provider-neutral role layer is not a DSH subagent runtime. No supported, verified
+subagent API is claimed for the implemented adapter. Use the role contracts as a
+sequential review rubric after the relevant skill phase, and label the trace
+`execution_mode=single-agent-role-guided`. Preserve the memory hooks and user controls.
+
+If a future DSH release exposes a documented delegation API with enforceable read-only
+permissions, add a separate adapter and live test; do not infer it from Codex or Claude.

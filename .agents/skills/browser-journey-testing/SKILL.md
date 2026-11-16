@@ -40,6 +40,10 @@ For an unexplained failure, use `browser-diagnostics` to investigate. For a broa
 visual, responsive, keyboard, and accessibility audit use `ui-quality-verification`.
 Fix findings only when implementation is authorized, then rerun affected journeys.
 
+For a significant interactive change, use the bounded
+[exploratory-charter.md](references/exploratory-charter.md): inventory the journey,
+challenge friction, and capture expected-vs-actual evidence without random clicking.
+
 ## Report honestly
 
 List journeys and states exercised, expected and actual outcomes, evidence, unresolved

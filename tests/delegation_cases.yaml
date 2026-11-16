@@ -1,0 +1,65 @@
+cases:
+  - id: one-line-edit
+    task: One-line JSX label change.
+    independent: false
+    consequence: low
+    host_supported: true
+    permissions_readonly: true
+    expected: single
+    role: null
+  - id: simple-explanation
+    task: Explain a short function.
+    independent: false
+    consequence: low
+    host_supported: true
+    permissions_readonly: true
+    expected: single
+    role: null
+  - id: financial-restart
+    task: Diagnose duplicate posting after batch restart.
+    independent: true
+    consequence: high
+    host_supported: true
+    permissions_readonly: true
+    expected: delegate
+    role: ld-financial-integrity-reviewer
+  - id: large-impact-map
+    task: Map a cross-module Java caller path.
+    independent: true
+    consequence: medium
+    host_supported: true
+    permissions_readonly: true
+    expected: delegate
+    role: ld-codebase-explorer
+  - id: independent-review
+    task: Review a substantial change with no edits.
+    independent: true
+    consequence: high
+    host_supported: true
+    permissions_readonly: true
+    expected: delegate
+    role: ld-independent-test-reviewer
+  - id: unsupported-host
+    task: High-consequence independent review on a host with no delegation API.
+    independent: true
+    consequence: high
+    host_supported: false
+    permissions_readonly: true
+    expected: fallback
+    role: ld-independent-test-reviewer
+  - id: write-permission
+    task: Specialist route lacks enforceable read-only permissions.
+    independent: true
+    consequence: high
+    host_supported: true
+    permissions_readonly: false
+    expected: fallback
+    role: ld-independent-test-reviewer
+  - id: low-value-parallel
+    task: Two trivial copy edits in the same file.
+    independent: false
+    consequence: low
+    host_supported: true
+    permissions_readonly: true
+    expected: single
+    role: null
