@@ -33,4 +33,4 @@ jobs:
       - name: Run tooling tests
         run: python -m unittest discover -s tests -v
       - name: Build source archive
-        run: python scripts/build_release.py
+        run: python scripts/build_release.py --require-clean

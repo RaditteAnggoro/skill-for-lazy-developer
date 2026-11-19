@@ -79,7 +79,10 @@ def export_pack(root, output, include_roles=False):
     }
     output.parent.mkdir(parents=True, exist_ok=True)
     with zipfile.ZipFile(output, "w", compression=zipfile.ZIP_DEFLATED) as archive:
-        archive.writestr(MANIFEST, json.dumps(manifest, indent=2, sort_keys=True) + "\n")
+        manifest_info = zipfile.ZipInfo(MANIFEST, date_time=(1980, 1, 1, 0, 0, 0))
+        manifest_info.compress_type = zipfile.ZIP_DEFLATED
+        manifest_info.external_attr = 0o100644 << 16
+        archive.writestr(manifest_info, json.dumps(manifest, indent=2, sort_keys=True) + "\n")
         for rel, data in sorted(files.items()):
             info = zipfile.ZipInfo(rel, date_time=(1980, 1, 1, 0, 0, 0))
             info.compress_type = zipfile.ZIP_DEFLATED
@@ -157,33 +160,40 @@ def import_pack(archive, target, apply=False, include_roles=False):
         backup = target / ".agents" / "backups" / ("skill-pack-{}-{}".format(stamp, counter))
         counter += 1
     backup.mkdir(parents=True)
-    saved = []
-    imported_files = []
+    selected = []
     with zipfile.ZipFile(archive) as bundle:
         for name in manifest["files"]:
             if include_roles and "roles" in manifest.get("features", []) and name.startswith(ROLE_PATH + "/"):
                 pass
             elif not name.startswith(".agents/skills/") and name not in IMPORT_FILES:
                 continue
+            selected.append(name)
+    saved = []
+    for name in selected:
+        destination = target / name
+        if not destination.resolve().is_relative_to(target):
+            raise PackError("import path escapes target: {}".format(name))
+        if destination.exists() or destination.is_symlink():
+            if destination.is_dir():
+                saved.append({"path": name, "backup": str(backup / name)})
+                (backup / name).parent.mkdir(parents=True, exist_ok=True)
+                shutil.copytree(destination, backup / name)
+            else:
+                saved.append({"path": name, "backup": str(backup / name)})
+                (backup / name).parent.mkdir(parents=True, exist_ok=True)
+                shutil.copy2(destination, backup / name)
+    journal = {"format": FORMAT, "status": "prepared", "saved": saved,
+               "planned_files": sorted(selected), "imported_files": []}
+    (backup / "manifest.json").write_text(json.dumps(journal, indent=2) + "\n", encoding="utf-8")
+    with zipfile.ZipFile(archive) as bundle:
+        for name in selected:
             destination = target / name
-            if not destination.resolve().is_relative_to(target):
-                raise PackError("import path escapes target: {}".format(name))
-            if destination.exists() or destination.is_symlink():
-                if destination.is_dir():
-                    saved.append({"path": name, "backup": str(backup / name)})
-                    (backup / name).parent.mkdir(parents=True, exist_ok=True)
-                    shutil.copytree(destination, backup / name)
-                else:
-                    saved.append({"path": name, "backup": str(backup / name)})
-                    (backup / name).parent.mkdir(parents=True, exist_ok=True)
-                    shutil.copy2(destination, backup / name)
             destination.parent.mkdir(parents=True, exist_ok=True)
             destination.write_bytes(bundle.read(name))
-            imported_files.append(name)
-    (backup / "manifest.json").write_text(
-        json.dumps({"format": FORMAT, "saved": saved, "imported": sorted(set(plan)), "imported_files": imported_files}, indent=2) + "\n",
-        encoding="utf-8",
-    )
+            journal["imported_files"].append(name)
+            (backup / "manifest.json").write_text(json.dumps(journal, indent=2) + "\n", encoding="utf-8")
+    journal["status"] = "complete"
+    (backup / "manifest.json").write_text(json.dumps(journal, indent=2) + "\n", encoding="utf-8")
     return {"target": str(target), "apply": True, "backup": str(backup), "files": unique, "skills": manifest.get("skills", [])}
 
 
@@ -191,9 +201,15 @@ def rollback(backup, target):
     backup = Path(backup).resolve()
     target = Path(target).resolve()
     manifest = json.loads((backup / "manifest.json").read_text(encoding="utf-8"))
-    if "imported_files" not in manifest:
-        raise PackError("legacy backup cannot be rolled back safely; restore saved files manually")
-    for name in manifest["imported_files"]:
+    imported = manifest.get("imported_files")
+    if imported is None:
+        if manifest.get("status") == "prepared":
+            imported = manifest.get("planned_files", [])
+        else:
+            raise PackError("legacy backup cannot be rolled back safely; restore saved files manually")
+    elif not imported and manifest.get("status") == "prepared":
+        imported = manifest.get("planned_files", [])
+    for name in imported:
         _safe_name(name)
         path = target / name
         if path.is_file() or path.is_symlink():

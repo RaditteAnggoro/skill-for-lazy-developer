@@ -61,8 +61,8 @@ class UiPhaseTests(unittest.TestCase):
         data = yaml.safe_load((ROOT / "tests/ui/evidence.yaml").read_text(encoding="utf-8"))
         self.assertTrue(data["gate_pass"])
         self.assertEqual(data["phase_five_status"], "complete")
-        self.assertEqual(data["checks"]["plain_and_react_passed"], 35)
-        self.assertEqual(data["checks"]["next_passed"], 12)
+        self.assertEqual(data["checks"]["plain_and_react_passed"], 39)
+        self.assertEqual(data["checks"]["next_passed"], 14)
         for key in ("empty", "loading", "error"):
             self.assertEqual(data["states"][key], "pass")
         limits = " ".join(data["limitations"]).lower()

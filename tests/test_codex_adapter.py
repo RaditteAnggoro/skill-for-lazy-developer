@@ -19,7 +19,7 @@ log = os.environ.get("FAKE_ENGRAM_LOG", "/tmp/codex-adapter-engram.log")
 with open(log, "a", encoding="utf-8") as handle:
     handle.write(json.dumps(sys.argv[1:]) + "\n")
 if len(sys.argv) > 1 and sys.argv[1] == "context":
-    print("Previous session: RECALL-TOKEN-7319")
+    print(os.environ.get("FAKE_CONTEXT_TEXT", "Previous session: RECALL-TOKEN-7319"))
 elif len(sys.argv) > 1 and sys.argv[1] == "search":
     print("Found 1 memories: #7 (decision) -- Billing database")
 elif len(sys.argv) > 1 and sys.argv[1] == "delete":
@@ -46,13 +46,14 @@ class CodexAdapterTests(unittest.TestCase):
         self.engram.chmod(0o755)
         self.log = self.root / "engram.log"
 
-    def runtime(self, command, event):
+    def runtime(self, command, event, extra_env=None):
         runtime = self.home / "codex-memory/memory_runtime.py"
         env = {
             **dict(os.environ),
             "CODEX_MEMORY_CONFIG": str(self.home / "codex-memory/config.json"),
             "FAKE_ENGRAM_LOG": str(self.log),
         }
+        env.update(extra_env or {})
         return subprocess.run(
             [sys.executable, str(runtime), command],
             input=json.dumps(event),
@@ -254,6 +255,56 @@ class CodexAdapterTests(unittest.TestCase):
             },
         )
         self.assertIn("unverified", self.log.read_text(encoding="utf-8"))
+
+    def test_handoff_rejects_failed_or_unrelated_verification(self):
+        install(self.home, str(self.engram))
+        failed = self.root / "failed.jsonl"
+        failed.write_text(
+            '{"type":"tool_call","call_id":"c1","command":"pytest tests/test_x.py"}\n'
+            '{"type":"tool_result","call_id":"c1","exit_code":1}\n',
+            encoding="utf-8",
+        )
+        self.runtime(
+            "stop",
+            {
+                "cwd": str(self.project),
+                "transcript_path": str(failed),
+                "last_assistant_message": "Verification: pytest tests/test_x.py passed. Implemented the adapter.",
+            },
+        )
+        self.assertIn("unverified", self.log.read_text(encoding="utf-8"))
+        self.log.write_text("", encoding="utf-8")
+        unrelated = self.root / "unrelated.jsonl"
+        unrelated.write_text(
+            '{"type":"tool_call","call_id":"c1","command":"npm test"}\n'
+            '{"type":"tool_result","call_id":"c1","exit_code":0}\n',
+            encoding="utf-8",
+        )
+        self.runtime(
+            "stop",
+            {
+                "cwd": str(self.project),
+                "transcript_path": str(unrelated),
+                "last_assistant_message": "Verification: pytest tests/test_x.py passed. Implemented the adapter.",
+            },
+        )
+        self.assertIn("unverified", self.log.read_text(encoding="utf-8"))
+
+    def test_recall_prefers_complete_active_records(self):
+        install(self.home, str(self.engram))
+        active = json.dumps({"status": "active"}, separators=(",", ":"))
+        old = json.dumps({"status": "superseded"}, separators=(",", ":"))
+        text = (
+            "<!-- memory-record:v1 " + active + " -->\n# Active\n\nKeep this.\n\n"
+            "<!-- memory-record:v1 " + old + " -->\n# Old\n\nDrop this."
+        )
+        output = self.runtime(
+            "session-start",
+            {"cwd": str(self.project), "hook_event_name": "SessionStart", "source": "startup"},
+            {"FAKE_CONTEXT_TEXT": text},
+        )
+        self.assertIn("Keep this", output.stdout)
+        self.assertNotIn("Drop this", output.stdout)
 
     def test_runtime_is_fail_open_when_engram_is_missing(self):
         install(self.home, str(self.engram))

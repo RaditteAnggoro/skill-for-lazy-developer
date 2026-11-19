@@ -175,6 +175,14 @@ python scripts/agent_setup_preview.py --target /path/to/project --with-memory --
 
 ---
 
+## One-shot coding
+
+Once the task and authorization are clear, the agent completes the full authorized
+change in one pass: plan, implement, verify, and report. It does not ask for approval
+between routine steps. It asks only when a missing decision, credential, permission,
+external dependency, or materially different outcome blocks safe progress; otherwise it
+states a reasonable assumption and continues.
+
 ## How routing works
 
 `adaptive-workflow` is the **single routing authority**. It chooses one primary skill
@@ -485,6 +493,9 @@ python3 -m venv .venv
 ```
 
 On Windows use `.venv\Scripts\python.exe`.
+
+For maintainer roadmap and priority rationale, see the
+[advanced development plan](docs/ADVANCED_DEVELOPMENT_PLAN.md).
 
 ### Preview the installer
 

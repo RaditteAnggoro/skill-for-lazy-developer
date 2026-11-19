@@ -143,8 +143,8 @@ python scripts/verify_dsh_bundle_lifecycle.py \
 
 ## Maintenance checks
 
-The current repository checks validate seventeen skills and local links, pass 258 unit
-tests, and build a reproducible 294-file archive with a verified SHA-256 checksum. The
+The current repository checks validate seventeen skills and local links, pass 267 unit
+tests, and build a reproducible 298-file archive with a verified SHA-256 checksum. The
 DSH profile, model credentials, Engram data, and provider binaries remain local test
 artifacts and are not distributed.
 

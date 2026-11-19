@@ -42,6 +42,17 @@ Use confidence and consequence, not a keyword count:
 The user may replace the route at any time. A named skill is an explicit override;
 combine it with another skill only when needed to complete the requested outcome.
 
+## One-shot execution
+
+Once the requested outcome and authorization are clear, finish the whole task in one
+pass: plan, implement, verify, and report without asking for approval between routine
+steps. Do not pause merely to announce the next phase or ask “should I continue?”.
+
+Ask only when a missing decision, credential, permission, external dependency, or a
+materially different outcome blocks safe progress. If a reasonable assumption is safe,
+state it and continue. One-shot does not mean ignoring a real blocker or expanding scope;
+it means completing the authorized work without unnecessary round-trips.
+
 ## Compose the workflow
 
 Use these routes as defaults, then adapt to the actual repository and request:

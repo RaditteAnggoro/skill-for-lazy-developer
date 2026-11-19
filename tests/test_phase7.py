@@ -60,6 +60,27 @@ class Phase7Tests(unittest.TestCase):
         self.assertEqual("# old snippet\n", (target / "AGENTS.snippet.md").read_text(encoding="utf-8"))
         self.assertTrue((target / ".agents/skills/old-skill/SKILL.md").is_file())
 
+    def test_import_writes_recovery_journal(self):
+        target = self.root / "journal-target"
+        target.mkdir()
+        result = import_pack(self.archive, target, apply=True)
+        journal = json.loads((Path(result["backup"]) / "manifest.json").read_text(encoding="utf-8"))
+        self.assertEqual(journal["status"], "complete")
+        self.assertTrue(journal["planned_files"])
+        self.assertEqual(sorted(journal["planned_files"]), sorted(journal["imported_files"]))
+
+    def test_prepared_journal_can_be_rolled_back_after_interruption(self):
+        target = self.root / "interrupted-target"
+        target.mkdir()
+        result = import_pack(self.archive, target, apply=True)
+        backup = Path(result["backup"])
+        journal = json.loads((backup / "manifest.json").read_text(encoding="utf-8"))
+        journal["status"] = "prepared"
+        journal["imported_files"] = []
+        (backup / "manifest.json").write_text(json.dumps(journal), encoding="utf-8")
+        rollback(backup, target)
+        self.assertFalse((target / ".agents/skills/adaptive-workflow/SKILL.md").exists())
+
     def test_checksum_tamper_is_rejected(self):
         tampered = self.root / "tampered.zip"
         with zipfile.ZipFile(self.archive) as source, zipfile.ZipFile(tampered, "w") as target:

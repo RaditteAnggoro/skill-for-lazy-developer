@@ -1,4 +1,5 @@
 import hashlib
+import json
 from pathlib import Path
 import tempfile
 import unittest
@@ -35,6 +36,14 @@ class PackagingTests(unittest.TestCase):
         expected = hashlib.sha256(archive.read_bytes()).hexdigest()
         self.assertEqual(checksum.read_text().split()[0], expected)
 
+    def test_archive_has_deterministic_build_info(self):
+        archive, _, _ = build_release(self.root)
+        with ZipFile(archive) as bundle:
+            info = json.loads(bundle.read("codex-developer-skills-0.1.0/BUILD-INFO.json"))
+        self.assertEqual(info["version"], "0.1.0")
+        self.assertIn("commit", info)
+        self.assertFalse(info["clean_snapshot"])
+
     def test_excludes_local_and_sensitive_files(self):
         for name in (".git/config", ".venv/lib/local.py", ".agents/artifacts/task/private.md", "docs/.DS_Store", "scripts/__pycache__/cache.pyc", "docs/.env", "docs/token.key"):
             path = self.root / name
@@ -46,6 +55,10 @@ class PackagingTests(unittest.TestCase):
         self.assertNotIn("scripts/__pycache__/cache.pyc", files)
         self.assertNotIn("docs/.env", files)
         self.assertNotIn("docs/token.key", files)
+
+    def test_require_clean_rejects_non_git_or_dirty_snapshot(self):
+        with self.assertRaisesRegex(ValueError, "not clean"):
+            build_release(self.root, require_clean=True)
 
     def test_archive_is_reproducible(self):
         first, _, _ = build_release(self.root)

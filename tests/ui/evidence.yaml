@@ -6,10 +6,10 @@ fixtures:
   react: tests/ui/fixtures/react
   next: tests/ui/fixtures/next
 checks:
-  plain_and_react_total: 35
-  next_total: 12
-  plain_and_react_passed: 35
-  next_passed: 12
+  plain_and_react_total: 39
+  next_total: 14
+  plain_and_react_passed: 39
+  next_passed: 14
 screenshots:
   baselines: 6
   plain: pass

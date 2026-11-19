@@ -445,7 +445,7 @@ The repository now includes:
   integration, and NOT_RUN/AUTH_REQUIRED/UNSUPPORTED host evidence.
 
 Final current checks: 17 skills validated, 4 roles validated, both wrapper sets
-deterministic/current, **258 unit tests passed**, and a **294-file** archive with a
+deterministic/current, **267 unit tests passed**, and a **298-file** archive with a
 valid SHA-256 checksum. Host role dispatch remains unexecuted; see
 [HERMES_IMPLEMENTATION_REPORT.md](HERMES_IMPLEMENTATION_REPORT.md).
 

@@ -10,7 +10,19 @@ import { PNG } from "pngjs";
 const here = path.dirname(fileURLToPath(import.meta.url));
 const snapshots = path.join(here, "snapshots");
 const artifacts = path.join(here, "artifacts");
-const chrome = "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome";
+function browserExecutable() {
+  const configured = process.env.UI_BROWSER_EXECUTABLE;
+  if (configured && existsSync(configured)) return configured;
+  const candidates = [
+    "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome",
+    "/usr/bin/google-chrome",
+    "/usr/bin/chromium",
+  ];
+  const found = candidates.find((candidate) => existsSync(candidate));
+  if (found) return found;
+  const bundled = chromium.executablePath();
+  return bundled && existsSync(bundled) ? bundled : null;
+}
 const fixtures = {
   plain: path.join(here, "fixtures/plain"),
   react: path.join(here, "fixtures/react/dist"),
@@ -58,11 +70,25 @@ function serve(root) {
 async function screenshot(page, fixture, width) {
   const file = path.join(artifacts, `${fixture}-${width}.png`);
   await page.screenshot({ path: file, fullPage: true });
+  if (process.env.UI_SNAPSHOT_MODE === "structural") {
+    record(`screenshot:${fixture}:${width}`, true, "captured; pixel comparison disabled by UI_SNAPSHOT_MODE");
+    return;
+  }
   const baseline = path.join(snapshots, `${fixture}-${width}.png`);
-  if (!existsSync(baseline) || process.argv.includes("--update-snapshots")) {
+  const update = process.argv.includes("--update-snapshots");
+  if (!existsSync(baseline)) {
+    if (!update) {
+      record(`screenshot:${fixture}:${width}`, false, "baseline missing; run with --update-snapshots and review the diff");
+      return;
+    }
     await mkdir(snapshots, { recursive: true });
     await writeFile(baseline, await readFile(file));
-    record(`screenshot:${fixture}:${width}`, true, "baseline-created");
+    record(`screenshot:${fixture}:${width}`, true, "baseline-updated explicitly; review before commit");
+    return;
+  }
+  if (update) {
+    await writeFile(baseline, await readFile(file));
+    record(`screenshot:${fixture}:${width}`, true, "baseline-updated explicitly; review before commit");
     return;
   }
   const expected = PNG.sync.read(await readFile(baseline));
@@ -136,14 +162,23 @@ async function runFixture(browser, fixture) {
     await page.locator("table tbody tr").first().getByRole("checkbox").check();
     record(`bulk-visible:${fixture}`, await page.getByRole("button", { name: "Approve selected" }).isVisible());
     await page.getByRole("button", { name: "Approve selected" }).click();
-    record(`bulk-approved:${fixture}`, await page.getByText("1 records approved.").isVisible().catch(() => false) || (await page.getByText("1 selected").isVisible().catch(() => true)));
+    const bodyText = await page.locator("body").textContent();
+    record(`bulk-approved-message:${fixture}`, bodyText.includes("1 records approved."), "explicit success message");
+    const firstRow = await page.locator("table tbody tr").first().textContent();
+    record(`bulk-approved-state:${fixture}`, firstRow.includes("approved"), "target row changed");
+    record(`bulk-cleared:${fixture}`, !bodyText.includes("1 selected"), "selection cleared");
     await page.close();
   } finally {
     server.close();
   }
 }
 
-const browser = await chromium.launch({ headless: true, executablePath: chrome });
+const executable = browserExecutable();
+if (!executable) {
+  console.error("No Chrome/Chromium executable found. Set UI_BROWSER_EXECUTABLE or install Playwright Chromium.");
+  process.exit(1);
+}
+const browser = await chromium.launch({ headless: true, executablePath: executable });
 try {
   await mkdir(artifacts, { recursive: true });
   await runFixture(browser, "plain");

@@ -106,6 +106,9 @@ def engram(config, args, cwd, timeout=3):
     )
 
 
+RECORD_ENVELOPE = re.compile(r"<!-- memory-record:v1 (\{.*?\}) -->", re.DOTALL)
+
+
 def recall(config, project, cwd):
     completed = engram(config, ["context", project["name"]], cwd, timeout=4)
     if completed.returncode != 0:
@@ -115,7 +118,34 @@ def recall(config, project, cwd):
         return ""
     if sensitive(text):
         return ""
-    return text[-1800:]
+    # Engram context is a presentation string. Prefer complete, structured records so a
+    # suffix cut cannot turn a partial record into trusted context. Fall back to legacy
+    # text only when the provider returned no memory envelope.
+    matches = list(RECORD_ENVELOPE.finditer(text))
+    if not matches:
+        return text[-1800:]
+    records = []
+    for index, match in enumerate(matches):
+        try:
+            meta = json.loads(match.group(1))
+        except json.JSONDecodeError:
+            continue
+        if not isinstance(meta, dict) or meta.get("status") not in (None, "active"):
+            continue
+        end = matches[index + 1].start() if index + 1 < len(matches) else len(text)
+        block = text[match.start():end].strip()
+        if block and not sensitive(block):
+            records.append(block)
+    if not records:
+        return ""
+    selected = []
+    size = 0
+    for block in reversed(records):
+        if size + len(block) + 2 > 1800:
+            break
+        selected.append(block)
+        size += len(block) + 2
+    return "\n\n".join(reversed(selected))
 
 
 def envelope(record):
@@ -266,26 +296,107 @@ def user_prompt(event):
     return 0
 
 
-def verification_evidence(message, transcript_path):
-    """Return True when a verification command and a success marker are linked.
+def _walk_objects(value):
+    if isinstance(value, dict):
+        yield value
+        for child in value.values():
+            yield from _walk_objects(child)
+    elif isinstance(value, list):
+        for child in value:
+            yield from _walk_objects(child)
 
-    The message must state the verification; the transcript must contain the command.
-    This is evidence-linked, not an independent rerun of the command.
+
+def _success_status(value):
+    if value is True:
+        return True
+    if value is False or value is None:
+        return False
+    if isinstance(value, int):
+        return value == 0
+    if isinstance(value, str):
+        text = value.strip().casefold()
+        return text in {"0", "success", "succeeded", "passed", "pass", "ok"} or bool(
+            re.search(r"exit(?:ed)?\s*(?:code\s*)?0|0\s+failed|no\s+errors", text)
+        )
+    return False
+
+
+def _transcript_invocations(transcript):
+    """Return command/result pairs linked by call id, or by local event order."""
+    calls = {}
+    results = {}
+    ordered = []
+    for line in transcript.splitlines():
+        if not line.strip():
+            continue
+        try:
+            event = json.loads(line)
+        except json.JSONDecodeError:
+            continue
+        for node in _walk_objects(event):
+            if not isinstance(node, dict):
+                continue
+            call_id = node.get("call_id") or node.get("callId") or node.get("id")
+            command = node.get("command")
+            if not isinstance(command, str):
+                arguments = node.get("arguments")
+                if isinstance(arguments, str):
+                    try:
+                        arguments = json.loads(arguments)
+                    except json.JSONDecodeError:
+                        arguments = None
+                if isinstance(arguments, dict):
+                    command = arguments.get("command")
+            if isinstance(command, str) and command.strip():
+                key = str(call_id) if call_id is not None else "ordered-{}".format(len(ordered))
+                calls[key] = command.strip()
+                ordered.append(key)
+            for field in ("exit_code", "exitCode", "exit", "returncode", "status", "is_error", "success"):
+                if field in node:
+                    value = node[field]
+                    if field == "is_error":
+                        value = not bool(value)
+                    if call_id is not None:
+                        results[str(call_id)] = value
+                    elif ordered:
+                        results[ordered[-1]] = value
+            output = node.get("output")
+            if isinstance(output, str) and ordered:
+                status = _success_status(output)
+                if status:
+                    results[ordered[-1]] = True
+    return calls, results
+
+
+def verification_evidence(message, transcript_path):
+    """Return linked verification metadata, or None.
+
+    The message must state a verification command and success. The transcript must
+    contain the same command with a success/exit result tied to that invocation. This is
+    evidence-linked, not an independent rerun of the command.
     """
-    command = VERIFY_COMMAND.search(message)
+    command_match = VERIFY_COMMAND.search(message)
     success = VERIFY_SUCCESS.search(message)
-    if command is None or success is None:
-        return False
-    if not transcript_path:
-        return False
+    if command_match is None or success is None or not transcript_path:
+        return None
     path = Path(str(transcript_path))
     try:
         if not path.is_file() or path.stat().st_size > 2_000_000:
-            return False
+            return None
         transcript = path.read_text(encoding="utf-8", errors="replace")
     except OSError:
-        return False
-    return VERIFY_COMMAND.search(transcript) is not None
+        return None
+    calls, results = _transcript_invocations(transcript)
+    needle = command_match.group(0).casefold()
+    for call_id, command in calls.items():
+        if needle not in command.casefold():
+            continue
+        if _success_status(results.get(call_id)):
+            fingerprint = hashlib.sha256(
+                (call_id + "\0" + command + "\0" + str(results.get(call_id))).encode("utf-8")
+            ).hexdigest()[:16]
+            return {"command": command, "exit_status": 0, "fingerprint": fingerprint}
+    return None
 
 
 def forget_state_path():
@@ -398,7 +509,11 @@ def session_end(event):
         0.9 if verified else 0.6,
         "tool",
         project["name"],
-        ["Verification command observed in session transcript"] if verified else None,
+        [
+            "verification command={} exit_status={} fingerprint={}".format(
+                verified["command"], verified["exit_status"], verified["fingerprint"]
+            )
+        ] if verified else None,
     )
     save_record(config, project, record, "session_summary", cwd, timeout=2.5)
     return 0

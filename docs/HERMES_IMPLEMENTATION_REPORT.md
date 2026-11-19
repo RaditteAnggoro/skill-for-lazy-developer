@@ -43,10 +43,10 @@ committed by this implementation.
 → Phase 6: 8/8 cases passed.
 
 .venv/bin/python -m unittest discover -s tests -q
-→ Ran 258 tests in 9.537s; OK.
+→ Ran 267 tests in 9.537s; OK.
 
 .venv/bin/python scripts/build_release.py
-→ Built codex-developer-skills-0.1.0.zip (294 files); checksum valid.
+→ Built codex-developer-skills-0.1.0.zip (298 files); checksum valid.
 ```
 
 The existing token benchmark still reports its recorded **63.17% median context

@@ -43,3 +43,10 @@ review the images before updating them.
 
 Automated checks do not replace an assistive-technology review or backend authorization
 testing. The fixtures use test records only and make no production requests.
+
+## Snapshot modes
+
+- Default: compare against reviewed baselines. A missing baseline is a failure.
+- `--update-snapshots`: explicitly update baselines; review the resulting diff before commit.
+- `UI_SNAPSHOT_MODE=structural`: capture screenshots but disable pixel comparison for
+  environments without the pinned visual profile. Use for interaction gate, not visual gate.
