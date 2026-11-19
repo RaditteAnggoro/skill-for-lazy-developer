@@ -1,6 +1,7 @@
 import { spawn } from "node:child_process";
 import { existsSync } from "node:fs";
 import { readFile, writeFile, mkdir } from "node:fs/promises";
+import { createRequire } from "node:module";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { chromium } from "playwright-core";
@@ -60,23 +61,6 @@ if (!existsSync(path.join(nextDir, ".next"))) {
   process.exit(1);
 }
 
-const server = spawn("npm", ["run", "start", "--", "-p", String(port)], {
-  cwd: nextDir,
-  env: { ...process.env, PORT: String(port) },
-  stdio: ["ignore", "pipe", "pipe"],
-});
-let output = "";
-server.stdout.on("data", (chunk) => { output += chunk; });
-server.stderr.on("data", (chunk) => { output += chunk; });
-const base = `http://127.0.0.1:${port}/`;
-for (let attempt = 0; attempt < 60; attempt += 1) {
-  try {
-    const response = await fetch(base);
-    if (response.ok) break;
-  } catch {}
-  await new Promise((resolve) => setTimeout(resolve, 250));
-}
-
 function browserExecutable() {
   const configured = process.env.UI_BROWSER_EXECUTABLE;
   if (configured && existsSync(configured)) return configured;
@@ -95,8 +79,40 @@ if (!executable) {
   console.error("No Chrome/Chromium executable found. Set UI_BROWSER_EXECUTABLE or install Playwright Chromium.");
   process.exit(1);
 }
-const browser = await chromium.launch({ headless: true, executablePath: executable });
+const fixtureRequire = createRequire(path.join(nextDir, "package.json"));
+const nextCli = fixtureRequire.resolve("next/dist/bin/next");
+// Run Next directly so terminating this child also closes the server's output pipes.
+const server = spawn(process.execPath, [nextCli, "start", "--hostname", "127.0.0.1", "--port", String(port)], {
+  cwd: nextDir,
+  stdio: ["ignore", "pipe", "pipe"],
+});
+const serverClosed = new Promise((resolve) => server.once("close", resolve));
+let serverError;
+server.once("error", (error) => { serverError = error; });
+let output = "";
+server.stdout.on("data", (chunk) => { output += chunk; });
+server.stderr.on("data", (chunk) => { output += chunk; });
+const base = `http://127.0.0.1:${port}/`;
+
+async function waitForServer() {
+  const deadline = Date.now() + 15_000;
+  while (Date.now() < deadline) {
+    if (serverError) throw serverError;
+    if (server.exitCode !== null || server.signalCode !== null) break;
+    try {
+      const response = await fetch(base, { signal: AbortSignal.timeout(500) });
+      await response.body?.cancel();
+      if (response.ok) return;
+    } catch {}
+    await new Promise((resolve) => setTimeout(resolve, 250));
+  }
+  throw new Error(`Next fixture did not become ready.\n${output.slice(-3000)}`);
+}
+
+let browser;
 try {
+  await waitForServer();
+  browser = await chromium.launch({ headless: true, executablePath: executable });
   await mkdir(artifacts, { recursive: true });
   const page = await browser.newPage({ viewport: { width: 1440, height: 900 } });
   await page.goto(base, { waitUntil: "networkidle" });
@@ -138,8 +154,17 @@ try {
   record("next:bulk-approved", bodyText.includes("1 records approved."), "explicit success message");
   record("next:bulk-state", (await page.locator("table tbody tr").first().textContent()).includes("approved"));
 } finally {
-  await browser.close();
-  server.kill("SIGTERM");
+  try {
+    await browser?.close();
+  } finally {
+    server.kill("SIGTERM");
+    const forceExit = setTimeout(() => server.kill("SIGKILL"), 5_000);
+    try {
+      await serverClosed;
+    } finally {
+      clearTimeout(forceExit);
+    }
+  }
 }
 
 record("next:server-output", !/error/i.test(output), output.slice(-300));

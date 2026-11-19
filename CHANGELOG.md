@@ -2,6 +2,9 @@
 
 ## Unreleased
 
+- Pin the CI toolchain for the Java fixture and stop the Next.js fixture cleanly so
+  browser checks can finish after their assertions pass.
+
 - Add Hermes-inspired quality enhancements without new skills: exploratory UI QA,
   risk-weighted TDD, review/simplification, API-layer debugging, spikes, grounded
   evidence, document actions, and optional AST structural search.
