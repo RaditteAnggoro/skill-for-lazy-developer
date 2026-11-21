@@ -7,8 +7,8 @@ states.
 ## Fixtures
 
 - `fixtures/plain/index.html`: dependency-free HTML/CSS/JS.
-- `fixtures/react`: Vite + React; build with `npm install && npm run build` in the fixture.
-- `fixtures/next`: Next.js App Router (15.5.29); build with `npm install && npm run build`.
+- `fixtures/react`: Vite 7.3.8 + React; build with `npm ci && npm run build` in the fixture.
+- `fixtures/next`: Next.js App Router (16.4.6); build with `npm ci && npm run build`.
 - `fixtures/shared/EnterpriseApprovals.jsx`: shared React implementation, copied into the
   Next fixture so each project remains self-contained.
 

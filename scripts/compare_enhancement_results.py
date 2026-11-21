@@ -19,8 +19,13 @@ def compare(baseline, candidate):
             raise ValueError('incompatible report: {}'.format(key))
     if baseline.get('isolation_preflight') != 'pass' or candidate.get('isolation_preflight') != 'pass':
         raise ValueError('both reports require isolation preflight')
-    expected = {(case, trial) for case in baseline['case_ids']
-                for trial in range(1, baseline['trials'] + 1)}
+    case_ids, trials = baseline['case_ids'], baseline['trials']
+    if (not isinstance(case_ids, list) or not case_ids
+            or any(not isinstance(case, str) or not case for case in case_ids)
+            or len(set(case_ids)) != len(case_ids)
+            or type(trials) is not int or trials < 1):
+        raise ValueError('comparison requires unique case IDs and positive trial count')
+    expected = {(case, trial) for case in case_ids for trial in range(1, trials + 1)}
     def select(report, variant):
         rows = [item for item in report['results'] if item['variant'] == variant]
         keyed = {(item['case_id'], item['trial']): item for item in rows}
@@ -33,6 +38,8 @@ def compare(baseline, candidate):
     after = select(candidate, 'candidate')
     comparable = [key for key in sorted(expected)
                   if before[key]['outcome'] != 'blocked' and after[key]['outcome'] != 'blocked']
+    paired_case_ids = {key[0] for key in comparable}
+    uncovered_case_ids = sorted(set(case_ids) - paired_case_ids)
     regressions = [list(key) for key in comparable
                    if before[key]['outcome'] == 'pass' and after[key]['outcome'] == 'fail']
     improvements = [list(key) for key in comparable
@@ -45,6 +52,14 @@ def compare(baseline, candidate):
         limitations.append('At least one report was derived by rescoring saved routing choices; inspect the original report and approved expectation changes.')
     return {
         'scope': 'read-only routing comparison',
+        'coverage_status': 'insufficient_evidence' if uncovered_case_ids else (
+            'complete' if len(comparable) == len(expected) else 'partial'),
+        'scheduled_pairs': len(expected),
+        'uncovered_case_ids': uncovered_case_ids,
+        'blocked_by_variant': {
+            'baseline': sum(row['outcome'] == 'blocked' for row in before.values()),
+            'candidate': sum(row['outcome'] == 'blocked' for row in after.values()),
+        },
         'comparable_trials': len(comparable),
         'blocked_or_unpaired_trials': len(expected) - len(comparable),
         'baseline_passes': sum(before[key]['outcome'] == 'pass' for key in comparable),
@@ -69,6 +84,9 @@ def main(argv=None):
         args.output.write_text(json.dumps(result, indent=2) + '\n')
         print('Compared {} trials; {} blocked; {} regressions'.format(
             result['comparable_trials'], result['blocked_or_unpaired_trials'], len(result['regressions'])))
+        if result['coverage_status'] == 'insufficient_evidence':
+            print('Insufficient evidence: at least one case has no comparable trials.', file=sys.stderr)
+            return 3
         return 0
     except (OSError, ValueError, KeyError, TypeError) as exc:
         print('Comparison failed: {}'.format(exc), file=sys.stderr)

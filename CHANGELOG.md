@@ -2,6 +2,15 @@
 
 ## Unreleased
 
+- Add pinned upstream comparison reports and a local phase receipt verifier for
+  declared inputs, check evidence, and dependency status during continuation.
+- Redact skill scanner findings, flag unscannable files within scope, and label
+  routing comparisons that lack paired coverage for one or more cases.
+- Add assertion-level requirement verification from JUnit reports while preserving
+  the existing reference-only lint.
+- Update the synthetic Next.js and React fixture lockfiles to resolve dependency
+  audit findings observed during the capability review.
+
 - Pin the CI toolchain for the Java fixture and stop the Next.js fixture cleanly so
   browser checks can finish after their assertions pass.
 

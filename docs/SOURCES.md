@@ -89,3 +89,6 @@ dependencies. They are not vendored into the distributed skill instructions.
 
 See the [third-party adoption register](THIRD_PARTY_ADOPTION_REGISTER.md) for the
 current deferred evaluation list. It is not a security approval.
+
+The [upstream benchmark source inventory](upstream-benchmark/01_SOURCE_INVENTORY.md)
+pins the inspected projects and links the maintainer comparison and benchmark results.

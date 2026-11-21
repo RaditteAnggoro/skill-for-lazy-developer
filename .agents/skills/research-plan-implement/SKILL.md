@@ -94,6 +94,11 @@ Rules:
 - Keep the final verification phase unless the request is explicitly research-only or
   review-only.
 
+When a project records check artifacts for a long-running task, use the optional
+[phase receipts format](references/phase-receipts.md) to check scope-bound input digests,
+required observations, and predecessor status before resuming. The older plan validator
+still checks the plan structure. A simulated trace cannot close a real phase.
+
 ## Execute or resume
 
 When implementation is requested, complete ready work within the authorized scope. Use the plan to guide delivery, revising it when code evidence changes a routine technical choice. Surface decisions that change the intended product or external effects. Do not ask to approve each already-authorized step.

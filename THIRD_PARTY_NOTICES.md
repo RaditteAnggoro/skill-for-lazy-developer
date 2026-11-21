@@ -20,8 +20,8 @@ are not copied into the distributed skill instructions.
 | [pngjs](https://github.com/pngjs/pngjs) | 7.0.0 | MIT | Screenshot decoding |
 | [pixelmatch](https://github.com/mapbox/pixelmatch) | 6.0.0 | ISC | Screenshot comparison |
 | [React](https://github.com/facebook/react) | 19.1.1 | MIT | React fixture |
-| [Vite](https://github.com/vitejs/vite) | 7.1.7 | MIT | React fixture build |
-| [Next.js](https://github.com/vercel/next.js) | 15.5.29 | MIT | Next.js fixture |
+| [Vite](https://github.com/vitejs/vite) | 7.3.8 | MIT | React fixture build |
+| [Next.js](https://github.com/vercel/next.js) | 16.4.6 | MIT | Next.js fixture |
 | [tomli](https://github.com/hukkin/tomli) | 2.0.1 | MIT | TOML role-wrapper validation on Python 3.9 |
 
 `tiktoken` may install `requests`, `regex`, `certifi`, `idna`, `urllib3`, and

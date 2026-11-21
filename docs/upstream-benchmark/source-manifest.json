@@ -1,0 +1,1435 @@
+{
+  "schema_version": 1,
+  "observed_on": "2026-11-21",
+  "baseline": "69b93d53fa1715a613299204500eb024d170c1a2",
+  "workspace": "../lazy-developer-upstreams",
+  "repositories": [
+    {
+      "name": "DietrichGebert/ponytail",
+      "url": "https://github.com/DietrichGebert/ponytail",
+      "category": "core",
+      "relation": "direct inspiration",
+      "status": "cloned",
+      "sha": "96608e078b2d5ea607c5c3b8b5a54d1c1fba6846",
+      "default_branch": "main",
+      "documented_pin": "96608e078b2d5ea607c5c3b8b5a54d1c1fba6846",
+      "license_spdx": "MIT",
+      "primary_language": "JavaScript",
+      "archived": false,
+      "local_path": "DietrichGebert--ponytail",
+      "tracked_path_count": 216,
+      "license_files": [
+        "LICENSE"
+      ],
+      "dependency_manifests": [
+        ".claude-plugin/marketplace.json",
+        ".claude-plugin/plugin.json",
+        ".codex-plugin/plugin.json",
+        ".devin-plugin/plugin.json",
+        ".grok-plugin/marketplace.json",
+        ".kimi-plugin/plugin.json",
+        ".qoder-plugin/plugin.json",
+        "package.json",
+        "pi-extension/package.json",
+        "plugin.json",
+        "skills/plugin.json"
+      ],
+      "skill_count": 12,
+      "ci_workflow_count": 2,
+      "hook_paths": [
+        "hooks/claude-codex-hooks.json",
+        "hooks/copilot-hooks.json",
+        "hooks/cursor-hooks.json",
+        "hooks/qoder-hooks.json",
+        "scripts/cursor-hooks.js"
+      ],
+      "documented_pin_available": true,
+      "anchors": [
+        {
+          "path": "skills/ponytail/SKILL.md",
+          "lines": 52,
+          "anchor": 13
+        },
+        {
+          "path": "hooks/ponytail-map.js",
+          "lines": 111,
+          "anchor": 1
+        },
+        {
+          "path": "tests/hooks.test.js",
+          "lines": 1005,
+          "anchor": 1
+        },
+        {
+          "path": "LICENSE",
+          "lines": 21,
+          "anchor": 1
+        }
+      ],
+      "kind": "skill + plugin/hooks",
+      "license_review": "MIT",
+      "capability": "Reuse-first and shortcuts",
+      "risk": "Works without an extra hook only as guidance; hooks require host install",
+      "implementation_evidence": "DOCUMENTED + IMPLEMENTED",
+      "upstream_runtime_execution": "NOT_RUN"
+    },
+    {
+      "name": "obra/superpowers",
+      "url": "https://github.com/obra/superpowers",
+      "category": "core",
+      "relation": "direct inspiration",
+      "status": "cloned",
+      "sha": "22f0b463e7a5e579904dd6211a520321035526f7",
+      "default_branch": "main",
+      "documented_pin": null,
+      "license_spdx": "MIT",
+      "primary_language": "Shell",
+      "archived": false,
+      "local_path": "obra--superpowers",
+      "tracked_path_count": 236,
+      "license_files": [
+        "LICENSE"
+      ],
+      "dependency_manifests": [
+        ".antigravity-plugin/plugin.json",
+        ".claude-plugin/marketplace.json",
+        ".claude-plugin/plugin.json",
+        ".codex-plugin/plugin.json",
+        ".cursor-plugin/plugin.json",
+        ".devin-plugin/plugin.json",
+        ".kimi-plugin/plugin.json",
+        ".muse-plugin/marketplace.json",
+        ".muse-plugin/plugin.json",
+        "package.json"
+      ],
+      "skill_count": 15,
+      "ci_workflow_count": 0,
+      "hook_paths": [
+        "hooks/hooks-cursor.json",
+        "hooks/hooks.json",
+        "hooks/run-hook.cmd"
+      ],
+      "anchors": [
+        {
+          "path": "skills/verification-before-completion/SKILL.md",
+          "lines": 120,
+          "anchor": 6
+        },
+        {
+          "path": "skills/systematic-debugging/SKILL.md",
+          "lines": 283,
+          "anchor": 6
+        },
+        {
+          "path": "tests/hooks/test-session-start.sh",
+          "lines": 412,
+          "anchor": 146
+        },
+        {
+          "path": "LICENSE",
+          "lines": 21,
+          "anchor": 1
+        }
+      ],
+      "kind": "skill + plugin/hooks",
+      "license_review": "MIT",
+      "capability": "Fresh verification and root-cause-first",
+      "risk": "Instruction compliance and hook loading depend on host",
+      "implementation_evidence": "DOCUMENTED",
+      "upstream_runtime_execution": "NOT_RUN"
+    },
+    {
+      "name": "mattpocock/skills",
+      "url": "https://github.com/mattpocock/skills",
+      "category": "core",
+      "relation": "direct inspiration",
+      "status": "cloned",
+      "sha": "abeeaf95660ba9e8b7c753eb38f441ca707a8823",
+      "default_branch": "main",
+      "documented_pin": null,
+      "license_spdx": "MIT",
+      "primary_language": "Shell",
+      "archived": false,
+      "local_path": "mattpocock--skills",
+      "tracked_path_count": 187,
+      "license_files": [
+        "LICENSE"
+      ],
+      "dependency_manifests": [
+        ".claude-plugin/marketplace.json",
+        ".claude-plugin/plugin.json",
+        "package.json"
+      ],
+      "skill_count": 39,
+      "ci_workflow_count": 4,
+      "hook_paths": [],
+      "anchors": [
+        {
+          "path": "skills/engineering/grill-with-docs/SKILL.md",
+          "lines": 7,
+          "anchor": 1
+        },
+        {
+          "path": "skills/engineering/domain-modeling/SKILL.md",
+          "lines": 74,
+          "anchor": 6
+        },
+        {
+          "path": "skills/engineering/tdd/tests.md",
+          "lines": 77,
+          "anchor": 1
+        },
+        {
+          "path": "LICENSE",
+          "lines": 21,
+          "anchor": 1
+        }
+      ],
+      "kind": "skill collection",
+      "license_review": "MIT",
+      "capability": "Domain language and TDD",
+      "risk": "Discussion depth is inappropriate for trivial changes",
+      "implementation_evidence": "DOCUMENTED",
+      "upstream_runtime_execution": "NOT_RUN"
+    },
+    {
+      "name": "humanlayer/skills",
+      "url": "https://github.com/humanlayer/skills",
+      "category": "core",
+      "relation": "direct inspiration",
+      "status": "cloned",
+      "sha": "4d69d20f6e9b57b4fcf0d501ccfb1be961f0f329",
+      "default_branch": "main",
+      "documented_pin": null,
+      "license_spdx": "MIT",
+      "primary_language": "TypeScript",
+      "archived": false,
+      "local_path": "humanlayer--skills",
+      "tracked_path_count": 103,
+      "license_files": [
+        "LICENSE"
+      ],
+      "dependency_manifests": [
+        ".claude-plugin/marketplace.json"
+      ],
+      "skill_count": 7,
+      "ci_workflow_count": 0,
+      "hook_paths": [],
+      "anchors": [
+        {
+          "path": "plugins/rpi/skills/rpi/references/implement-outline/process.md",
+          "lines": 39,
+          "anchor": 1
+        },
+        {
+          "path": "plugins/rpi/skills/rpi/references/create-research/process.md",
+          "lines": 72,
+          "anchor": 1
+        },
+        {
+          "path": "plugins/rpi/agents/outline-implementer-agent.md",
+          "lines": 91,
+          "anchor": 8
+        },
+        {
+          "path": "LICENSE",
+          "lines": 21,
+          "anchor": 1
+        }
+      ],
+      "kind": "RPI skill/plugin + roles",
+      "license_review": "MIT",
+      "capability": "Resumable outlines and delegation",
+      "risk": "Automated sessions need host support; manual fallback possible",
+      "implementation_evidence": "DOCUMENTED",
+      "upstream_runtime_execution": "NOT_RUN"
+    },
+    {
+      "name": "tt-a1i/archify",
+      "url": "https://github.com/tt-a1i/archify",
+      "category": "core",
+      "relation": "direct inspiration",
+      "status": "cloned",
+      "sha": "8509a3d63e763b4d454ea9aafa1f939545fcb1ea",
+      "default_branch": "main",
+      "documented_pin": null,
+      "license_spdx": "Apache-2.0",
+      "primary_language": "JavaScript",
+      "archived": false,
+      "local_path": "tt-a1i--archify",
+      "tracked_path_count": 1206,
+      "license_files": [
+        "LICENSE",
+        "NOTICE"
+      ],
+      "dependency_manifests": [
+        "archify/package.json",
+        "package.json",
+        "website/package.json"
+      ],
+      "skill_count": 5,
+      "ci_workflow_count": 6,
+      "hook_paths": [],
+      "anchors": [
+        {
+          "path": "archify/renderers/dataflow/dataflow-compiler.mjs",
+          "lines": 1605,
+          "anchor": 62
+        },
+        {
+          "path": "archify/schemas/erd.schema.json",
+          "lines": 381,
+          "anchor": 1
+        },
+        {
+          "path": "test/erd-rendering.test.mjs",
+          "lines": 1167,
+          "anchor": 96
+        },
+        {
+          "path": "LICENSE",
+          "lines": 202,
+          "anchor": 2
+        },
+        {
+          "path": "NOTICE",
+          "lines": 26,
+          "anchor": 1
+        }
+      ],
+      "kind": "diagram CLI/renderer",
+      "license_review": "Apache-2.0",
+      "capability": "Diagram schema and rendering",
+      "risk": "A valid diagram describes supplied data; source relationships need independent evidence",
+      "implementation_evidence": "IMPLEMENTED",
+      "upstream_runtime_execution": "NOT_RUN"
+    },
+    {
+      "name": "ChromeDevTools/chrome-devtools-mcp",
+      "url": "https://github.com/ChromeDevTools/chrome-devtools-mcp",
+      "category": "core",
+      "relation": "direct inspiration",
+      "status": "cloned",
+      "sha": "437f394edcb0708d60637bcd326c59b4351f35ef",
+      "default_branch": "main",
+      "documented_pin": null,
+      "license_spdx": "Apache-2.0",
+      "primary_language": "TypeScript",
+      "archived": false,
+      "local_path": "ChromeDevTools--chrome-devtools-mcp",
+      "tracked_path_count": 410,
+      "license_files": [
+        "LICENSE"
+      ],
+      "dependency_manifests": [
+        ".claude-plugin/marketplace.json",
+        ".claude-plugin/plugin.json",
+        ".cursor-plugin/plugin.json",
+        ".kimi-code-plugin/plugin.json",
+        "package.json",
+        "plugin.json"
+      ],
+      "skill_count": 8,
+      "ci_workflow_count": 8,
+      "hook_paths": [
+        "scripts/eslint_rules/no-sinon-restore-in-hooks-rule.js"
+      ],
+      "anchors": [
+        {
+          "path": "src/tools/network.ts",
+          "lines": 352,
+          "anchor": 45
+        },
+        {
+          "path": "src/tools/console.ts",
+          "lines": 155,
+          "anchor": 45
+        },
+        {
+          "path": "tests/tools/network.test.ts",
+          "lines": 646,
+          "anchor": 23
+        },
+        {
+          "path": "LICENSE",
+          "lines": 202,
+          "anchor": 2
+        }
+      ],
+      "kind": "MCP server",
+      "license_review": "Apache-2.0",
+      "capability": "Browser diagnostics",
+      "risk": "Authenticated pages and debugging output may contain private data",
+      "implementation_evidence": "IMPLEMENTED",
+      "upstream_runtime_execution": "NOT_RUN"
+    },
+    {
+      "name": "akitaonrails/ai-memory",
+      "url": "https://github.com/akitaonrails/ai-memory",
+      "category": "memory-context-tooling",
+      "relation": "research reference",
+      "status": "cloned",
+      "sha": "6a141858bb88fbd025b144664a37271acd5e0e43",
+      "default_branch": "main",
+      "documented_pin": null,
+      "license_spdx": "MIT",
+      "primary_language": "Rust",
+      "archived": false,
+      "local_path": "akitaonrails--ai-memory",
+      "tracked_path_count": 1479,
+      "license_files": [
+        "LICENSE"
+      ],
+      "dependency_manifests": [
+        ".claude-plugin/marketplace.json",
+        "Cargo.toml",
+        "evals/Cargo.toml"
+      ],
+      "skill_count": 20,
+      "ci_workflow_count": 10,
+      "hook_paths": [
+        "companions/ai-memory-wikisync/src/hook.rs",
+        "crates/ai-memory-cli/src/commands/codex_hook_trust.rs",
+        "crates/ai-memory-cli/src/commands/hook.rs",
+        "crates/ai-memory-cli/src/commands/hook_capture.rs",
+        "crates/ai-memory-cli/src/commands/hook_drain_process.rs",
+        "crates/ai-memory-cli/src/commands/hook_spool.rs",
+        "crates/ai-memory-cli/src/commands/install_hooks.rs",
+        "crates/ai-memory-cli/templates/plugin/ai-memory-hook.sh",
+        "crates/ai-memory-cli/tests/fixtures/kiro-v3-hook-payloads.json",
+        "crates/ai-memory-cli/tests/suite/hook_drain.rs"
+      ],
+      "anchors": [
+        {
+          "path": "crates/ai-memory-cli/src/commands/mcp_bridge.rs",
+          "lines": 1920,
+          "anchor": 713
+        },
+        {
+          "path": "plugins/codex/mcp.json",
+          "lines": 13,
+          "anchor": 1
+        },
+        {
+          "path": "crates/ai-memory-cli/tests/suite/mcp_bridge_stdio.rs",
+          "lines": 442,
+          "anchor": 419
+        },
+        {
+          "path": "LICENSE",
+          "lines": 21,
+          "anchor": 1
+        }
+      ],
+      "kind": "CLI/MCP memory service",
+      "license_review": "MIT",
+      "capability": "Memory bridge and lifecycle integration",
+      "risk": "Bridge connectivity, scope, and trust still depend on deployment",
+      "implementation_evidence": "IMPLEMENTED",
+      "upstream_runtime_execution": "NOT_RUN"
+    },
+    {
+      "name": "Gentleman-Programming/engram",
+      "url": "https://github.com/Gentleman-Programming/engram",
+      "category": "memory-context-tooling",
+      "relation": "research reference",
+      "status": "cloned",
+      "sha": "380d513841f0cc96f87088b837156d758bd1ee4c",
+      "default_branch": "main",
+      "documented_pin": null,
+      "license_spdx": "MIT",
+      "primary_language": "Go",
+      "archived": false,
+      "local_path": "Gentleman-Programming--engram",
+      "tracked_path_count": 1114,
+      "license_files": [
+        "LICENSE"
+      ],
+      "dependency_manifests": [
+        ".claude-plugin/marketplace.json",
+        "go.mod"
+      ],
+      "skill_count": 21,
+      "ci_workflow_count": 18,
+      "hook_paths": [
+        "cmd/engram/hook_bind.go",
+        "cmd/engram/hook_bind_test.go",
+        "cmd/engram/hook_claude.go",
+        "cmd/engram/hook_claude_context.go",
+        "cmd/engram/hook_claude_context_test.go",
+        "cmd/engram/hook_claude_noop_test.go",
+        "cmd/engram/hook_claude_test.go",
+        "cmd/engram/hook_codex.go",
+        "cmd/engram/hook_codex_compatibility_test.go",
+        "cmd/engram/hook_codex_test.go"
+      ],
+      "anchors": [
+        {
+          "path": "internal/store/store.go",
+          "lines": 14865,
+          "anchor": 161
+        },
+        {
+          "path": "internal/mcp/mcp.go",
+          "lines": 4008,
+          "anchor": 99
+        },
+        {
+          "path": "internal/mcp/mcp_test.go",
+          "lines": 12143,
+          "anchor": 24
+        },
+        {
+          "path": "LICENSE",
+          "lines": 21,
+          "anchor": 1
+        }
+      ],
+      "kind": "CLI/MCP memory service",
+      "license_review": "MIT",
+      "capability": "Local memory storage and retrieval",
+      "risk": "Provider output requires context filtering and repo-specific trust checks",
+      "implementation_evidence": "IMPLEMENTED",
+      "upstream_runtime_execution": "NOT_RUN"
+    },
+    {
+      "name": "rtk-ai/rtk",
+      "url": "https://github.com/rtk-ai/rtk",
+      "category": "memory-context-tooling",
+      "relation": "research reference",
+      "status": "cloned",
+      "sha": "ef0b734b6b2f5df26267bf05d90d71b887658580",
+      "default_branch": "develop",
+      "documented_pin": null,
+      "license_spdx": "Apache-2.0",
+      "primary_language": "Rust",
+      "archived": false,
+      "local_path": "rtk-ai--rtk",
+      "tracked_path_count": 958,
+      "license_files": [
+        "LICENSE"
+      ],
+      "dependency_manifests": [
+        "Cargo.toml",
+        "engine/Cargo.toml",
+        "openclaw/package.json",
+        "plugin/Cargo.toml",
+        "proxy/Cargo.toml",
+        "text/Cargo.toml"
+      ],
+      "skill_count": 12,
+      "ci_workflow_count": 8,
+      "hook_paths": [
+        "engine/builtin/posthook.toml",
+        "src/hooks/hook_audit_cmd.rs",
+        "src/hooks/hook_check.rs",
+        "src/hooks/hook_cmd.rs",
+        "src/hooks/posthook.rs"
+      ],
+      "anchors": [
+        {
+          "path": "src/main.rs",
+          "lines": 8,
+          "anchor": 1
+        },
+        {
+          "path": "src/filters/df.toml",
+          "lines": 16,
+          "anchor": 1
+        },
+        {
+          "path": "tests/ng_build_test.rs",
+          "lines": 466,
+          "anchor": 53
+        },
+        {
+          "path": "LICENSE",
+          "lines": 190,
+          "anchor": 1
+        }
+      ],
+      "kind": "CLI/filter runtime",
+      "license_review": "Apache-2.0",
+      "capability": "Command output reduction",
+      "risk": "Formatting can remove details required for an investigation",
+      "implementation_evidence": "IMPLEMENTED",
+      "upstream_runtime_execution": "NOT_RUN"
+    },
+    {
+      "name": "mksglu/context-mode",
+      "url": "https://github.com/mksglu/context-mode",
+      "category": "memory-context-tooling",
+      "relation": "research reference",
+      "status": "cloned",
+      "sha": "8a61fa7ba461d5474bac35b5f6700ed598e7022f",
+      "default_branch": "main",
+      "documented_pin": null,
+      "license_spdx": "NOASSERTION",
+      "primary_language": "JavaScript",
+      "archived": false,
+      "local_path": "mksglu--context-mode",
+      "tracked_path_count": 877,
+      "license_files": [
+        "LICENSE"
+      ],
+      "dependency_manifests": [
+        ".claude-plugin/marketplace.json",
+        ".claude-plugin/plugin.json",
+        ".codex-plugin/plugin.json",
+        "package.json"
+      ],
+      "skill_count": 13,
+      "ci_workflow_count": 6,
+      "hook_paths": [
+        ".codex-plugin/hooks.json",
+        "bench/hook-gs6.mjs",
+        "bench/hook-index.mjs",
+        "bench/hook-large-post.mjs",
+        "e2e/cases/GP3-hooks.e2e.mjs",
+        "e2e/checks/hook-budget.mjs",
+        "e2e/checks/hook-phase-profile.mjs",
+        "e2e/checks/setup-hook-overhead.mjs",
+        "e2e/fixtures/hook-roundtrip.json",
+        "e2e/golden/GP1/default-hook-timeouts.json"
+      ],
+      "anchors": [
+        {
+          "path": "src/core/tools/execute.ts",
+          "lines": 244,
+          "anchor": 33
+        },
+        {
+          "path": "src/core/store/fts.ts",
+          "lines": 894,
+          "anchor": 40
+        },
+        {
+          "path": "tests/0002-store.test.mjs",
+          "lines": 1313,
+          "anchor": 29
+        },
+        {
+          "path": "LICENSE",
+          "lines": 94,
+          "anchor": 5
+        }
+      ],
+      "kind": "MCP/context runtime",
+      "license_review": "Elastic-2.0 (root text)",
+      "capability": "Externalized output and indexing",
+      "risk": "Persistence and executing tools must honor policy; no host rehearsal here",
+      "implementation_evidence": "IMPLEMENTED",
+      "upstream_runtime_execution": "NOT_RUN"
+    },
+    {
+      "name": "oraios/serena",
+      "url": "https://github.com/oraios/serena",
+      "category": "memory-context-tooling",
+      "relation": "research reference",
+      "status": "cloned",
+      "sha": "7f7d6245bf96b60fdf4e752a779917372fd1ee6e",
+      "default_branch": "main",
+      "documented_pin": null,
+      "license_spdx": "NOASSERTION",
+      "primary_language": "Python",
+      "archived": false,
+      "local_path": "oraios--serena",
+      "tracked_path_count": 1211,
+      "license_files": [
+        "LICENSE"
+      ],
+      "dependency_manifests": [
+        "pyproject.toml"
+      ],
+      "skill_count": 0,
+      "ci_workflow_count": 9,
+      "hook_paths": [
+        "src/serena/hooks.py",
+        "test/serena/test_hooks.py"
+      ],
+      "anchors": [
+        {
+          "path": "src/serena/tools/symbol_tools.py",
+          "lines": 468,
+          "anchor": 4
+        },
+        {
+          "path": "src/serena/project.py",
+          "lines": 816,
+          "anchor": 1
+        },
+        {
+          "path": "test/conftest.py",
+          "lines": 617,
+          "anchor": 36
+        },
+        {
+          "path": "LICENSE",
+          "lines": 84,
+          "anchor": 1
+        }
+      ],
+      "kind": "MCP/language-server client",
+      "license_review": "GPL-3.0-or-later app; MIT SolidLSP",
+      "capability": "Semantic source navigation",
+      "risk": "Dynamic/reflection/SQL edges can be unresolved",
+      "implementation_evidence": "IMPLEMENTED",
+      "upstream_runtime_execution": "NOT_RUN"
+    },
+    {
+      "name": "yamadashy/repomix",
+      "url": "https://github.com/yamadashy/repomix",
+      "category": "memory-context-tooling",
+      "relation": "research reference",
+      "status": "cloned",
+      "sha": "f0bcc08ab07d2dff2415fa40fb26d07eaf55b4ff",
+      "default_branch": "main",
+      "documented_pin": null,
+      "license_spdx": "MIT",
+      "primary_language": "TypeScript",
+      "archived": false,
+      "local_path": "yamadashy--repomix",
+      "tracked_path_count": 1375,
+      "license_files": [
+        "LICENSE"
+      ],
+      "dependency_manifests": [
+        ".claude-plugin/marketplace.json",
+        "browser/package.json",
+        "package.json"
+      ],
+      "skill_count": 6,
+      "ci_workflow_count": 21,
+      "hook_paths": [],
+      "anchors": [
+        {
+          "path": "src/core/packager.ts",
+          "lines": 384,
+          "anchor": 79
+        },
+        {
+          "path": "src/core/security/securityCheck.ts",
+          "lines": 170,
+          "anchor": 48
+        },
+        {
+          "path": "tests/core/packager.test.ts",
+          "lines": 520,
+          "anchor": 6
+        },
+        {
+          "path": "LICENSE",
+          "lines": 7,
+          "anchor": 1
+        }
+      ],
+      "kind": "snapshot CLI",
+      "license_review": "MIT",
+      "capability": "Scoped snapshots and screening",
+      "risk": "A scan does not authorize sending packed content elsewhere",
+      "implementation_evidence": "IMPLEMENTED",
+      "upstream_runtime_execution": "NOT_RUN"
+    },
+    {
+      "name": "nextlevelbuilder/ui-ux-pro-max-skill",
+      "url": "https://github.com/nextlevelbuilder/ui-ux-pro-max-skill",
+      "category": "ui-web",
+      "relation": "research reference",
+      "status": "cloned",
+      "sha": "f76d1653d7467fc11fb9d9d79295a421c92ab958",
+      "default_branch": "main",
+      "documented_pin": null,
+      "license_spdx": "MIT",
+      "primary_language": "Python",
+      "archived": false,
+      "local_path": "nextlevelbuilder--ui-ux-pro-max-skill",
+      "tracked_path_count": 745,
+      "license_files": [
+        "LICENSE"
+      ],
+      "dependency_manifests": [
+        ".claude-plugin/marketplace.json",
+        ".claude-plugin/plugin.json",
+        "cli/package.json",
+        "gallery/package.json",
+        "stack/package.json"
+      ],
+      "skill_count": 13,
+      "ci_workflow_count": 6,
+      "hook_paths": [],
+      "anchors": [
+        {
+          "path": "src/ui-ux-pro-max/scripts/design_system.py",
+          "lines": 1882,
+          "anchor": 2
+        },
+        {
+          "path": "src/ui-ux-pro-max/scripts/search.py",
+          "lines": 249,
+          "anchor": 2
+        },
+        {
+          "path": ".claude/skills/ui-ux-pro-max/SKILL.md",
+          "lines": 243,
+          "anchor": 6
+        },
+        {
+          "path": "LICENSE",
+          "lines": 21,
+          "anchor": 1
+        }
+      ],
+      "kind": "skill + Python search",
+      "license_review": "MIT",
+      "capability": "Searchable design suggestions",
+      "risk": "Recommendations need project conventions and operator validation",
+      "implementation_evidence": "IMPLEMENTED",
+      "upstream_runtime_execution": "NOT_RUN"
+    },
+    {
+      "name": "vercel-labs/agent-skills",
+      "url": "https://github.com/vercel-labs/agent-skills",
+      "category": "ui-web",
+      "relation": "research reference",
+      "status": "cloned",
+      "sha": "5a37a6329fbad3666c3207392a6a7c0110e92efb",
+      "default_branch": "main",
+      "documented_pin": null,
+      "license_spdx": null,
+      "primary_language": "JavaScript",
+      "archived": false,
+      "local_path": "vercel-labs--agent-skills",
+      "tracked_path_count": 445,
+      "license_files": [],
+      "dependency_manifests": [
+        "package.json"
+      ],
+      "skill_count": 9,
+      "ci_workflow_count": 2,
+      "hook_paths": [
+        "skills/react-best-practices/rules/rerender-split-combined-hooks.md"
+      ],
+      "anchors": [
+        {
+          "path": "skills/react-best-practices/SKILL.md",
+          "lines": 149,
+          "anchor": 10
+        },
+        {
+          "path": "skills/web-design-guidelines/SKILL.md",
+          "lines": 51,
+          "anchor": 10
+        },
+        {
+          "path": "packages/vercel-optimize-tests/package.json",
+          "lines": 12,
+          "anchor": 1
+        }
+      ],
+      "kind": "skill collection",
+      "license_review": "Component terms unverified",
+      "capability": "React and web review",
+      "risk": "Rules are not browser evidence and remote lookup needs permission/data boundaries",
+      "implementation_evidence": "DOCUMENTED",
+      "upstream_runtime_execution": "NOT_RUN"
+    },
+    {
+      "name": "miqdadbadjuber/anti-slop",
+      "url": "https://github.com/miqdadbadjuber/anti-slop",
+      "category": "ui-web",
+      "relation": "research reference",
+      "status": "cloned",
+      "sha": "7f6a03df2931c12cb244dc4ab14ee4866b0ac2ba",
+      "default_branch": "main",
+      "documented_pin": "4520786d3dff09eb295a2c563c7fab50063f00fb",
+      "license_spdx": "MIT",
+      "primary_language": "JavaScript",
+      "archived": false,
+      "local_path": "miqdadbadjuber--anti-slop",
+      "tracked_path_count": 71,
+      "license_files": [
+        "LICENSE"
+      ],
+      "dependency_manifests": [
+        ".claude-plugin/marketplace.json",
+        ".claude-plugin/plugin.json",
+        ".codex-plugin/plugin.json",
+        ".cursor-plugin/marketplace.json",
+        ".cursor-plugin/plugin.json",
+        ".kimi-plugin/plugin.json",
+        ".omp-plugin/marketplace.json",
+        ".qoder-plugin/plugin.json",
+        "cli/package.json",
+        "package.json",
+        "plugin.json"
+      ],
+      "skill_count": 6,
+      "ci_workflow_count": 1,
+      "hook_paths": [],
+      "documented_pin_available": true,
+      "anchors": [
+        {
+          "path": "skills/antislop-ui/SKILL.md",
+          "lines": 351,
+          "anchor": 6
+        },
+        {
+          "path": "rules/antislop.md",
+          "lines": 12,
+          "anchor": 1
+        },
+        {
+          "path": "cli/scripts/smoke-test.mjs",
+          "lines": 132,
+          "anchor": 1
+        },
+        {
+          "path": "LICENSE",
+          "lines": 21,
+          "anchor": 1
+        }
+      ],
+      "kind": "skill + CLI",
+      "license_review": "MIT",
+      "capability": "Generic visual pattern review",
+      "risk": "Rule compliance is subjective and varies by product context",
+      "implementation_evidence": "DOCUMENTED",
+      "upstream_runtime_execution": "NOT_RUN"
+    },
+    {
+      "name": "heydamir/unslop",
+      "url": "https://github.com/heydamir/unslop",
+      "category": "ui-web",
+      "relation": "research reference",
+      "status": "cloned",
+      "sha": "620163eedb3529d9cd23a3994ed8d287d06f760d",
+      "default_branch": "main",
+      "documented_pin": "97daa3eb365670ea3f87ed85356cbfcee18105a5",
+      "license_spdx": "CC-BY-4.0",
+      "primary_language": "JavaScript",
+      "archived": false,
+      "local_path": "heydamir--unslop",
+      "tracked_path_count": 29,
+      "license_files": [
+        "LICENSE"
+      ],
+      "dependency_manifests": [
+        ".claude-plugin/marketplace.json",
+        ".claude-plugin/plugin.json"
+      ],
+      "skill_count": 1,
+      "ci_workflow_count": 0,
+      "hook_paths": [],
+      "documented_pin_available": true,
+      "anchors": [
+        {
+          "path": "skills/unslop/SKILL.md",
+          "lines": 236,
+          "anchor": 11
+        },
+        {
+          "path": "LICENSE",
+          "lines": 396,
+          "anchor": 1
+        }
+      ],
+      "kind": "skill instructions",
+      "license_review": "CC-BY-4.0",
+      "capability": "Iterative UI cleanup",
+      "risk": "No observed independently graded UX run here",
+      "implementation_evidence": "DOCUMENTED",
+      "upstream_runtime_execution": "NOT_RUN"
+    },
+    {
+      "name": "hannsxpeter/humanizer",
+      "url": "https://github.com/hannsxpeter/humanizer",
+      "category": "ui-web",
+      "relation": "research reference",
+      "status": "cloned",
+      "sha": "e8f1248a7d4919689c1f942e356ed95b102d9f07",
+      "default_branch": "main",
+      "documented_pin": "e8f1248a7d4919689c1f942e356ed95b102d9f07",
+      "license_spdx": "MIT",
+      "primary_language": null,
+      "archived": false,
+      "local_path": "hannsxpeter--humanizer",
+      "tracked_path_count": 21,
+      "license_files": [
+        "LICENSE"
+      ],
+      "dependency_manifests": [],
+      "skill_count": 1,
+      "ci_workflow_count": 1,
+      "hook_paths": [],
+      "documented_pin_available": true,
+      "anchors": [
+        {
+          "path": "SKILL.md",
+          "lines": 355,
+          "anchor": 21
+        },
+        {
+          "path": "references/examples.md",
+          "lines": 379,
+          "anchor": 1
+        },
+        {
+          "path": "LICENSE",
+          "lines": 21,
+          "anchor": 1
+        }
+      ],
+      "kind": "skill instructions",
+      "license_review": "MIT",
+      "capability": "Natural editing",
+      "risk": "Stylistic edits can change meaning; factual preservation must be tested",
+      "implementation_evidence": "DOCUMENTED + IMPLEMENTED",
+      "upstream_runtime_execution": "NOT_RUN"
+    },
+    {
+      "name": "pbakaus/impeccable",
+      "url": "https://github.com/pbakaus/impeccable",
+      "category": "ui-web",
+      "relation": "research reference",
+      "status": "cloned",
+      "sha": "b49177d32788f2dc585c42831d845dacf1ebed2c",
+      "default_branch": "main",
+      "documented_pin": "b4bff1626c344067788c2679f048a20057c7cc5a",
+      "license_spdx": "Apache-2.0",
+      "primary_language": "Rust",
+      "archived": false,
+      "local_path": "pbakaus--impeccable",
+      "tracked_path_count": 4943,
+      "license_files": [
+        "LICENSE",
+        "NOTICE.md"
+      ],
+      "dependency_manifests": [
+        ".claude-plugin/marketplace.json",
+        ".claude-plugin/plugin.json",
+        ".cursor-plugin/marketplace.json",
+        "Cargo.toml",
+        "package.json"
+      ],
+      "skill_count": 26,
+      "ci_workflow_count": 4,
+      "hook_paths": [
+        ".agent/skills/impeccable/reference/hooks.md",
+        ".agents/hooks.json",
+        ".agents/skills/impeccable/reference/hooks.md",
+        ".claude/skills/impeccable/reference/hooks.md",
+        ".codex/hooks.json",
+        ".cursor/hooks.json",
+        ".cursor/skills/impeccable/reference/hooks.md",
+        ".devin/skills/impeccable/reference/hooks.md",
+        ".dsh/skills/impeccable/reference/hooks.md",
+        ".gemini/skills/impeccable/reference/hooks.md"
+      ],
+      "documented_pin_available": true,
+      "anchors": [
+        {
+          "path": "skill/reference/critique-rubric.md",
+          "lines": 496,
+          "anchor": 1
+        },
+        {
+          "path": "crates/cli/src/switch_sync.rs",
+          "lines": 312,
+          "anchor": 27
+        },
+        {
+          "path": "crates/cli/tests/critiques.rs",
+          "lines": 956,
+          "anchor": 79
+        },
+        {
+          "path": "LICENSE",
+          "lines": 191,
+          "anchor": 1
+        },
+        {
+          "path": "NOTICE.md",
+          "lines": 33,
+          "anchor": 1
+        }
+      ],
+      "kind": "skill + CLI/account",
+      "license_review": "Apache-2.0",
+      "capability": "Design critique and refinement",
+      "risk": "Account/network sync is a separate trust boundary",
+      "implementation_evidence": "DOCUMENTED + IMPLEMENTED",
+      "upstream_runtime_execution": "NOT_RUN"
+    },
+    {
+      "name": "lzehrung/codegraph",
+      "url": "https://github.com/lzehrung/codegraph",
+      "category": "code-intelligence",
+      "relation": "research reference",
+      "status": "cloned",
+      "sha": "13687be6a1e875b1153137025559488c4fbb28c6",
+      "default_branch": "main",
+      "documented_pin": "2c7e668ca4b62441648e5f09f85d4ad128c5f427",
+      "license_spdx": "MIT",
+      "primary_language": "TypeScript",
+      "archived": false,
+      "local_path": "lzehrung--codegraph",
+      "tracked_path_count": 2041,
+      "license_files": [
+        "LICENSE"
+      ],
+      "dependency_manifests": [
+        "package.json"
+      ],
+      "skill_count": 2,
+      "ci_workflow_count": 3,
+      "hook_paths": [],
+      "documented_pin_available": true,
+      "anchors": [
+        {
+          "path": "src/indexer.ts",
+          "lines": 138,
+          "anchor": 98
+        },
+        {
+          "path": "src/mcp.ts",
+          "lines": 8,
+          "anchor": 1
+        },
+        {
+          "path": "tests/mcp-server.test.ts",
+          "lines": 5119,
+          "anchor": 193
+        },
+        {
+          "path": "LICENSE",
+          "lines": 21,
+          "anchor": 1
+        }
+      ],
+      "kind": "CLI/MCP index",
+      "license_review": "MIT",
+      "capability": "Code indexing and graph queries",
+      "risk": "Index freshness and unsupported dynamic edges affect completeness",
+      "implementation_evidence": "IMPLEMENTED",
+      "upstream_runtime_execution": "NOT_RUN"
+    },
+    {
+      "name": "Graphify-Labs/graphify",
+      "url": "https://github.com/Graphify-Labs/graphify",
+      "category": "code-intelligence",
+      "relation": "research reference",
+      "status": "cloned",
+      "sha": "b582ad401aaef4378935ec6620e3b165ae8e03c1",
+      "default_branch": "v8",
+      "documented_pin": "91f4d120b630ee35c79bf3c75ccd186870a808f9",
+      "license_spdx": "Apache-2.0",
+      "primary_language": "Python",
+      "archived": false,
+      "local_path": "Graphify-Labs--graphify",
+      "tracked_path_count": 1279,
+      "license_files": [
+        "LICENSE",
+        "NOTICE"
+      ],
+      "dependency_manifests": [
+        "pyproject.toml"
+      ],
+      "skill_count": 0,
+      "ci_workflow_count": 5,
+      "hook_paths": [
+        "graphify/hooks.py",
+        "graphify/skills/agents/references/hooks.md",
+        "graphify/skills/amp/references/hooks.md",
+        "graphify/skills/claude/references/hooks.md",
+        "graphify/skills/claw/references/hooks.md",
+        "graphify/skills/codex/references/hooks.md",
+        "graphify/skills/copilot/references/hooks.md",
+        "graphify/skills/droid/references/hooks.md",
+        "graphify/skills/kilo/references/hooks.md",
+        "graphify/skills/kiro/references/hooks.md"
+      ],
+      "documented_pin_available": true,
+      "anchors": [
+        {
+          "path": "graphify/extract.py",
+          "lines": 14162,
+          "anchor": 40
+        },
+        {
+          "path": "graphify/build.py",
+          "lines": 3550,
+          "anchor": 1
+        },
+        {
+          "path": "tests/test_extract.py",
+          "lines": 6665,
+          "anchor": 15
+        },
+        {
+          "path": "LICENSE",
+          "lines": 202,
+          "anchor": 2
+        },
+        {
+          "path": "NOTICE",
+          "lines": 8,
+          "anchor": 1
+        }
+      ],
+      "kind": "graph runtime",
+      "license_review": "Apache-2.0",
+      "capability": "Multi-artifact graph",
+      "risk": "Semantic processing or visualization needs separate dataflow review",
+      "implementation_evidence": "IMPLEMENTED",
+      "upstream_runtime_execution": "NOT_RUN"
+    },
+    {
+      "name": "trailofbits/skills",
+      "url": "https://github.com/trailofbits/skills",
+      "category": "security-evaluation",
+      "relation": "research reference",
+      "status": "cloned",
+      "sha": "149d7b21f4067765b82e67029730b42d228ef4b4",
+      "default_branch": "main",
+      "documented_pin": null,
+      "license_spdx": "CC-BY-SA-4.0",
+      "primary_language": "Python",
+      "archived": false,
+      "local_path": "trailofbits--skills",
+      "tracked_path_count": 1660,
+      "license_files": [
+        "LICENSE"
+      ],
+      "dependency_manifests": [
+        ".claude-plugin/marketplace.json"
+      ],
+      "skill_count": 99,
+      "ci_workflow_count": 4,
+      "hook_paths": [
+        "plugins/fp-check/hooks/hooks.json",
+        "plugins/gh-cli/hooks/hooks.json",
+        "plugins/gh-cli/hooks/session-hooks.bats",
+        "plugins/modern-python/hooks/hooks.json"
+      ],
+      "anchors": [
+        {
+          "path": "plugins/spec-to-code-compliance/skills/spec-to-code-compliance/SKILL.md",
+          "lines": 115,
+          "anchor": 7
+        },
+        {
+          "path": "plugins/property-based-testing/skills/property-based-testing/SKILL.md",
+          "lines": 68,
+          "anchor": 7
+        },
+        {
+          "path": "plugins/property-based-testing/evals-extra/run.sh",
+          "lines": 717,
+          "anchor": 2
+        },
+        {
+          "path": "LICENSE",
+          "lines": 427,
+          "anchor": 1
+        }
+      ],
+      "kind": "skill/plugin collection",
+      "license_review": "CC-BY-SA-4.0",
+      "capability": "Requirement tracing and invariants",
+      "risk": "Test presence alone does not verify execution or authorize security probing",
+      "implementation_evidence": "DOCUMENTED",
+      "upstream_runtime_execution": "NOT_RUN"
+    },
+    {
+      "name": "getsentry/skills",
+      "url": "https://github.com/getsentry/skills",
+      "category": "security-evaluation",
+      "relation": "research reference",
+      "status": "cloned",
+      "sha": "a582c51ee29d0f35e6ac321340796f77d43da733",
+      "default_branch": "main",
+      "documented_pin": null,
+      "license_spdx": "Apache-2.0",
+      "primary_language": "Python",
+      "archived": false,
+      "local_path": "getsentry--skills",
+      "tracked_path_count": 170,
+      "license_files": [
+        "LICENSE"
+      ],
+      "dependency_manifests": [
+        ".claude-plugin/marketplace.json",
+        ".claude-plugin/plugin.json"
+      ],
+      "skill_count": 31,
+      "ci_workflow_count": 0,
+      "hook_paths": [
+        "skills/skill-writer/references/claude-hook-backed.md",
+        "skills/skill-writer/references/example-hook-backed-skill.md"
+      ],
+      "anchors": [
+        {
+          "path": "skills/security-model/SKILL.md",
+          "lines": 185,
+          "anchor": 18
+        },
+        {
+          "path": "skills/security-model/SPEC.md",
+          "lines": 93,
+          "anchor": 1
+        },
+        {
+          "path": "skills/security-model/scripts/selftest_resolve_security_model.py",
+          "lines": 219,
+          "anchor": 1
+        },
+        {
+          "path": "LICENSE",
+          "lines": 190,
+          "anchor": 1
+        }
+      ],
+      "kind": "skill/plugin collection",
+      "license_review": "Apache-2.0",
+      "capability": "Repository-specific security model",
+      "risk": "Review coverage depends on available configuration and evidence",
+      "implementation_evidence": "DOCUMENTED + IMPLEMENTED",
+      "upstream_runtime_execution": "NOT_RUN"
+    },
+    {
+      "name": "promptfoo/promptfoo",
+      "url": "https://github.com/promptfoo/promptfoo",
+      "category": "security-evaluation",
+      "relation": "research reference",
+      "status": "cloned",
+      "sha": "e6d8f04a6c0f3fa9d44345fd6eba081c1a6b07ad",
+      "default_branch": "main",
+      "documented_pin": null,
+      "license_spdx": "MIT",
+      "primary_language": "TypeScript",
+      "archived": false,
+      "local_path": "promptfoo--promptfoo",
+      "tracked_path_count": 6069,
+      "license_files": [
+        "LICENSE"
+      ],
+      "dependency_manifests": [
+        ".claude-plugin/marketplace.json",
+        "code-scan-action/package.json",
+        "package.json",
+        "site/package.json"
+      ],
+      "skill_count": 17,
+      "ci_workflow_count": 19,
+      "hook_paths": [
+        "examples/claude-agent-sdk/advanced/hooks.js",
+        "examples/config-extension-api/hooks.js",
+        "examples/config-extension-api/hooks.py",
+        "examples/config-stateful-session-management/hooks.js",
+        "site/docs/enterprise/webhooks.md",
+        "site/docs/providers/webhook.md",
+        "src/app/src/pages/eval/components/hooks.test.ts",
+        "src/app/src/pages/eval/components/hooks.ts",
+        "src/assertions/webhook.ts",
+        "src/providers/webhook.ts"
+      ],
+      "anchors": [
+        {
+          "path": "src/evaluator/engine.ts",
+          "lines": 4359,
+          "anchor": 211
+        },
+        {
+          "path": "src/assertions/index.ts",
+          "lines": 970,
+          "anchor": 130
+        },
+        {
+          "path": "src/evaluator/resultProcessing.ts",
+          "lines": 975,
+          "anchor": 57
+        },
+        {
+          "path": "LICENSE",
+          "lines": 19,
+          "anchor": 1
+        }
+      ],
+      "kind": "evaluation CLI/runtime",
+      "license_review": "MIT",
+      "capability": "Parameterized evaluator and assertions",
+      "risk": "External calls/cost and uneven coverage need separate configuration",
+      "implementation_evidence": "IMPLEMENTED",
+      "upstream_runtime_execution": "NOT_RUN"
+    },
+    {
+      "name": "NousResearch/hermes-agent",
+      "url": "https://github.com/NousResearch/hermes-agent",
+      "category": "agent-system",
+      "relation": "direct inspiration",
+      "status": "cloned",
+      "sha": "52b527194b364ba073c85f0b1cd8c63bc9264cac",
+      "default_branch": "main",
+      "documented_pin": null,
+      "license_spdx": "MIT",
+      "primary_language": "Python",
+      "archived": false,
+      "local_path": "NousResearch--hermes-agent",
+      "tracked_path_count": 27298,
+      "license_files": [
+        "LICENSE"
+      ],
+      "dependency_manifests": [
+        "package.json",
+        "pm/pyproject.toml",
+        "pyproject.toml",
+        "tests-js/package.json",
+        "ui-tui/package.json",
+        "web/package.json",
+        "website/package.json"
+      ],
+      "skill_count": 186,
+      "ci_workflow_count": 49,
+      "hook_paths": [
+        "agent/api_request_hooks.py",
+        "agent/auxiliary_hooks.py",
+        "agent/outbound_webhooks.py",
+        "agent/plugin_stream_hooks.py",
+        "agent/provider_route_hooks.py",
+        "agent/shell_hooks.py",
+        "agent/verify_hooks.py",
+        "apps/desktop/src/types/webhooks.ts",
+        "apps/desktop/src/webhooks-rest.test.ts",
+        "docker/stage2-hook.sh"
+      ],
+      "anchors": [
+        {
+          "path": "tools/delegate_tool.py",
+          "lines": 1015,
+          "anchor": 24
+        },
+        {
+          "path": "tools/memory_tool.py",
+          "lines": 479,
+          "anchor": 18
+        },
+        {
+          "path": "tests/tools/test_delegate.py",
+          "lines": 2101,
+          "anchor": 33
+        },
+        {
+          "path": "LICENSE",
+          "lines": 21,
+          "anchor": 1
+        }
+      ],
+      "kind": "standalone agent/runtime",
+      "license_review": "MIT",
+      "capability": "Runtime delegation and memory tools",
+      "risk": "Permissions and lifecycle behavior depend on configured host/runtime",
+      "implementation_evidence": "IMPLEMENTED",
+      "upstream_runtime_execution": "NOT_RUN"
+    }
+  ]
+}

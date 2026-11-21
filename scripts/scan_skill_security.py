@@ -5,6 +5,7 @@ This is a review aid. A clean result is not proof that an instruction bundle is 
 
 import argparse
 import json
+import os
 from pathlib import Path
 import re
 import sys
@@ -24,6 +25,7 @@ RULES = [
     ("unpinned-install", "medium", re.compile(r"\b(pip|npm|pnpm)\s+(install|add)\s+(?!.*(?:==|@|--frozen|--lock))", re.I)),
 ]
 TEXT_SUFFIXES = {".md", ".txt", ".yaml", ".yml", ".json", ".py", ".sh", ".js", ".mjs", ".ts"}
+MAX_TEXT_BYTES = 1024 * 1024
 
 
 def scan_text(text, filename="<input>"):
@@ -39,30 +41,63 @@ def scan_text(text, filename="<input>"):
                     "line": line_number,
                     "rule": rule,
                     "severity": severity,
-                    "excerpt": line.strip()[:180],
+                    "excerpt": "[source text omitted]",
                 })
     return findings
 
 
 def scan_path(path):
     target = Path(path)
-    if not target.exists():
-        raise ValueError("path does not exist: {}".format(target))
-    files = [target] if target.is_file() else [
-        item for item in target.rglob("*")
-        if item.is_file() and item.suffix.lower() in TEXT_SUFFIXES
-    ]
     findings = []
-    for file in sorted(files):
+
+    def unscanned(file, rule):
+        findings.append({"file": str(file), "line": 0, "rule": rule,
+                         "severity": "medium", "excerpt": "[content not scanned]"})
+
+    def scan_file(file):
+        if file.is_symlink():
+            unscanned(file, "symlink-not-scanned")
+            return
+        if not file.is_file():
+            unscanned(file, "nonregular-not-scanned")
+            return
         try:
-            text = file.read_text(encoding="utf-8", errors="replace")
-        except OSError as exc:
-            findings.append({
-                "file": str(file), "line": 0, "rule": "read-error",
-                "severity": "medium", "excerpt": str(exc),
-            })
-            continue
+            with file.open("rb") as stream:
+                data = stream.read(MAX_TEXT_BYTES + 1)
+            if len(data) > MAX_TEXT_BYTES:
+                unscanned(file, "size-limit")
+                return
+            text = data.decode("utf-8")
+            if "\x00" in text:
+                unscanned(file, "binary-not-scanned")
+                return
+        except UnicodeError:
+            unscanned(file, "binary-not-scanned")
+            return
+        except OSError:
+            unscanned(file, "read-error")
+            return
         findings.extend(scan_text(text, str(file)))
+
+    if target.is_symlink():
+        unscanned(target, "symlink-not-scanned")
+    elif not target.exists():
+        raise ValueError("path does not exist: {}".format(target))
+    elif target.is_dir():
+        for directory, dirs, files in os.walk(
+                target, onerror=lambda exc: unscanned(exc.filename or target, "read-error")):
+            root = Path(directory)
+            dirs.sort()
+            for name in dirs[:]:
+                if (root / name).is_symlink():
+                    unscanned(root / name, "symlink-not-scanned")
+                    dirs.remove(name)
+            for name in sorted(files):
+                file = root / name
+                if file.is_symlink() or file.suffix.lower() in TEXT_SUFFIXES:
+                    scan_file(file)
+    else:
+        scan_file(target)
     return findings
 
 
@@ -84,7 +119,8 @@ def main(argv=None):
     except (OSError, ValueError) as exc:
         print("scan failed: {}".format(exc), file=sys.stderr)
         return 2
-    result = {"path": str(args.path), "verdict": verdict(findings), "findings": findings}
+    result = {"path": str(args.path), "scope": "heuristic_triage",
+              "verdict": verdict(findings), "findings": findings}
     if args.json:
         print(json.dumps(result, indent=2, ensure_ascii=False))
     else:

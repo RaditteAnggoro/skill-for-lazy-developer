@@ -42,6 +42,10 @@ The scanner is a triage aid, not proof of safety. Also review generated role wra
 and any proposed skill-learning diff for permission broadening, hidden instructions,
 and out-of-scope writes; a role label is policy metadata, not a sandbox.
 
+Scan a stable quarantine snapshot. Findings omit source excerpts, and symlinks or
+unscannable text require review. Inventory unsupported formats separately. A clean
+heuristic verdict leaves the adoption decision to a human reviewer.
+
 Read [review-checklist.md](references/review-checklist.md) for the decision record.
 
 ## Decide and record

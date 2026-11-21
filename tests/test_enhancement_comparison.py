@@ -20,6 +20,8 @@ class ComparisonTests(unittest.TestCase):
         value = compare(a, b)
         self.assertEqual(value['comparable_trials'], 2)
         self.assertEqual(value['blocked_or_unpaired_trials'], 1)
+        self.assertEqual(value['coverage_status'], 'partial')
+        self.assertEqual(value['blocked_by_variant'], {'baseline': 1, 'candidate': 0})
         self.assertEqual(value['regressions'], [['one', 1]])
         self.assertEqual(value['improvements'], [['one', 2]])
 
@@ -39,6 +41,23 @@ class ComparisonTests(unittest.TestCase):
         a = report('baseline', ['pass'] * 3); a['derived_rescore'] = True
         b = report('candidate', ['pass'] * 3)
         self.assertTrue(any('rescoring' in x for x in compare(a, b)['limitations']))
+
+    def test_missing_case_coverage_is_insufficient(self):
+        a = report('baseline', ['blocked'] * 3)
+        b = report('candidate', ['pass'] * 3)
+        value = compare(a, b)
+        self.assertEqual(value['coverage_status'], 'insufficient_evidence')
+        self.assertEqual(value['uncovered_case_ids'], ['one'])
+        self.assertEqual(value['comparable_trials'], 0)
+        self.assertEqual(value['scheduled_pairs'], 3)
+
+    def test_empty_corpus_is_invalid(self):
+        a = report('baseline', ['pass'] * 3)
+        b = report('candidate', ['pass'] * 3)
+        for variant in (a, b):
+            variant.update(case_ids=[], results=[])
+        with self.assertRaises(ValueError):
+            compare(a, b)
 
 
 if __name__ == '__main__':
