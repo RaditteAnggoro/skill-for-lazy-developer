@@ -3,8 +3,11 @@ hosts:
   codex:
     version: 0.167.0
     wrapper_parse: pass
-    host_role_dispatch: NOT_RUN
-    reason: Isolated CLI canaries produced no child-role event or role identity. Successful command exit alone did not verify dispatch.
+    host_role_dispatch: pass
+    evidence_level: HOST_INTEGRATION
+    role: ld-codebase-explorer
+    transport: app-server
+    reason: Read-only synthetic app-server canary observed child lifecycle, exact role findings and the parent handoff.
   claude:
     version: 2.1.322
     wrapper_parse: pass

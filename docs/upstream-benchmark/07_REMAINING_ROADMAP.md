@@ -1,17 +1,28 @@
-# 07 — Remaining roadmap
+# 07 — Delivery status and remaining roadmap
 
-| Priority | Work left | Completion evidence |
-| --- | --- | --- |
-| P0 | Verify the installed hook on each remaining supported host and review legacy records before transferring them. | Codex consumes same-turn typed completion events. New records use root-bound provider buckets. Legacy records stay outside automatic recall and delete. |
-| P1 | Observe the receipt smoke test on hosted CI. | The first CI job records the synthetic corpus check and the next job verifies the artifact before continuing. Local subprocess replay verifies the same plan. |
-| P1 | Run a blind task review under a pinned visual profile. | Include matching success, recovery, accessibility and pixel evidence for each candidate. Browser coverage now includes approval and inventory journeys. |
-| P1 | Evaluate a disposable server database and batch framework, then scale to a million rows under defined resource budgets. | SQLite now checks process exits during a posting and after a chunk commit, plus restart and full staging reconciliation. Server engines and their query plans require their own fixtures. |
-| P1 | Expand the isolated matched [task matrix](05_BENCHMARK_RESULTS.md) beyond routing, source edges and repayment. | Retain per-case denominators and account for every skipped or blocked arm. Use the same fixture, acceptance checks and permission profile across arms. |
-| P2 | Obtain positive Codex and Claude dispatch canaries. DSH keeps a single-agent fallback where dispatch is unsupported. | Actual host run proves role identity, bounded behavior and timeout/fallback on a synthetic project. |
-| P2 | Trial local semantic index or renderer when the project needs it. | Improves edge/anchor coverage per time and context after native fallback, with source hydration, case revision, license and rollback reviewed. |
-| P3 | Evaluate persistent external context, blind model-generated prose, or semantic cross-artifact graphs. | Demonstrates incremental value and isolated persistence/egress control before any activation. |
+## Delivered work
 
-Continue with the current skill roster. Consider a new skill only if multiple projects demonstrate a distinct repeated intent and the existing owner cannot achieve the necessary outcome without confusing routing or significantly increasing context. A host integration is usually an optional capability or adapter.
+| Priority | Implementation and verified scope |
+| --- | --- |
+| P0 | Root-bound Engram buckets, full recall through scoped temporary exports, preview-bound deletion, and exact same-turn Codex hook evidence. The installed Codex hook and same-name project isolation passed on synthetic data. |
+| P1 | Cross-runner receipt verification passed on [GitHub Actions](https://github.com/RaditteAnggoro/skill-for-lazy-developer/actions/runs/44983280774). [Browser CI](https://github.com/RaditteAnggoro/skill-for-lazy-developer/actions/runs/44983280687) passed 81 structural checks across approvals and inventory. The local SQLite restart check reconciled one million staging events and two million postings. A matched read-only diagnosis benchmark passed 3/3 on each Lazy Developer version. |
+| P2 | A disposable Codex app-server session dispatched the custom explorer with observable child and parent evidence. The bounded AST experiment resolved three Python callsites with aliases and shadowed names. See the [P2 evaluation](11_P2_EVALUATION.md) for its scope and host results. |
 
-[Follow-up implementation and measured results](10_PARITY_FOLLOWUP.md) record the
-ten original weaknesses, including the local packaging and recovery work completed here.
+## Remaining verification
+
+| Area | Evidence required |
+| --- | --- |
+| Additional hosts | Authenticate Claude for its custom-role dispatch canary and exercise installed lifecycle hooks on each remaining host. DSH uses the sequential role fallback while its adapter has no verified dispatch API. |
+| Visual quality | Run a blind task review in a pinned visual profile. Include comparable success, recovery, accessibility and pixel checks. |
+| Server databases and batch frameworks | Use disposable server and framework fixtures to verify restart, concurrency, reconciliation and query plans. SQLite scale evidence stays specific to its local fixture. |
+| Cross-upstream comparisons | Expand the matched [task matrix](05_BENCHMARK_RESULTS.md) using identical fixtures, acceptance checks and permissions per arm. |
+| Structural navigation | Evaluate multi-package or dynamic call graphs before adopting a persistent index. Use current source anchors for decisions. |
+
+## Later scope
+
+P3 evaluates persistent external context, blind review of model-generated prose, and
+cross-artifact semantic graphs. Require measurable gains, isolated persistence and
+controlled egress before activation.
+
+See the [ten-area follow-up](10_PARITY_FOLLOWUP.md) for prior results and the exact
+scope of the original comparison.

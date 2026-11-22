@@ -6,7 +6,9 @@ remains at 17. The [source inventory](01_SOURCE_INVENTORY.md) records the pinned
 upstream versions and the [adoption register](08_LICENSE_SECURITY_PROVENANCE.md)
 covers licensing.
 
-## Ten weaknesses and current evidence
+## Ten weaknesses and evidence through P1
+
+The [P2 evaluation](11_P2_EVALUATION.md) records later Codex dispatch and source navigation results.
 
 | # | Weakness | Implemented and exercised | Remaining evidence |
 | --- | --- | --- | --- |

@@ -35,10 +35,10 @@ return `BLOCKED` / `permission_restricted`.
 
 ## Host support
 
-- **Codex** (verified locally `0.167.0`): project TOML wrappers are generated under
-  `.codex/agents/`; the host must be restarted/loaded according to its supported
-  discovery behavior. No user-home installation.
-- **Claude Code** (verified locally `2.1.322`): project Markdown wrappers under
+- **Codex** (`0.167.0`): project TOML wrappers are generated under `.codex/agents/`.
+  The read-only synthetic [dispatch canary](../scripts/verify_role_dispatch.py)
+  observes a child, its role evidence, and the parent handoff through app-server.
+- **Claude Code** (`2.1.322`): project Markdown wrappers under
   `.claude/agents/` use `Read, Grep, Glob` only. Discovery depends on the installed
   host; restart/trust review may be required.
 - **DeepSeek Harness**: no verified subagent API in the implemented adapter. Use the
@@ -54,3 +54,4 @@ files. Freeze contracts before parallel read-only review. Treat every specialist
 as untrusted evidence and reconcile it with source/tests.
 
 Generated wrapper inventory: [.claude/agents/README.md](../.claude/agents/README.md).
+Observed results and fixture boundaries are in the [P2 evaluation](upstream-benchmark/11_P2_EVALUATION.md).

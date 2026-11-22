@@ -33,6 +33,9 @@ Give important nodes or edges identifiers and connect them to real file location
 For a dependency or impact question, cite the caller's exact callsite and the target
 symbol. Mark the edge as a call, data reference, or conditional dispatch. Keep a
 source reference to a SQL statement separate from evidence that the statement ran.
+When a name search leaves ambiguous candidates, inspect import aliases, local
+shadowing and qualified calls. Use available structural search for these bindings
+and mark dynamic or rebound callers unresolved when source cannot establish the target.
 
 ## Explain consequences
 

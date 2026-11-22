@@ -2,6 +2,9 @@
 
 ## Unreleased
 
+- Add an isolated Codex role dispatch canary and a local structural-navigation
+  benchmark that measures exact caller anchors under aliases and shadowing.
+- Reconcile delivered P0/P1 evidence and separate follow-up validation in the roadmap.
 - Isolate companion memory in root-bound Engram projects, verify same-turn Codex
   command completion and limit confirmed deletion to previewed observation IDs.
 - Resume a synthetic phase receipt across GitHub Actions jobs. Add inventory receipt
