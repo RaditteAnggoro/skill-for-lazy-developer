@@ -30,6 +30,10 @@ Use Mermaid in Markdown by default. Use an HTML/SVG artifact when interaction or
 
 Give important nodes or edges identifiers and connect them to real file locations in an evidence table. Use repository-relative links in saved portable documents; use the host's clickable file convention in chat.
 
+For a dependency or impact question, cite the caller's exact callsite and the target
+symbol. Mark the edge as a call, data reference, or conditional dispatch. Keep a
+source reference to a SQL statement separate from evidence that the statement ran.
+
 ## Explain consequences
 
 State the answer in plain language, then show the diagram and supporting code. For data-processing questions, describe origin, transformations, destination, side effects, and failure behaviour. For change-impact questions, identify affected callers, contracts, tables, and tests; distinguish confirmed dependencies from candidates.

@@ -1,5 +1,8 @@
 from copy import deepcopy
+import json
 from pathlib import Path
+import subprocess
+import sys
 from tempfile import TemporaryDirectory
 import unittest
 
@@ -65,3 +68,31 @@ class PhaseReceipts(unittest.TestCase):
         self.plan['task'] = 'Different task'
         with self.assertRaises(ValueError):
             self.report()
+
+    def test_recorder_resumes_in_separate_process_and_binds_run_identity(self):
+        repo = Path(__file__).resolve().parents[1]
+        plan = self.root / 'plan.json'
+        receipts = self.root / 'receipts.json'
+        plan.write_text(json.dumps(self.plan), encoding='utf-8')
+
+        def run(phase):
+            return subprocess.run([sys.executable, str(repo/'scripts/record_phase_check.py'),
+                                   str(plan), str(receipts), '--workspace', str(self.root),
+                                   '--artifacts', str(self.artifacts), '--phase', phase, '--check', 'case',
+                                   '--', sys.executable, '-c', 'raise SystemExit(0)'],
+                                  capture_output=True, text=True, timeout=20, check=False)
+
+        self.assertEqual(run('final').returncode, 2)
+        self.assertFalse(receipts.exists())
+        for phase in ('work', 'final'):
+            result = run(phase)
+            self.assertEqual(result.returncode, 0, result.stderr)
+        bundle = json.loads(receipts.read_text(encoding='utf-8'))
+        self.assertTrue(self.report(bundle)['complete'])
+        observation = bundle['phases'][0]['checks']['case']
+        observed_file = self.artifacts / observation['path']
+        observed = json.loads(observed_file.read_text(encoding='utf-8'))
+        observed['check'] = 'another-check'
+        observed_file.write_text(json.dumps(observed), encoding='utf-8')
+        observation['sha256'] = file_digest(self.artifacts, observation['path'])
+        self.assertEqual(self.report(bundle)['phases'][0]['reason'], 'provenance_mismatch')

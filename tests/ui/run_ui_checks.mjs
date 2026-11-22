@@ -6,6 +6,7 @@ import { fileURLToPath } from "node:url";
 import { chromium } from "playwright-core";
 import pixelmatch from "pixelmatch";
 import { PNG } from "pngjs";
+import { verifyKeyboardRejection } from "./approval_journeys.mjs";
 
 const here = path.dirname(fileURLToPath(import.meta.url));
 const snapshots = path.join(here, "snapshots");
@@ -167,8 +168,41 @@ async function runFixture(browser, fixture) {
     const firstRow = await page.locator("table tbody tr").first().textContent();
     record(`bulk-approved-state:${fixture}`, firstRow.includes("approved"), "target row changed");
     record(`bulk-cleared:${fixture}`, !bodyText.includes("1 selected"), "selection cleared");
+    await verifyKeyboardRejection(page, fixture, record);
     await page.close();
   } finally {
+    server.close();
+  }
+}
+
+async function runInventory(browser) {
+  const server = await serve(path.join(here, "fixtures/inventory"));
+  const page = await browser.newPage({ viewport: { width: 360, height: 900 } });
+  try {
+    page.on("pageerror", (error) => consoleErrors.push(`inventory: ${error.message}`));
+    await page.goto(`http://127.0.0.1:${server.address().port}/`);
+    const quantity = page.getByLabel("Units received");
+    const stock = page.locator("#stock");
+    const submit = page.getByRole("button", { name: "Record receipt" });
+    await page.keyboard.press("Tab");
+    record("inventory:keyboard-focus", await quantity.evaluate((node) => node === document.activeElement &&
+      getComputedStyle(node).outlineStyle === "solid"));
+    await quantity.fill("9");
+    await submit.press("Enter");
+    record("inventory:reject-over-receipt", !await quantity.evaluate((node) => node.validity.valid) &&
+      await stock.textContent() === "12");
+    await quantity.fill("4");
+    await submit.press("Enter");
+    record("inventory:error-preserves-value", await page.getByRole("alert").isVisible() &&
+      await quantity.inputValue() === "4" && await stock.textContent() === "12");
+    await page.getByRole("button", { name: "Retry receipt" }).press("Enter");
+    record("inventory:retry-exact-stock", await stock.textContent() === "16" &&
+      await page.getByRole("status").textContent() === "4 units received for PO-214.");
+    record("inventory:no-repeat", await page.getByRole("button", { name: "Receipt recorded" }).isDisabled());
+    record("inventory:overflow:360", await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth));
+    if (process.env.UI_SNAPSHOT_MODE === "structural") await screenshot(page, "inventory", 360);
+  } finally {
+    await page.close();
     server.close();
   }
 }
@@ -183,6 +217,7 @@ try {
   await mkdir(artifacts, { recursive: true });
   await runFixture(browser, "plain");
   await runFixture(browser, "react");
+  await runInventory(browser);
   // Next fixture is source-validated; its build is not installed in this fixture run.
   const nextPage = await readFile(path.join(here, "fixtures/next/app/page.jsx"), "utf8");
   const nextLayout = await readFile(path.join(here, "fixtures/next/app/layout.jsx"), "utf8");

@@ -4,6 +4,7 @@ import subprocess
 import sys
 import tempfile
 import unittest
+from unittest.mock import patch
 import zipfile
 
 from scripts.scan_skill_security import scan_path
@@ -80,6 +81,43 @@ class Phase7Tests(unittest.TestCase):
         (backup / "manifest.json").write_text(json.dumps(journal), encoding="utf-8")
         rollback(backup, target)
         self.assertFalse((target / ".agents/skills/adaptive-workflow/SKILL.md").exists())
+
+    def test_rollback_preserves_post_import_edits(self):
+        target = self.root / 'edited-target'
+        target.mkdir()
+        result = import_pack(self.archive, target, apply=True)
+        edited = target / 'AGENTS.snippet.md'
+        edited.write_text('User edited the snippet.', encoding='utf-8')
+        with self.assertRaisesRegex(PackError, 'rollback conflict'):
+            rollback(result['backup'], target)
+        self.assertEqual(edited.read_text(encoding='utf-8'), 'User edited the snippet.')
+        self.assertTrue((target / '.agents/skills/adaptive-workflow/SKILL.md').is_file())
+
+    def test_interrupted_import_recovers_only_paths_that_were_applied(self):
+        from scripts import package_skill_pack
+
+        target = self.root / 'partial-target'
+        target.mkdir()
+        snippet = target / 'AGENTS.snippet.md'
+        snippet.write_text('original snippet', encoding='utf-8')
+        write = package_skill_pack._atomic_write
+        attempt = []
+
+        def interrupt(path, content):
+            if path.name != 'manifest.json':
+                if attempt:
+                    raise OSError('synthetic interruption')
+                attempt.append(path)
+            return write(path, content)
+
+        with patch.object(package_skill_pack, '_atomic_write', side_effect=interrupt):
+            with self.assertRaisesRegex(OSError, 'synthetic interruption'):
+                import_pack(self.archive, target, apply=True)
+        backup, = (target / '.agents/backups').iterdir()
+        self.assertTrue(attempt[0].is_file())
+        rollback(backup, target)
+        self.assertFalse(attempt[0].exists())
+        self.assertEqual(snippet.read_text(encoding='utf-8'), 'original snippet')
 
     def test_checksum_tamper_is_rejected(self):
         tampered = self.root / "tampered.zip"

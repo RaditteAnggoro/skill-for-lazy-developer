@@ -1,6 +1,8 @@
 import hashlib
 import json
 from pathlib import Path
+import shutil
+import subprocess
 import tempfile
 import unittest
 from zipfile import ZipFile
@@ -57,8 +59,27 @@ class PackagingTests(unittest.TestCase):
         self.assertNotIn("docs/token.key", files)
 
     def test_require_clean_rejects_non_git_or_dirty_snapshot(self):
-        with self.assertRaisesRegex(ValueError, "not clean"):
+        with self.assertRaisesRegex(ValueError, "clean source snapshot"):
             build_release(self.root, require_clean=True)
+
+    @unittest.skipUnless(shutil.which("git"), "git unavailable")
+    def test_clean_archive_excludes_ignored_untracked_files_inside_allowlist(self):
+        # A clean Git status can still conceal local drafts and evidence.
+        for relative in PATHS[:5]:
+            (self.root / relative / "fixture.txt").write_text("committed fixture\n")
+        (self.root / ".gitignore").write_text("docs/private-review.md\n")
+        git = ["git", "-C", str(self.root)]
+        subprocess.run(git + ["init", "-q"], check=True)
+        subprocess.run(git + ["add", "."], check=True)
+        subprocess.run(git + ["-c", "user.name=Fixture", "-c", "user.email=fixture@example.test",
+                              "-c", "commit.gpgsign=false", "commit", "-qm", "fixture"], check=True)
+        (self.root / "docs/private-review.md").write_text("synthetic private marker\n")
+        subprocess.run(git + ["update-index", "--assume-unchanged", "docs/fixture.txt"], check=True)
+        (self.root / "docs/fixture.txt").write_text("local-only edit\n")
+        archive, _, _ = build_release(self.root, require_clean=True)
+        with ZipFile(archive) as bundle:
+            self.assertEqual(bundle.read("codex-developer-skills-0.1.0/docs/fixture.txt"), b"committed fixture\n")
+            self.assertNotIn("codex-developer-skills-0.1.0/docs/private-review.md", bundle.namelist())
 
     def test_archive_is_reproducible(self):
         first, _, _ = build_release(self.root)

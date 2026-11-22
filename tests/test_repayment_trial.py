@@ -5,9 +5,22 @@ import unittest
 from unittest import mock
 
 from scripts import run_repayment_trial as trial
+from scripts.run_repayment_comparison import summarize
 
 
 class RepaymentTrialTests(unittest.TestCase):
+    def test_three_way_gate_excludes_rounds_with_blocked_grading(self):
+        variants = ['baseline', 'superpowers', 'candidate']
+        results = [dict(trial=i, variant=v, outcome='pass', holdout='pass')
+                   for i in range(1, 4) for v in variants]
+        results[4]['holdout'] = 'blocked'
+        value = summarize(results, variants)
+        self.assertEqual(value['status'], 'insufficient_evidence')
+        self.assertEqual(value['matched_trials'], 2)
+        results[4]['holdout'] = 'pass'
+        results[5]['holdout'] = 'fail'
+        self.assertEqual(summarize(results, variants)['status'], 'below_upstream')
+
     def test_synthetic_grader_does_not_pass_when_no_checks_ran(self):
         cases = [
             (SimpleNamespace(returncode=0, stderr=b''), 'blocked'),

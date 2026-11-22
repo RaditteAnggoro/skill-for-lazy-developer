@@ -44,3 +44,5 @@ output. It does not establish persistence, authorization or visual equivalence.
 
 See the [remaining roadmap](07_REMAINING_ROADMAP.md) for cross-upstream task benchmarks,
 live dispatch, human UX assessment, and optional integrations with unverified runtime behavior.
+The [follow-up comparison](10_PARITY_FOLLOWUP.md) adds source-edge and repayment
+results, stronger runtime evidence checks and expanded approval journeys.

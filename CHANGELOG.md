@@ -2,6 +2,19 @@
 
 ## Unreleased
 
+- Isolate companion memory in root-bound Engram projects, verify same-turn Codex
+  command completion and limit confirmed deletion to previewed observation IDs.
+- Resume a synthetic phase receipt across GitHub Actions jobs. Add inventory receipt
+  browser coverage and reconcile SQLite batch postings after an interrupted worker.
+- Record phase checks from explicit commands and validate linked execution evidence
+  when resuming work or reviewing a skill-learning proposal.
+- Bind memory trust to matching typed command outcomes and scope new memories to
+  their project roots. Preserve reviewed learning proposal revisions.
+- Recover interrupted portable imports without overwriting later edits. Build clean
+  source archives from committed files, excluding ignored workspace content.
+- Exercise approval error recovery and keyboard rejection in Chrome, score exact
+  source edges, and compare isolated repayment repairs with hidden concurrency and
+  rollback checks.
 - Add pinned upstream comparison reports and a local phase receipt verifier for
   declared inputs, check evidence, and dependency status during continuation.
 - Redact skill scanner findings, flag unscannable files within scope, and label

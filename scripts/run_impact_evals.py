@@ -27,6 +27,9 @@ CASES = ROOT/'tests/enhancement/impact_cases.yaml'
 FIXTURE = ROOT/'tests/enhancement/fixtures/impact'
 SCHEMA = {'type': 'object', 'properties': {'files': {'type': 'array',
           'items': {'type': 'string'}}}, 'required': ['files'], 'additionalProperties': False}
+EDGE_SCHEMA = {'type': 'object', 'properties': {'edges': {'type': 'array',
+               'items': {'type': 'string'}}}, 'required': ['edges'], 'additionalProperties': False}
+EDGE_FORMAT = 'caller.py:LINE::caller_symbol -> callee.py::callee_symbol'
 
 
 def fixture_hash():
@@ -53,7 +56,9 @@ def run_case(source, case, codex, model, effort, timeout):
     with tempfile.TemporaryDirectory(prefix='impact-eval-') as tmp:
         work = Path(tmp); prepare_router_workspace(source, work)
         shutil.copytree(FIXTURE, work/'project')
-        schema = work/'schema.json'; schema.write_text(json.dumps(SCHEMA))
+        key = 'edges' if 'edges' in case else 'files'
+        schema = work/'schema.json'
+        schema.write_text(json.dumps(EDGE_SCHEMA if key == 'edges' else SCHEMA))
         result = work/'result.json'
         command = ([codex, 'exec', '--ephemeral', '--ignore-user-config', '--skip-git-repo-check']
                    + PROFILE_OPTIONS + ['--output-schema',str(schema),'--output-last-message',str(result),
@@ -61,18 +66,20 @@ def run_case(source, case, codex, model, effort, timeout):
                                         '-c','model_reasoning_effort="{}"'.format(effort)])
         prompt = ('This is an analysis-only synthetic project in the project/ directory. '
                   'Inspect source and apply the repository instructions. Do not edit files or invoke external services. '
-                  'Return only the required JSON with source file basenames, not directory paths.\n\n'
+                  'Return only the required JSON with '
+                  + (f'exact directed source anchors formatted {EDGE_FORMAT}.\n\n' if key == 'edges'
+                     else 'source file basenames, not directory paths.\n\n')
                   + case['prompt'])
         try:
             completed = subprocess.run(command, input=prompt, text=True, capture_output=True,
                                        timeout=timeout, env=benchmark_environment(), check=False)
             if completed.returncode:
                 return {'outcome':'blocked','reason':classify_failure(completed.stderr)}
-            actual = json.loads(result.read_text(encoding='utf-8'))['files']
+            actual = json.loads(result.read_text(encoding='utf-8'))[key]
             if not isinstance(actual,list) or not all(isinstance(x,str) for x in actual):
-                raise ValueError('invalid file list')
-            if len(set(actual)) != len(actual): raise ValueError('duplicate filenames')
-            metrics = score(actual, case['files'])
+                raise ValueError('invalid evidence list')
+            if len(set(actual)) != len(actual): raise ValueError('duplicate evidence entries')
+            metrics = score(actual, case[key])
             metrics['outcome'] = 'pass' if metrics['recall'] == metrics['precision'] == 1 else 'fail'
             return metrics
         except (OSError, ValueError, KeyError, subprocess.TimeoutExpired) as exc:
@@ -100,7 +107,7 @@ def main(argv=None):
             cases=[by_id[x] for x in args.case]
         with tempfile.TemporaryDirectory(prefix='impact-source-') as tmp:
             source=Path(tmp); meta=snapshot(args.ref,args.patch,source)
-            report={'scope':'synthetic source-file impact only', 'snapshot':meta,
+            report={'scope':'synthetic static file and directed source-edge impact', 'snapshot':meta,
                     'fixture_sha256':fixture_hash(), 'corpus_sha256':hashlib.sha256(corpus_bytes).hexdigest(),
                     'runner_sha256':hashlib.sha256(Path(__file__).read_bytes()).hexdigest(),
                     'shared_runner_sha256':hashlib.sha256((ROOT/'scripts/run_enhancement_benchmark.py').read_bytes()).hexdigest(),

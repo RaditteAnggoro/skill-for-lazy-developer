@@ -1,6 +1,7 @@
 import { execFile } from 'node:child_process';
 import { createHash, randomUUID } from 'node:crypto';
 import { promises as fs, readFileSync } from 'node:fs';
+import { tmpdir } from 'node:os';
 import path from 'node:path';
 import { promisify } from 'node:util';
 
@@ -133,15 +134,6 @@ function projectForSync(cwd) {
   }
 }
 
-function pendingForgetId(config, id) {
-  try {
-    const data = JSON.parse(readFileSync(forgetStatePath(config), 'utf8'));
-    return Array.isArray(data.candidates) && data.candidates.includes(Number(id));
-  } catch {
-    return false;
-  }
-}
-
 function isOptedOut(config) {
   const project = projectForSync(process.cwd());
   if (!project) return false;
@@ -175,10 +167,44 @@ async function engram(config, args, cwd, timeout = 2500) {
   return completed.stdout || '';
 }
 
+function projectFingerprint(project) {
+  return createHash('sha256').update(project.root).digest('hex');
+}
+
+function providerProject(project) {
+  return `ld-${projectFingerprint(project)}`;
+}
+
 async function recall(config, project, cwd, timeout = 3000) {
-  const text = (await engram(config, ['context', project.name], cwd, timeout)).trim();
-  if (!text || text.includes('No memories') || sensitive(text)) return '';
-  return text.slice(-1800);
+  const namespace = providerProject(project);
+  const temporary = await fs.mkdtemp(path.join(tmpdir(), 'ld-memory-'));
+  let observations;
+  try {
+    const output = path.join(temporary, 'observations.json');
+    await engram(config, ['export', output, '--project', namespace], cwd, timeout);
+    if ((await fs.stat(output)).size > 16 * 1024 * 1024) return '';
+    observations = JSON.parse(await fs.readFile(output, 'utf8')).observations;
+  } finally {
+    await fs.rm(temporary, { recursive: true, force: true });
+  }
+  if (!Array.isArray(observations)) return '';
+  const records = [];
+  const scope = projectFingerprint(project);
+  observations.sort((a, b) => String(b?.updated_at ?? '').localeCompare(String(a?.updated_at ?? '')));
+  let size = 0;
+  for (const item of observations) {
+    if (item?.project !== namespace || item.scope !== 'project' || typeof item.content !== 'string') continue;
+    const block = item.content.trim();
+    const match = block.match(/^<!-- memory-record:v1 (\{[\s\S]*?\}) -->/);
+    if (!match || block.length > 1800 || sensitive(block)) continue;
+    let meta;
+    try { meta = JSON.parse(match[1]); } catch { continue; }
+    if (meta?.status !== 'active' || meta.scope?.project !== project.name || meta.project_fingerprint !== scope) continue;
+    if (size + block.length + 2 > 1800) break;
+    records.push(block);
+    size += block.length + 2;
+  }
+  return records.reverse().join('\n\n');
 }
 
 function record(kind, topic, title, content, trust, confidence, projectName, evidence) {
@@ -208,7 +234,7 @@ function record(kind, topic, title, content, trust, confidence, projectName, evi
   };
 }
 
-function envelope(value) {
+function envelope(value, project) {
   const meta = {
     id: value.id,
     kind: value.kind,
@@ -217,6 +243,7 @@ function envelope(value) {
     trust: value.trust,
     confidence: value.confidence,
     scope: value.scope,
+    project_fingerprint: projectFingerprint(project),
   };
   return `<!-- memory-record:v1 ${JSON.stringify(meta)} -->\n# ${value.title}\n\n${value.content.trim()}\n`;
 }
@@ -227,7 +254,7 @@ async function saveRecord(config, project, value, type, cwd, timeout = 2500) {
     [
       'save',
       value.title,
-      envelope(value),
+      envelope(value, project),
       '--type', type,
       '--project', project.name,
       '--scope', 'project',
@@ -259,7 +286,7 @@ async function maybeRemember(config, project, prompt, cwd) {
     content,
     'verified',
     0.95,
-    project.name,
+      providerProject(project),
   );
   await saveRecord(config, project, value, 'decision', cwd);
   return 'Saved to project memory.';
@@ -274,18 +301,24 @@ function verificationEvidence(agent, message) {
     return false;
   }
   const calls = new Map();
+  let verified = false;
   for (const event of events) {
     if (event?.type === 'tool/call' && event.data?.callId) {
       calls.set(event.data.callId, event.data);
     }
-    if (event?.type === 'tool/result' && event.data?.message?.isError === false) {
-      const call = calls.get(event.data.message.toolCallId || event.data.message.callId);
+    const result = event?.data?.message;
+    if (event?.type === 'tool/result' && result) {
+      const call = calls.get(result.toolCallId || result.callId);
       if (!call) continue;
-      const command = JSON.stringify(call.arguments || {});
-      if (VERIFY_COMMAND.test(command)) return true;
+      const command = call.arguments?.command;
+      if (typeof command !== 'string' || VERIFY_COMMAND.exec(command)?.index !== 0) continue;
+      const escaped = command.replace(/[.*+?^$\{\}()|[\]\\]/g, '\\$&');
+      const claim = new RegExp('(?:^|[\\s\x60])' + escaped
+        + '(?=\x60|$|[.!](?:\\s|$)|\\s+(?:passed|succeeded|ok|success|exit(?:ed)?)\\b)', 'i');
+      if (claim.test(message)) verified = result.isError === false && result.exitCode === 0;
     }
   }
-  return false;
+  return verified;
 }
 
 function forgetStatePath(config) {
@@ -308,7 +341,7 @@ async function writeForgetState(config, data) {
 }
 
 function candidateIds(text) {
-  return [...String(text).matchAll(/#(\d+)/g)].map((match) => Number(match[1]));
+  return [...String(text).matchAll(/^\[\d+\] #(\d+) \(/gm)].map((match) => Number(match[1]));
 }
 
 async function handleForget(prompt, config, project, cwd, agent) {
@@ -321,14 +354,18 @@ async function handleForget(prompt, config, project, cwd, agent) {
   const confirm = lowered.match(/(?:forget|lupakan|hapus)\s+(?:confirm|konfirmasi|yes|ya)\s+#?(\d+)/);
   if (confirm) {
     const state = await readForgetState(config);
-    if (!state || state.root !== project.root || state.project !== project.name) {
+    if (!state || state.providerProject !== providerProject(project)) {
       injectText(agent, 'No pending memory deletion for this project.');
       return true;
     }
     const observationId = Number(confirm[1]);
+    if (!state.candidates?.includes(observationId)) {
+      injectText(agent, 'That memory is not among the pending matches; nothing was removed.');
+      return true;
+    }
     const search = await engram(
       config,
-      ['search', state.query, '--project', project.name, '--limit', '5', '--match', 'any'],
+      ['search', state.query, '--project', providerProject(project), '--limit', '5', '--match', 'any'],
       cwd,
       4000,
     );
@@ -350,7 +387,7 @@ async function handleForget(prompt, config, project, cwd, agent) {
   }
   const search = await engram(
     config,
-    ['search', query, '--project', project.name, '--limit', '5', '--match', 'any'],
+    ['search', query, '--project', providerProject(project), '--limit', '5', '--match', 'any'],
     cwd,
     4000,
   );
@@ -360,8 +397,7 @@ async function handleForget(prompt, config, project, cwd, agent) {
     return true;
   }
   await writeForgetState(config, {
-    root: project.root,
-    project: project.name,
+    providerProject: providerProject(project),
     query,
     candidates: ids,
   });
@@ -474,8 +510,7 @@ export function apply(ctx, config = {}) {
     name: 'engram:memory-policy',
     order: 9100,
     text: [
-      'Project memory is available through Engram MCP tools when visible.',
-      'Recall with mem_context or mem_search before repeating prior work.',
+      'The companion recalls project-bound Engram memory. Use the companion controls to show, remember or forget project memory.',
       'Save only verified decisions, causes, lessons, blockers, and next steps.',
       'Never save raw conversations, full logs, credentials, customer data, or sensitive personal data.',
       'Current repository state overrides saved memory. If memory is unavailable, continue ordinary work and report the limitation.',

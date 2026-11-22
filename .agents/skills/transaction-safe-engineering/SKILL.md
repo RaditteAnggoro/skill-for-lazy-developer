@@ -30,6 +30,9 @@ State the invariants before changing code:
 Use an idempotency key derived from the business operation, not a random retry token.
 Persist it with the operation result before returning success. Make retries reuse the
 key and return the original result. Define concurrency control for competing writers.
+Bind the key to the business payload. A retry with different immutable values is a
+conflict. Use storage-enforced uniqueness or an equivalent atomic claim instead of
+relying on a sequential read-before-write. Commit the claim and durable effect together.
 
 For multi-step operations, use a transaction where the storage supports it; otherwise
 use a durable state machine with explicit pending, committed, failed, and compensating
@@ -51,6 +54,10 @@ If live database evidence is necessary, follow the database safeguards in the sh
 Test duplicate requests, timeout-after-commit, crash-before-commit, concurrent writers,
 partial batch failure, replay, and rollback/compensation. Verify ledger totals and audit
 records, not just HTTP 200. Record the actual failure injection and remaining gaps.
+For local fixtures, synchronize two writers, reopen the store after a successful
+commit, and inject a failure between durable writes. Assert that a failed attempt
+leaves no partial effect, a valid retry can finish, and a conflicting replay cannot
+change the committed result.
 
 If the request is a review, report findings and do not change production behavior without
 authorization. Pair with `systematic-debugging` for an unexplained failure and

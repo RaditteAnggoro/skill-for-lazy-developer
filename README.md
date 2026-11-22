@@ -437,7 +437,7 @@ This tree shows the major source paths; generated `dist/`, local state (`.venv/`
 ├── tests/
 │   ├── fixtures/                     # security/spec/domain/transaction fixtures
 │   ├── roles/                        # invalid role fixture
-│   ├── ui/                           # plain/React/Next fixture checks
+│   ├── ui/                           # approval and inventory browser journeys
 │   ├── hermes_*                      # enhancement/spec matrices
 │   └── test_*.py
 ├── AGENTS.md                         # maintainer instructions

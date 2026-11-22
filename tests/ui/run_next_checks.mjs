@@ -7,6 +7,7 @@ import { fileURLToPath } from "node:url";
 import { chromium } from "playwright-core";
 import pixelmatch from "pixelmatch";
 import { PNG } from "pngjs";
+import { verifyKeyboardRejection } from "./approval_journeys.mjs";
 
 const here = path.dirname(fileURLToPath(import.meta.url));
 const nextDir = path.join(here, "fixtures/next");
@@ -153,6 +154,7 @@ try {
   const bodyText = await page.locator("body").textContent();
   record("next:bulk-approved", bodyText.includes("1 records approved."), "explicit success message");
   record("next:bulk-state", (await page.locator("table tbody tr").first().textContent()).includes("approved"));
+  await verifyKeyboardRejection(page, "next", record);
 } finally {
   try {
     await browser?.close();

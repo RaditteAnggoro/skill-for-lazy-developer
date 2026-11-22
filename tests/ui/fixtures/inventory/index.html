@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="icon" href="data:,">
+  <title>Receive inventory</title>
+  <style>
+    body { margin: 0; color: #18202a; background: #f3f6f9; font: 1rem/1.55 system-ui, sans-serif; }
+    main { max-width: 35rem; margin: 2rem auto; padding: 0 1rem; }
+    h1 { margin: 0 0 .75rem; line-height: 1.2; }
+    form { padding: 1rem; border: 1px solid #a4b3c2; border-radius: .5rem; background: white; }
+    label { display: block; font-weight: 600; }
+    input, button { font: inherit; box-sizing: border-box; min-height: 2.75rem; }
+    input { display: block; width: 10rem; max-width: 100%; margin: .25rem 0 1rem; padding: .25rem .5rem; }
+    button { padding: .25rem .75rem; color: white; background: #164878; border: 0; border-radius: .25rem; }
+    button:disabled { background: #4d5e70; }
+    :focus-visible { outline: 3px solid #1d66a8; outline-offset: 3px; }
+    [role="alert"] { color: #98251e; }
+  </style>
+</head>
+<body>
+  <main>
+    <h1>Receive inventory</h1>
+    <p>Purchase order PO-214 for USB-C cables.</p>
+    <p>Units in stock: <strong id="stock">12</strong></p>
+    <form>
+      <label for="quantity">Units received</label>
+      <input id="quantity" type="number" min="1" max="8" step="1" required aria-describedby="limit">
+      <p id="limit">Up to 8 units remain on this order.</p>
+      <button type="submit">Record receipt</button>
+      <p role="alert" hidden></p>
+      <p role="status"></p>
+    </form>
+  </main>
+  <script>
+    // A one-time recoverable failure makes retry and quantity preservation observable.
+    const form = document.querySelector('form');
+    const quantity = document.querySelector('#quantity');
+    const control = form.querySelector('button');
+    const error = form.querySelector('[role="alert"]');
+    const status = form.querySelector('[role="status"]');
+    const stock = document.querySelector('#stock');
+    let state = 'ready';
+    form.addEventListener('submit', (event) => {
+      event.preventDefault();
+      if (state === 'settled') return;
+      if (state === 'ready') {
+        state = 'failed';
+        error.textContent = 'Receipt could not be recorded. Retry to keep this quantity.';
+        error.hidden = false;
+        control.textContent = 'Retry receipt';
+        return;
+      }
+      const received = quantity.valueAsNumber;
+      state = 'settled';
+      stock.textContent = String(12 + received);
+      error.hidden = true;
+      status.textContent = `${received} units received for PO-214.`;
+      quantity.disabled = true;
+      control.disabled = true;
+      control.textContent = 'Receipt recorded';
+    });
+  </script>
+</body>
+</html>

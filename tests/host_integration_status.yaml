@@ -4,7 +4,7 @@ hosts:
     version: 0.167.0
     wrapper_parse: pass
     host_role_dispatch: NOT_RUN
-    reason: No supported non-interactive custom-agent dispatch was exercised in this implementation.
+    reason: Isolated CLI canaries produced no child-role event or role identity. Successful command exit alone did not verify dispatch.
   claude:
     version: 2.1.322
     wrapper_parse: pass

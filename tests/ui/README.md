@@ -25,6 +25,10 @@ mobile screenshots, compares them to `snapshots/`, and exercises keyboard, filte
 selection, bulk action, empty, loading, error, and retry paths. It does not require a
 production connection.
 
+All three fixtures also exercise keyboard-driven retry, selection and rejection at
+768 pixels. The rejection checks verify the exact changed invoice, unchanged rows,
+and cleared selection.
+
 For the built Next fixture:
 
 ```sh
@@ -40,6 +44,10 @@ requires new baselines. Screenshot baselines are tied to Chrome and the local fo
 review the images before updating them.
 
 ## Limits
+
+The plain inventory fixture checks quantity validation, recovery with preserved
+input, exact stock changes, and keyboard focus at a narrow viewport. Structural
+mode captures it for inspection along with the approval fixtures.
 
 Automated checks do not replace an assistive-technology review or backend authorization
 testing. The fixtures use test records only and make no production requests.

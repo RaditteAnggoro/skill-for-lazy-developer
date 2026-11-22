@@ -1,5 +1,6 @@
 import assert from 'node:assert/strict';
-import { mkdtemp, readFile, writeFile, mkdir, chmod } from 'node:fs/promises';
+import { createHash } from 'node:crypto';
+import { mkdtemp, readFile, writeFile, mkdir, chmod, realpath, rm } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import path from 'node:path';
 import { apply } from './index.js';
@@ -8,11 +9,19 @@ const root = await mkdtemp(path.join(tmpdir(), 'dsh-lifecycle-'));
 const project = path.join(root, 'project');
 const bin = path.join(root, 'engram');
 const log = path.join(root, 'engram.log');
+const context = path.join(root, 'context.txt');
 await mkdir(path.join(project, '.engram'), { recursive: true });
 await writeFile(path.join(project, '.engram/config.json'), '{"project_name":"demo"}\n');
+const localRoot = await realpath(project);
+const fingerprint = (directory) => createHash('sha256').update(directory).digest('hex');
+const memory = (projectRoot, status, body) => {
+  const metadata = { scope: { project: 'demo' }, project_fingerprint: fingerprint(projectRoot), status };
+  return `<!-- memory-record:v1 ${JSON.stringify(metadata)} -->\n${body}`;
+};
+await writeFile(context, memory(localRoot, 'active', 'Previous session: RECALL-TOKEN-7319'));
 await writeFile(
   bin,
-  `#!/usr/bin/env python3\nimport json, os, sys\nwith open(${JSON.stringify(log)}, 'a') as f: f.write(json.dumps(sys.argv[1:]) + '\\n')\nif len(sys.argv) > 1 and sys.argv[1] == 'context': print('Previous session: RECALL-TOKEN-7319')\nelif len(sys.argv) > 1 and sys.argv[1] == 'search': print('Found 1 memories: #7 (decision) -- Billing database')\nelif len(sys.argv) > 1 and sys.argv[1] == 'delete': print('Memory #' + sys.argv[2] + ' deleted')\nelif len(sys.argv) > 1 and sys.argv[1] == 'save': print('Memory saved')\n`,
+  `#!/usr/bin/env python3\nimport json, os, sys\nwith open(${JSON.stringify(log)}, 'a') as f: f.write(json.dumps(sys.argv[1:]) + '\\n')\nif len(sys.argv) > 1 and sys.argv[1] == 'export':\n    with open(${JSON.stringify(context)}) as f: text = f.read()\n    records = [dict(project=sys.argv[4], scope='project', content='<!-- memory-record:v1 ' + block) for block in text.split('<!-- memory-record:v1 ')[1:]]\n    with open(sys.argv[2], 'w') as output: json.dump(dict(observations=records), output)\nelif len(sys.argv) > 1 and sys.argv[1] == 'search': print('[1] #7 (decision) — Billing database\\n    Reference #9')\nelif len(sys.argv) > 1 and sys.argv[1] == 'delete': print('Memory #' + sys.argv[2] + ' deleted')\nelif len(sys.argv) > 1 and sys.argv[1] == 'save': print('Memory saved')\n`,
 );
 await chmod(bin, 0o755);
 
@@ -51,6 +60,17 @@ const firstDecision = await handlers['agent/pre-step']({
 }, enter);
 assert.match(JSON.stringify(firstDecision), /RECALL-TOKEN-7319/);
 assert.match(JSON.stringify(injected), /Project memory/);
+await writeFile(context, [
+  memory(localRoot, 'active', 'LOCAL-CURRENT'),
+  memory(path.join(localRoot, '..', 'same-name-project'), 'active', 'FOREIGN-PROJECT'),
+  memory(localRoot, 'stale', 'STALE-RECORD'),
+  '<!-- memory-record:v1 {"status":"active"} -->\nUNBOUND-LEGACY',
+].join('\n'));
+await handlers['agent/pre-step']({
+  messages: [{ role: 'user', source: { kind: 'user' }, content: [{ type: 'text', text: 'Show project memory again' }] }],
+}, enter);
+assert.match(JSON.stringify(injected.at(-1)), /LOCAL-CURRENT/);
+assert.doesNotMatch(JSON.stringify(injected.at(-1)), /FOREIGN-PROJECT|STALE-RECORD|UNBOUND-LEGACY/);
 await handlers['agent/pre-step']({
   messages: [{ role: 'user', source: { kind: 'user' }, content: [{ type: 'text', text: 'Remember this: Phase 3 uses bounded handoff' }] }],
 }, enter);
@@ -66,23 +86,31 @@ await handlers['agent/pre-step']({
 assert.match(JSON.stringify(injected), /Nothing was deleted/);
 assert.doesNotMatch(await readFile(log, 'utf8'), /"delete"/);
 await handlers['agent/pre-step']({
+  messages: [{ role: 'user', source: { kind: 'user' }, content: [{ type: 'text', text: 'forget confirm 9' }] }],
+}, enter);
+assert.match(JSON.stringify(injected.at(-1)), /not among the pending matches/);
+assert.doesNotMatch(await readFile(log, 'utf8'), /"delete"/);
+await handlers['agent/pre-step']({
   messages: [{ role: 'user', source: { kind: 'user' }, content: [{ type: 'text', text: 'forget confirm 7' }] }],
 }, enter);
 assert.match(JSON.stringify(injected), /Deleted memory #7/);
 assert.match(await readFile(log, 'utf8'), /"delete"/);
 
+let testExit;
 agent.session.snapshotEvents = () => [
   { type: 'tool/call', data: { callId: 'c1', name: 'bash', arguments: { command: 'pytest tests/test_x.py' } } },
-  { type: 'tool/result', data: { message: { isError: false, toolCallId: 'c1' } } },
+  { type: 'tool/result', data: { message: { isError: false, toolCallId: 'c1', exitCode: testExit } } },
 ];
 agent.session.deriveMessages = () => [{
   role: 'assistant',
   content: [{ type: 'text', text: 'Verification: pytest tests/test_x.py passed. Implemented the adapter and verified the flow.' }],
 }];
 await handlers['agent/turn-stopping']({});
-saved = await readFile(log, 'utf8');
-assert.match(saved, /verified/);
-assert.match(saved, /0.9/);
+const lastSaved = async () => JSON.parse((await readFile(log, 'utf8')).trim().split('\n').at(-1))[2];
+assert.match(await lastSaved(), /"trust":"unverified"/);
+testExit = 0;
+await handlers['agent/turn-stopping']({});
+assert.match(await lastSaved(), /"trust":"verified"/);
 
 await handlers['agent/pre-step']({
   messages: [{ role: 'user', source: { kind: 'user' }, content: [{ type: 'text', text: 'Do not remember this project' }] }],
@@ -107,4 +135,5 @@ await created({ agent: second });
 assert.equal(secondInjected.length, 0);
 
 process.chdir(cwd);
+await rm(root, { recursive: true, force: true });
 console.log('lifecycle ok');

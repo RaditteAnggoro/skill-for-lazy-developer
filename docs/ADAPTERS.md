@@ -86,6 +86,15 @@ user-level Codex hooks file. It does not trust them: the user must review `/hook
 once. The adapter is fail-open and only operates in a project with an Engram
 `.engram/config.json`.
 
+Codex, Claude and DSH companion controls store records in provider projects named
+`ld-<sha256 of the resolved project root>`. Recall uses a scoped, temporary Engram
+export to read complete records and verifies the namespace, root, project name and
+record status. Deletion requires an ID from the same project's preview and current
+search. The companions leave memories stored under the previous display-name
+project intact. To bring forward a legacy memory, review its source and save the
+specific fact from the project using the companion's `Remember this` control.
+Direct Engram tools keep their own provider configuration.
+
 ## Claude Code
 
 Claude Code reads its own instruction and plugin conventions; it does not share all of

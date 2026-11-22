@@ -8,8 +8,10 @@ import argparse
 from datetime import datetime, timezone
 import hashlib
 import json
+import os
 from pathlib import Path, PurePosixPath
 import shutil
+import stat
 import sys
 import tempfile
 import zipfile
@@ -40,6 +42,41 @@ def _sha256(data):
     return hashlib.sha256(data).hexdigest()
 
 
+def _managed_file(root, name):
+    if (_safe_name(name) != name or not (name in IMPORT_FILES
+            or any(name.startswith(prefix + "/") for prefix in (*IMPORT_ROOTS, ROLE_PATH)))):
+        raise PackError("path is outside the managed pack: {}".format(name))
+    destination = root
+    parts = PurePosixPath(name).parts
+    for part in parts[:-1]:
+        destination = destination / part
+        if destination.is_symlink() or (destination.exists() and not destination.is_dir()):
+            raise PackError("managed parent is not a regular directory: {}".format(name))
+    destination = destination / parts[-1]
+    if destination.is_symlink():
+        raise PackError("managed path is a symlink: {}".format(name))
+    if destination.exists() and not destination.is_file():
+        raise PackError("managed path is not a regular file: {}".format(name))
+    return destination
+
+
+def _atomic_write(path, content):
+    path.parent.mkdir(parents=True, exist_ok=True)
+    temp = None
+    try:
+        with tempfile.NamedTemporaryFile(dir=path.parent, delete=False) as stream:
+            temp = Path(stream.name)
+            stream.write(content)
+            stream.flush()
+            os.fsync(stream.fileno())
+        if path.exists():
+            temp.chmod(stat.S_IMODE(path.stat().st_mode))
+        temp.replace(path)
+    finally:
+        if temp is not None:
+            temp.unlink(missing_ok=True)
+
+
 def _collect(root, include_roles=False):
     root = Path(root).resolve()
     files = {}
@@ -53,6 +90,9 @@ def _collect(root, include_roles=False):
             if not candidate.is_file() or candidate.is_symlink():
                 continue
             rel = candidate.relative_to(root).as_posix()
+            if (set(candidate.relative_to(root).parts) & {'artifacts', 'backups', '__pycache__', 'node_modules'}
+                    or candidate.name.startswith('.env') or candidate.suffix.lower() in {'.key', '.pem', '.pyc'}):
+                continue
             files[rel] = candidate.read_bytes()
     return files
 
@@ -159,7 +199,6 @@ def import_pack(archive, target, apply=False, include_roles=False):
     while backup.exists():
         backup = target / ".agents" / "backups" / ("skill-pack-{}-{}".format(stamp, counter))
         counter += 1
-    backup.mkdir(parents=True)
     selected = []
     with zipfile.ZipFile(archive) as bundle:
         for name in manifest["files"]:
@@ -168,32 +207,39 @@ def import_pack(archive, target, apply=False, include_roles=False):
             elif not name.startswith(".agents/skills/") and name not in IMPORT_FILES:
                 continue
             selected.append(name)
+    backups = backup.parent
+    if (target / '.agents').is_symlink() or backups.is_symlink():
+        raise PackError("backup directory must stay inside the target project")
+    destinations = {name: _managed_file(target, name) for name in selected}
+    backup.mkdir(parents=True)
     saved = []
+    previous = {}
     for name in selected:
-        destination = target / name
-        if not destination.resolve().is_relative_to(target):
-            raise PackError("import path escapes target: {}".format(name))
-        if destination.exists() or destination.is_symlink():
-            if destination.is_dir():
-                saved.append({"path": name, "backup": str(backup / name)})
-                (backup / name).parent.mkdir(parents=True, exist_ok=True)
-                shutil.copytree(destination, backup / name)
-            else:
-                saved.append({"path": name, "backup": str(backup / name)})
-                (backup / name).parent.mkdir(parents=True, exist_ok=True)
-                shutil.copy2(destination, backup / name)
-    journal = {"format": FORMAT, "status": "prepared", "saved": saved,
+        destination = destinations[name]
+        previous[name] = None
+        if destination.exists():
+            saved.append({"path": name, "backup": str(backup / name)})
+            (backup / name).parent.mkdir(parents=True, exist_ok=True)
+            shutil.copy2(destination, backup / name)
+            previous[name] = _sha256((backup / name).read_bytes())
+    journal = {"format": FORMAT, "status": "prepared", "saved": saved, "target": str(target),
+               "previous_sha256": previous, "installed_sha256": {name: manifest['files'][name] for name in selected},
                "planned_files": sorted(selected), "imported_files": []}
-    (backup / "manifest.json").write_text(json.dumps(journal, indent=2) + "\n", encoding="utf-8")
+    journal_path = backup / "manifest.json"
+    _atomic_write(journal_path, (json.dumps(journal, indent=2) + "\n").encode())
     with zipfile.ZipFile(archive) as bundle:
         for name in selected:
-            destination = target / name
-            destination.parent.mkdir(parents=True, exist_ok=True)
-            destination.write_bytes(bundle.read(name))
+            destination = _managed_file(target, name)
+            current = _sha256(destination.read_bytes()) if destination.exists() else None
+            if current != previous[name]:
+                raise PackError("import conflict: {} changed after backup".format(name))
+            content = bundle.read(name)
+            if _sha256(content) != journal['installed_sha256'][name]:
+                raise PackError("pack changed after verification: {}".format(name))
+            _atomic_write(destination, content)
             journal["imported_files"].append(name)
-            (backup / "manifest.json").write_text(json.dumps(journal, indent=2) + "\n", encoding="utf-8")
     journal["status"] = "complete"
-    (backup / "manifest.json").write_text(json.dumps(journal, indent=2) + "\n", encoding="utf-8")
+    _atomic_write(journal_path, (json.dumps(journal, indent=2) + "\n").encode())
     return {"target": str(target), "apply": True, "backup": str(backup), "files": unique, "skills": manifest.get("skills", [])}
 
 
@@ -201,28 +247,33 @@ def rollback(backup, target):
     backup = Path(backup).resolve()
     target = Path(target).resolve()
     manifest = json.loads((backup / "manifest.json").read_text(encoding="utf-8"))
-    imported = manifest.get("imported_files")
-    if imported is None:
-        if manifest.get("status") == "prepared":
-            imported = manifest.get("planned_files", [])
+    installed = manifest.get('installed_sha256')
+    previous = manifest.get('previous_sha256')
+    if not isinstance(installed, dict) or not isinstance(previous, dict) or set(installed) != set(previous):
+        raise PackError("legacy backup cannot be rolled back safely; restore saved files manually")
+    if manifest.get('target') != str(target) or backup.parent != target / '.agents/backups':
+        raise PackError("backup does not belong to the target project")
+    actions = []
+    for name, expected in installed.items():
+        destination = _managed_file(target, name)
+        current = _sha256(destination.read_bytes()) if destination.exists() else None
+        if current == previous[name]:
+            continue  # File was never applied, or a previous recovery already restored it.
+        if current is None or current != expected:
+            raise PackError("rollback conflict: {} changed after import".format(name))
+        content = None
+        if previous[name] is not None:
+            content = _managed_file(backup, name).read_bytes()
+            if _sha256(content) != previous[name]:
+                raise PackError("backup does not match journal: {}".format(name))
+        actions.append((destination, content))
+    for destination, content in actions:
+        if content is None:
+            destination.unlink()
         else:
-            raise PackError("legacy backup cannot be rolled back safely; restore saved files manually")
-    elif not imported and manifest.get("status") == "prepared":
-        imported = manifest.get("planned_files", [])
-    for name in imported:
-        _safe_name(name)
-        path = target / name
-        if path.is_file() or path.is_symlink():
-            path.unlink()
-    for item in manifest.get("saved", []):
-        source = Path(item["backup"])
-        destination = target / item["path"]
-        if source.is_dir():
-            shutil.copytree(source, destination, dirs_exist_ok=True)
-        else:
-            destination.parent.mkdir(parents=True, exist_ok=True)
-            shutil.copy2(source, destination)
-    return {"target": str(target), "restored": len(manifest.get("saved", [])), "removed": len(manifest.get("imported", []))}
+            _atomic_write(destination, content)
+    return {"target": str(target), "restored": sum(data is not None for _, data in actions),
+            "removed": sum(data is None for _, data in actions)}
 
 
 def main(argv=None):

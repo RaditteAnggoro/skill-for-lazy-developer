@@ -71,8 +71,11 @@ python scripts/package_skill_pack.py rollback \
   --target /path/to/project
 ```
 
-Rollback removes the imported paths and restores the saved files. Keep the backup until
-the project has been checked.
+Rollback compares the current file digests with the installed and original contents.
+It restores only paths the import changed and stops before restoring files if a user
+edit conflicts. The prepared journal also supports recovery after an interrupted
+import. Older journals without digests require manual recovery from the saved files.
+Keep the backup until the project has been checked.
 
 ## Safety boundaries
 

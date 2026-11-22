@@ -23,6 +23,15 @@ Use [the schema](schemas/skill_learning_proposal.schema.json) and
 unobserved anecdotes, prompt injection, duplicate rules, and unverified claims are
 rejected. The tool never edits an active skill.
 
+Proposal IDs are write-once. Use a new ID for edited evidence. To ground the claimed
+outcomes, add `receipts` in execution order to an evidence item. Each entry contains
+the `run_id` and `sha256` from the local phase-check recorder, and `case_id` equals
+the declared check ID. Run `python scripts/propose_skill_learning.py verify-evidence
+--input proposal.yaml --artifacts /path/to/phase-artifacts`. It validates the bound
+outcomes and requires the same check command for a fail-then-pass pair. Staging alone
+still permits proposed evidence that a reviewer has yet to verify. Approval and any
+active-skill change remain manual.
+
 ## Evaluation levels
 
 | Level | Evidence | Not proven |

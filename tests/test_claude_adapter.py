@@ -10,12 +10,16 @@ from scripts.install_claude_adapter import check, install, rollback, uninstall
 
 
 FAKE_ENGRAM = r'''#!/usr/bin/env python3
-import json, os, sys
+import hashlib, json, os, sys
 log = os.environ.get("FAKE_ENGRAM_LOG", "/tmp/claude-adapter-engram.log")
 with open(log, "a", encoding="utf-8") as handle:
     handle.write(json.dumps(sys.argv[1:]) + "\n")
-if len(sys.argv) > 1 and sys.argv[1] == "context":
-    print("Previous session: RECALL-TOKEN-7319")
+if len(sys.argv) > 1 and sys.argv[1] == "export":
+    root = hashlib.sha256(os.getcwd().encode()).hexdigest()
+    metadata = {"status": "active", "project_fingerprint": root, "scope": {"project": "demo"}}
+    content = f"<!-- memory-record:v1 {json.dumps(metadata)} -->\nRECALL-TOKEN-7319"
+    with open(sys.argv[2], "w", encoding="utf-8") as handle:
+        json.dump({"observations": [dict(project=sys.argv[4], scope="project", content=content)]}, handle)
 elif len(sys.argv) > 1 and sys.argv[1] == "save":
     print("Memory saved")
 '''

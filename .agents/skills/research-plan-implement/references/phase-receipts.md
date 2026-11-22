@@ -34,3 +34,15 @@ records as historical evidence. Use the observed outputs and provenance to judge
 whether the required check really ran. A digest verifies current contents, while
 the observation producer remains a trust boundary. The optional script does not
 execute commands, grant authority, or constrain host tool use.
+
+For an already authorized check, `scripts/record_phase_check.py` can run a command
+explicitly supplied after `--` and write its exit status and input digests into the
+receipt. It does not read executable commands from the plan. Use one writer per
+receipt bundle. Commands run with the caller's permissions, so run only checks
+appropriate to the declared scope.
+
+```sh
+python scripts/record_phase_check.py plan.yaml .agents/artifacts/my-task/receipts.json \
+  --phase backend --check approval-regression --artifacts .agents/artifacts/my-task \
+  -- python -m unittest discover -s tests -p test_approval.py
+```

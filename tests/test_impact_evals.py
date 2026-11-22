@@ -25,9 +25,21 @@ class ImpactEvalTests(unittest.TestCase):
         self.assertEqual(len({x['id'] for x in cases}), len(cases))
         for case in cases:
             self.assertTrue(case['prompt'])
-            self.assertEqual(len(case['files']), len(set(case['files'])))
-            for name in case['files']:
-                self.assertTrue((impact.FIXTURE/name).is_file(), (case['id'], name))
+            key = 'edges' if 'edges' in case else 'files'
+            self.assertEqual(len(case[key]), len(set(case[key])))
+            if key == 'files':
+                for name in case[key]:
+                    self.assertTrue((impact.FIXTURE/name).is_file(), (case['id'], name))
+            else:
+                for anchor in case[key]:
+                    caller, callee = anchor.split(' -> ')
+                    position, caller_name = caller.split('::')
+                    file, line = position.split(':')
+                    callee_file, target = callee.split('::')
+                    source = (impact.FIXTURE/file).read_text().splitlines()
+                    self.assertIn(target, source[int(line)-1])
+                    self.assertIn('def ' + caller_name, '\n'.join(source[:int(line)]))
+                    self.assertIn(target, (impact.FIXTURE/callee_file).read_text())
 
     def test_agent_receives_source_but_not_ground_truth(self):
         with tempfile.TemporaryDirectory() as tmp:

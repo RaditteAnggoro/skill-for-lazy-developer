@@ -83,13 +83,14 @@ def verify(plan, bundle, workspace, artifacts):
         elif phase_id not in receipts:
             state = {'status': 'ready', 'reason': 'no_receipt'}
         else:
-            state = check_receipt(receipts[phase_id], inputs, checks, workspace, artifacts)
+            state = check_receipt(receipts[phase_id], inputs, checks, workspace, artifacts,
+                                  bundle['plan_sha256'])
         trace[phase_id] = {'phase': phase_id, 'skill': phase['primary'], **state}
     return {'complete': all(row['status'] == 'completed' for row in trace.values()),
             'phases': list(trace.values())}
 
 
-def check_receipt(receipt, inputs, checks, workspace, artifacts):
+def check_receipt(receipt, inputs, checks, workspace, artifacts, expected_plan):
     recorded = receipt.get('input_sha256')
     observations = receipt.get('checks')
     if not isinstance(recorded, dict) or set(recorded) != set(inputs):
@@ -116,9 +117,31 @@ def check_receipt(receipt, inputs, checks, workspace, artifacts):
         try:
             if file_digest(artifacts, observation.get('path')) != digest:
                 return {'status': 'stale', 'check': check_id, 'reason': 'artifact_changed'}
+            if 'run_id' in observation and not recorded_check_matches(
+                    artifacts, observation, expected_plan, receipt['id'], check_id, recorded):
+                return {'status': 'blocked', 'check': check_id, 'reason': 'provenance_mismatch'}
         except OSError:
             return {'status': 'blocked', 'check': check_id, 'reason': 'artifact_unavailable'}
     return {'status': 'completed', 'checks': checks}
+
+
+def recorded_check_matches(artifacts, observation, expected_plan, phase, check, inputs):
+    """Validate the recorder's typed metadata, separate from manually linked artifacts."""
+    run_id = observation['run_id']
+    if not isinstance(run_id, str) or not re.fullmatch('[a-f0-9]{32}', run_id):
+        return False
+    if observation['path'] != f'phase-check-{run_id}.json':
+        return False
+    with (artifacts / observation['path']).open('rb') as stream:
+        try:
+            entry = json.loads(stream.read(65537))
+        except (UnicodeError, ValueError):
+            return False
+    return (isinstance(entry, dict) and entry.get('run_id') == run_id
+            and entry.get('plan_sha256') == expected_plan and entry.get('phase') == phase
+            and entry.get('check') == check and entry.get('input_sha256') == inputs
+            and entry.get('inputs_unchanged') is True and type(entry.get('exit_code')) is int
+            and entry['exit_code'] == 0 and entry.get('outcome') == 'passed')
 
 
 def main(argv=None):

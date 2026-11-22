@@ -10,7 +10,6 @@ from datetime import datetime, timezone
 import json
 import os
 from pathlib import Path
-import shutil
 import subprocess
 import sys
 
@@ -19,7 +18,10 @@ ROOT = Path(__file__).resolve().parents[1]
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
-from scripts.install_codex_adapter import check, install, uninstall  # noqa: E402
+from integrations.codex.memory_runtime import (  # noqa: E402
+    RECORD_ENVELOPE, base_record, project_for, provider_project, recall as read_memory, save_record,
+)
+from scripts.install_codex_adapter import install, uninstall  # noqa: E402
 
 
 DEFAULT_CODEX = Path(
@@ -89,7 +91,7 @@ def verify(codex, engram_bin, artifacts, timeout, model=None):
     artifacts = Path(artifacts).resolve()
     root = artifacts / "codex-adapter-verification"
     if root.exists():
-        shutil.rmtree(root)
+        raise VerifyError("Choose a new artifacts directory for this run")
     home = root / "codex-home"
     project = root / "project"
     data = root / "engram-data"
@@ -98,6 +100,11 @@ def verify(codex, engram_bin, artifacts, timeout, model=None):
     home.mkdir(parents=True)
     (project / "AGENTS.md").write_text(
         "# Codex adapter verification\n\nUse project memory when relevant.\n",
+        encoding="utf-8",
+    )
+    (project / "test_probe.py").write_text(
+        "import unittest\n\n\nclass Probe(unittest.TestCase):\n"
+        "    def test_fixture(self):\n        self.assertEqual(7, 7)\n",
         encoding="utf-8",
     )
     auth_source = Path.home() / ".codex/auth.json"
@@ -112,24 +119,13 @@ def verify(codex, engram_bin, artifacts, timeout, model=None):
     )
     engram(config=engram_bin, data_dir=data, project=project, args=["init", "demo"])
     install(home, str(engram_bin), str(data))
-    engram(
-        config=engram_bin,
-        data_dir=data,
-        project=project,
-        args=[
-            "save",
-            "Seed memory",
-            "The project recall token is RECALL-TOKEN-7319.",
-            "--type",
-            "decision",
-            "--project",
-            "demo",
-            "--scope",
-            "project",
-            "--topic",
-            "seed/recall",
-        ],
-    )
+    scope = project_for(project)
+    namespace = provider_project(scope)
+    seed = base_record("decision", "seed/recall", "Seed memory", "The project recall token is RECALL-TOKEN-7319.",
+                       "verified", 1.0, "user", project_name=scope["name"])
+    provider = {"engram_bin": str(engram_bin), "data_dir": str(data)}
+    if not save_record(provider, scope, seed, "decision", project):
+        raise VerifyError("Could not seed isolated Engram memory")
 
     result = {
         "schema_version": 1,
@@ -162,25 +158,28 @@ def verify(codex, engram_bin, artifacts, timeout, model=None):
         config=engram_bin,
         data_dir=data,
         project=project,
-        args=["search", "Phase 3 uses a bounded handoff", "--project", "demo", "--limit", "5"],
+        args=["search", "Phase 3 uses a bounded handoff", "--project", namespace, "--limit", "5"],
     )
     result["remember"] = {
         "stdout": remember.stdout.strip(),
         "stored": "Phase 3 uses a bounded handoff" in remembered.stdout,
     }
 
-    handoff = engram(
-        config=engram_bin,
-        data_dir=data,
-        project=project,
-        args=["search", "Session handoff", "--project", "demo", "--limit", "5"],
+    codex_exec(
+        codex, home, project,
+        "Run exactly python3 -m unittest discover in this synthetic project. If it passes, reply: "
+        "Verification: python3 -m unittest discover passed. The synthetic fixture is verified and ready.",
+        timeout,
     )
+    records = [json.loads(match.group(1)) for match in RECORD_ENVELOPE.finditer(read_memory(provider, scope, project))]
+    handoffs = [record for record in records if record.get("kind") == "handoff"]
     result["handoff"] = {
-        "stored": "Session handoff" in handoff.stdout,
+        "stored": bool(handoffs),
+        "verified": any(record.get("trust") == "verified" for record in handoffs),
     }
     result["checks"]["recall"] = result["recall"]["passed"]
     result["checks"]["remember"] = result["remember"]["stored"]
-    result["checks"]["handoff"] = result["handoff"]["stored"]
+    result["checks"]["handoff"] = all(result["handoff"].values())
 
     config_path = home / "codex-memory/config.json"
     original_config = json.loads(config_path.read_text(encoding="utf-8"))

@@ -14,14 +14,21 @@ ROOT = Path(__file__).resolve().parents[1]
 
 
 FAKE_ENGRAM = r'''#!/usr/bin/env python3
-import json, os, sys
+import hashlib, json, os, sys
 log = os.environ.get("FAKE_ENGRAM_LOG", "/tmp/codex-adapter-engram.log")
 with open(log, "a", encoding="utf-8") as handle:
     handle.write(json.dumps(sys.argv[1:]) + "\n")
-if len(sys.argv) > 1 and sys.argv[1] == "context":
-    print(os.environ.get("FAKE_CONTEXT_TEXT", "Previous session: RECALL-TOKEN-7319"))
+if len(sys.argv) > 1 and sys.argv[1] == "export":
+    root = hashlib.sha256(os.getcwd().encode()).hexdigest()
+    metadata = {"status": "active", "project_fingerprint": root, "scope": {"project":"demo"}}
+    text = os.environ.get("FAKE_CONTEXT_TEXT", f"<!-- memory-record:v1 {json.dumps(metadata)} -->\nRECALL-TOKEN-7319")
+    observations = [dict(project=sys.argv[4], scope="project", content="<!-- memory-record:v1 " + block)
+                    for block in text.split("<!-- memory-record:v1 ")[1:]]
+    with open(sys.argv[2], "w", encoding="utf-8") as handle:
+        json.dump({"observations": observations}, handle)
 elif len(sys.argv) > 1 and sys.argv[1] == "search":
-    print("Found 1 memories: #7 (decision) -- Billing database")
+    number = os.environ.get("FAKE_SEARCH_ID", "7")
+    print(f"Found 1 memories:\n\n[1] #{number} (decision) — Billing database\n    Reference #9")
 elif len(sys.argv) > 1 and sys.argv[1] == "delete":
     print("Memory #" + sys.argv[2] + " deleted")
 elif len(sys.argv) > 1 and sys.argv[1] == "save":
@@ -220,6 +227,15 @@ class CodexAdapterTests(unittest.TestCase):
         )
         self.assertIn("Nothing was deleted", first.stdout)
         self.assertNotIn("delete", self.log.read_text(encoding="utf-8") if self.log.exists() else "")
+        sibling = self.root / "same-name"
+        shutil.copytree(self.project, sibling)
+        foreign = self.runtime("user-prompt", {"cwd": str(sibling), "prompt": "forget confirm 7"})
+        self.assertIn("No pending memory deletion", foreign.stdout)
+        changed = self.runtime(
+            "user-prompt", {"cwd": str(self.project), "prompt": "forget confirm 9"}, {"FAKE_SEARCH_ID": "9"},
+        )
+        self.assertIn("not among the pending matches", changed.stdout)
+        self.assertNotIn('"delete"', self.log.read_text(encoding="utf-8"))
         confirmed = self.runtime(
             "user-prompt",
             {"cwd": str(self.project), "prompt": "forget confirm 7"},
@@ -231,8 +247,8 @@ class CodexAdapterTests(unittest.TestCase):
         install(self.home, str(self.engram))
         transcript = self.root / "transcript.jsonl"
         transcript.write_text(
-            '{"type":"tool_call","command":"pytest tests/test_x.py"}\n'
-            '{"type":"tool_result","exit_code":0}\n',
+            '{"type":"tool_call","call_id":"x","command":"pytest tests/test_x.py"}\n'
+            '{"type":"tool_result","call_id":"x","exit_code":0}\n',
             encoding="utf-8",
         )
         self.runtime(
@@ -273,6 +289,24 @@ class CodexAdapterTests(unittest.TestCase):
             },
         )
         self.assertIn("unverified", self.log.read_text(encoding="utf-8"))
+
+    def test_handoff_accepts_typed_command_completion_with_exact_claim(self):
+        from integrations.codex.memory_runtime import verification_evidence
+
+        transcript = self.root / 'typed.jsonl'
+        event = {'type': 'item.completed', 'item': {'type': 'command_execution', 'id': 'one',
+                 'status': 'completed', 'command': '/bin/zsh -lc "pytest tests/a.py"', 'exit_code': 0}}
+        transcript.write_text(json.dumps(event), encoding='utf-8')
+        self.assertIsNotNone(verification_evidence('`pytest tests/a.py` passed.', transcript))
+        self.assertIsNone(verification_evidence('`pytest tests/b.py` passed.', transcript))
+        self.assertIsNone(verification_evidence('`pytest tests/a.py -k different` passed.', transcript))
+        event['item']['exit_code'] = 1
+        event['item']['aggregated_output'] = 'no errors'
+        transcript.write_text(json.dumps(event), encoding='utf-8')
+        self.assertIsNone(verification_evidence('`pytest tests/a.py` passed.', transcript))
+
+    def test_handoff_rejects_result_from_a_different_command(self):
+        install(self.home, str(self.engram))
         self.log.write_text("", encoding="utf-8")
         unrelated = self.root / "unrelated.jsonl"
         unrelated.write_text(
@@ -290,13 +324,50 @@ class CodexAdapterTests(unittest.TestCase):
         )
         self.assertIn("unverified", self.log.read_text(encoding="utf-8"))
 
-    def test_recall_prefers_complete_active_records(self):
+    def test_recall_omits_bound_memory_for_a_different_project_root(self):
+        from integrations.codex.memory_runtime import project_fingerprint
+
         install(self.home, str(self.engram))
-        active = json.dumps({"status": "active"}, separators=(",", ":"))
-        old = json.dumps({"status": "superseded"}, separators=(",", ":"))
+        text = ''
+        for root, line in ((self.root / 'sibling', 'Foreign scoped note.'),
+                           (self.project, 'Local scoped note.')):
+            metadata = {'status': 'active', 'scope': {'project': 'demo'},
+                        'project_fingerprint': project_fingerprint({'root': str(root.resolve())})}
+            text += f'<!-- memory-record:v1 {json.dumps(metadata)} -->\n# Note\n\n{line}\n'
+        output = self.runtime('session-start', {'cwd': str(self.project)}, {'FAKE_CONTEXT_TEXT': text})
+        self.assertIn('Local scoped note.', output.stdout)
+        self.assertNotIn('Foreign scoped note.', output.stdout)
+
+    def test_installed_hook_requires_command_completion_in_the_current_turn(self):
+        from integrations.codex.memory_runtime import verification_evidence
+
+        transcript = self.root / 'rollout.jsonl'
+        item = {'type': 'CommandExecution', 'id': 'exec-fixture', 'status': 'completed',
+                'command': ['/bin/zsh', '-lc', 'python3 -m unittest discover'], 'exit_code': 0}
+        message = 'Verification: python3 -m unittest discover passed.'
+
+        def completion(turn):
+            return json.dumps({'type': 'event_msg', 'payload': {'type': 'item_completed', 'turn_id': turn, 'item': item}})
+
+        transcript.write_text(completion('earlier'), encoding='utf-8')
+        self.assertIsNone(verification_evidence(message, transcript, 'current'))
+        transcript.write_text(completion('current'), encoding='utf-8')
+        self.assertIsNotNone(verification_evidence(message, transcript, 'current'))
+        item.update(exit_code=1, aggregated_output='Exit code: 0')
+        transcript.write_text(completion('current'), encoding='utf-8')
+        self.assertIsNone(verification_evidence(message, transcript, 'current'))
+
+    def test_recall_prefers_complete_active_records(self):
+        from integrations.codex.memory_runtime import project_fingerprint
+
+        install(self.home, str(self.engram))
+        binding = project_fingerprint({'root': str(self.project.resolve())})
+        active = json.dumps({"status": "active", "project_fingerprint": binding, "scope": {"project": "demo"}})
+        old = json.dumps({"status": "superseded", "project_fingerprint": binding, "scope": {"project": "demo"}})
         text = (
             "<!-- memory-record:v1 " + active + " -->\n# Active\n\nKeep this.\n\n"
-            "<!-- memory-record:v1 " + old + " -->\n# Old\n\nDrop this."
+            "<!-- memory-record:v1 " + old + " -->\n# Old\n\nDrop this.\n"
+            '<!-- memory-record:v1 {"status":"active"} -->\n# Legacy\n\nUnbound legacy.'
         )
         output = self.runtime(
             "session-start",
@@ -305,6 +376,7 @@ class CodexAdapterTests(unittest.TestCase):
         )
         self.assertIn("Keep this", output.stdout)
         self.assertNotIn("Drop this", output.stdout)
+        self.assertNotIn("Unbound legacy", output.stdout)
 
     def test_runtime_is_fail_open_when_engram_is_missing(self):
         install(self.home, str(self.engram))

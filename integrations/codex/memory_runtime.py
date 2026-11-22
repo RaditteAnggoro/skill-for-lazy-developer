@@ -13,8 +13,10 @@ import json
 import os
 from pathlib import Path
 import re
+import shlex
 import subprocess
 import sys
+import tempfile
 
 
 RUNTIME_DIR = Path(__file__).resolve().parent
@@ -33,7 +35,7 @@ SENSITIVE = (
 )
 
 VERIFY_COMMAND = re.compile(
-    r"\b(pytest|python -m pytest|npm test|pnpm test|yarn test|go test|cargo test|"
+    r"\b(pytest|python(?:3(?:\.\d+)?)? -m (?:pytest|unittest)|npm test|pnpm test|yarn test|go test|cargo test|"
     r"dotnet test|mvn test|gradle test|rspec|phpunit|ruff|eslint|lint|"
     r"typecheck|tsc|build|check)\b",
     re.IGNORECASE,
@@ -109,38 +111,51 @@ def engram(config, args, cwd, timeout=3):
 RECORD_ENVELOPE = re.compile(r"<!-- memory-record:v1 (\{.*?\}) -->", re.DOTALL)
 
 
+def project_fingerprint(project):
+    return hashlib.sha256(project['root'].encode('utf-8')).hexdigest()
+
+
+def provider_project(project):
+    return f"ld-{project_fingerprint(project)}"
+
+
 def recall(config, project, cwd):
-    completed = engram(config, ["context", project["name"]], cwd, timeout=4)
-    if completed.returncode != 0:
+    namespace = provider_project(project)
+    # The CLI context view abbreviates the body of an envelope. A project-scoped
+    # export supplies complete records and is removed before any context is returned.
+    with tempfile.TemporaryDirectory(prefix='ld-memory-') as temporary:
+        output = Path(temporary) / 'observations.json'
+        completed = engram(config, ["export", str(output), "--project", namespace], cwd, timeout=4)
+        if completed.returncode != 0 or not output.is_file() or output.stat().st_size > 16 * 1024 * 1024:
+            return ""
+        try:
+            exported = json.loads(output.read_text(encoding='utf-8'))
+        except json.JSONDecodeError:
+            return ""
+    observations = exported.get('observations') if isinstance(exported, dict) else None
+    if not isinstance(observations, list):
         return ""
-    text = completed.stdout.strip()
-    if not text or "No memories" in text:
-        return ""
-    if sensitive(text):
-        return ""
-    # Engram context is a presentation string. Prefer complete, structured records so a
-    # suffix cut cannot turn a partial record into trusted context. Fall back to legacy
-    # text only when the provider returned no memory envelope.
-    matches = list(RECORD_ENVELOPE.finditer(text))
-    if not matches:
-        return text[-1800:]
     records = []
-    for index, match in enumerate(matches):
+    for item in observations:
+        if (not isinstance(item, dict) or item.get('project') != namespace
+                or item.get('scope') != 'project' or not isinstance(item.get('content'), str)):
+            continue
+        block = item['content'].strip()
+        match = RECORD_ENVELOPE.match(block)
+        if not match or len(block) > 1800 or sensitive(block):
+            continue
         try:
             meta = json.loads(match.group(1))
         except json.JSONDecodeError:
             continue
-        if not isinstance(meta, dict) or meta.get("status") not in (None, "active"):
+        scope = meta.get('scope') if isinstance(meta, dict) else None
+        if (scope is None or not isinstance(scope, dict) or scope.get('project') != project['name']
+                or meta.get('status') != 'active' or meta.get('project_fingerprint') != project_fingerprint(project)):
             continue
-        end = matches[index + 1].start() if index + 1 < len(matches) else len(text)
-        block = text[match.start():end].strip()
-        if block and not sensitive(block):
-            records.append(block)
-    if not records:
-        return ""
+        records.append((str(item.get('updated_at', '')), block))
     selected = []
     size = 0
-    for block in reversed(records):
+    for _, block in sorted(records, reverse=True):
         if size + len(block) + 2 > 1800:
             break
         selected.append(block)
@@ -148,7 +163,7 @@ def recall(config, project, cwd):
     return "\n\n".join(reversed(selected))
 
 
-def envelope(record):
+def envelope(record, project):
     meta = {
         "id": record["id"],
         "kind": record["kind"],
@@ -157,6 +172,7 @@ def envelope(record):
         "trust": record["trust"],
         "confidence": record["confidence"],
         "scope": record["scope"],
+        "project_fingerprint": project_fingerprint(project),
     }
     return "<!-- memory-record:v1 {} -->\n# {}\n\n{}\n".format(
         json.dumps(meta, ensure_ascii=False, sort_keys=True, separators=(",", ":")),
@@ -171,11 +187,11 @@ def save_record(config, project, record, engram_type, cwd, timeout=3):
         [
             "save",
             record["title"],
-            envelope(record),
+            envelope(record, project),
             "--type",
             engram_type,
             "--project",
-            project["name"],
+            provider_project(project),
             "--scope",
             "project",
             "--topic",
@@ -296,79 +312,61 @@ def user_prompt(event):
     return 0
 
 
-def _walk_objects(value):
-    if isinstance(value, dict):
-        yield value
-        for child in value.values():
-            yield from _walk_objects(child)
-    elif isinstance(value, list):
-        for child in value:
-            yield from _walk_objects(child)
-
-
-def _success_status(value):
-    if value is True:
-        return True
-    if value is False or value is None:
-        return False
-    if isinstance(value, int):
-        return value == 0
-    if isinstance(value, str):
-        text = value.strip().casefold()
-        return text in {"0", "success", "succeeded", "passed", "pass", "ok"} or bool(
-            re.search(r"exit(?:ed)?\s*(?:code\s*)?0|0\s+failed|no\s+errors", text)
-        )
-    return False
-
-
-def _transcript_invocations(transcript):
-    """Return command/result pairs linked by call id, or by local event order."""
+def _transcript_invocations(transcript, turn_id=None):
+    """Use typed host events and never infer exit status from command output."""
     calls = {}
-    results = {}
-    ordered = []
+    completed = []
     for line in transcript.splitlines():
-        if not line.strip():
-            continue
         try:
             event = json.loads(line)
         except json.JSONDecodeError:
             continue
-        for node in _walk_objects(event):
-            if not isinstance(node, dict):
+        if not isinstance(event, dict):
+            continue
+        event_type = event.get('type')
+        if event_type == 'event_msg':
+            payload = event.get('payload')
+            if (not isinstance(payload, dict) or payload.get('type') != 'item_completed'
+                    or (turn_id is not None and payload.get('turn_id') != turn_id)):
                 continue
-            call_id = node.get("call_id") or node.get("callId") or node.get("id")
-            command = node.get("command")
-            if not isinstance(command, str):
-                arguments = node.get("arguments")
-                if isinstance(arguments, str):
-                    try:
-                        arguments = json.loads(arguments)
-                    except json.JSONDecodeError:
-                        arguments = None
-                if isinstance(arguments, dict):
-                    command = arguments.get("command")
-            if isinstance(command, str) and command.strip():
-                key = str(call_id) if call_id is not None else "ordered-{}".format(len(ordered))
-                calls[key] = command.strip()
-                ordered.append(key)
-            for field in ("exit_code", "exitCode", "exit", "returncode", "status", "is_error", "success"):
-                if field in node:
-                    value = node[field]
-                    if field == "is_error":
-                        value = not bool(value)
-                    if call_id is not None:
-                        results[str(call_id)] = value
-                    elif ordered:
-                        results[ordered[-1]] = value
-            output = node.get("output")
-            if isinstance(output, str) and ordered:
-                status = _success_status(output)
-                if status:
-                    results[ordered[-1]] = True
-    return calls, results
+            item = payload.get('item')
+            if (isinstance(item, dict) and item.get('type') == 'CommandExecution'
+                    and item.get('status') in ('completed', 'failed', 'declined')):
+                argv = item.get('command')
+                if isinstance(argv, list) and argv and all(isinstance(arg, str) for arg in argv):
+                    exit_code = item.get('exit_code') if item['status'] == 'completed' else None
+                    completed.append((item.get('id'), shlex.join(argv), exit_code))
+            continue
+        if turn_id is not None:
+            continue
+        if event_type == 'item.completed':
+            item = event.get('item')
+            if (isinstance(item, dict) and item.get('type') == 'command_execution'
+                    and item.get('status') in ('completed', 'failed')):
+                exit_code = item.get('exit_code') if item['status'] == 'completed' else None
+                completed.append((item.get('id'), item.get('command'), exit_code))
+            continue
+        call_id = event.get('call_id')
+        if not isinstance(call_id, str) or not call_id:
+            continue
+        if event_type == 'tool_call':
+            calls[call_id] = event.get('command')
+        elif event_type == 'tool_result' and call_id in calls:
+            completed.append((call_id, calls.pop(call_id), event.get('exit_code')))
+    return completed
 
 
-def verification_evidence(message, transcript_path):
+def _command_text(command):
+    try:
+        tokens = shlex.split(command)
+    except ValueError:
+        return command.strip()
+    if len(tokens) == 3 and Path(tokens[0]).name in {'sh', 'bash', 'zsh'} and tokens[1] in {'-c', '-lc'}:
+        return tokens[2].strip()
+    return command.strip()
+
+
+def verification_evidence(message, transcript_path, turn_id=None):
     """Return linked verification metadata, or None.
 
     The message must state a verification command and success. The transcript must
@@ -386,16 +384,21 @@ def verification_evidence(message, transcript_path):
         transcript = path.read_text(encoding="utf-8", errors="replace")
     except OSError:
         return None
-    calls, results = _transcript_invocations(transcript)
-    needle = command_match.group(0).casefold()
-    for call_id, command in calls.items():
-        if needle not in command.casefold():
+    for call_id, command, exit_code in reversed(_transcript_invocations(transcript, turn_id)):
+        if not isinstance(call_id, str) or not isinstance(command, str):
             continue
-        if _success_status(results.get(call_id)):
-            fingerprint = hashlib.sha256(
-                (call_id + "\0" + command + "\0" + str(results.get(call_id))).encode("utf-8")
-            ).hexdigest()[:16]
-            return {"command": command, "exit_status": 0, "fingerprint": fingerprint}
+        exact = _command_text(command)
+        kind = VERIFY_COMMAND.match(exact)
+        literal = r'(?:^|[\s`])' + re.escape(exact) + (
+            r'(?=`|$|[.!](?:\s|$)|\s+(?:passed|succeeded|ok|success|exit(?:ed)?)\b)'
+        )
+        if kind is None or not re.search(literal, message, re.I):
+            continue
+        if type(exit_code) is not int or exit_code != 0:
+            return None
+        fingerprint = hashlib.sha256((call_id + "\0" + command + "\0" + "0").encode()).hexdigest()[:16]
+        return {"command": kind.group(0), "exit_status": 0,
+                "fingerprint": fingerprint}
     return None
 
 
@@ -420,7 +423,7 @@ def write_forget_state(data):
 
 
 def candidate_ids(output):
-    return [int(value) for value in re.findall(r"#(\d+)", output)]
+    return [int(value) for value in re.findall(r"^\[\d+\] #(\d+) \(", output, re.MULTILINE)]
 
 
 def handle_forget(prompt, config, project, cwd):
@@ -436,12 +439,14 @@ def handle_forget(prompt, config, project, cwd):
     )
     if confirm:
         state = read_forget_state()
-        if not state or state.get("root") != project["root"] or state.get("project") != project["name"]:
+        if not state or state.get("provider_project") != provider_project(project):
             return "No pending memory deletion for this project."
         observation_id = int(confirm.group(1))
+        if observation_id not in state.get('candidates', []):
+            return "That memory is not among the pending matches; nothing was removed."
         search = engram(
             config,
-            ["search", state["query"], "--project", project["name"], "--limit", "5"],
+            ["search", state["query"], "--project", provider_project(project), "--limit", "5"],
             cwd,
             timeout=4,
         )
@@ -465,7 +470,7 @@ def handle_forget(prompt, config, project, cwd):
         return "Name the memory topic to forget."
     search = engram(
         config,
-        ["search", query, "--project", project["name"], "--limit", "5"],
+        ["search", query, "--project", provider_project(project), "--limit", "5"],
         cwd,
         timeout=4,
     )
@@ -474,8 +479,7 @@ def handle_forget(prompt, config, project, cwd):
         return "No matching project memory was found; nothing was removed."
     write_forget_state(
         {
-            "root": project["root"],
-            "project": project["name"],
+            "provider_project": provider_project(project),
             "query": query,
             "candidates": ids,
         }
@@ -499,7 +503,7 @@ def session_end(event):
     if len(message) < 20 or sensitive(message):
         return 0
     content = message[:1800]
-    verified = verification_evidence(message, event.get("transcript_path"))
+    verified = verification_evidence(message, event.get("transcript_path"), event.get("turn_id"))
     record = base_record(
         "handoff",
         "handoff/{}".format(project["name"]),

@@ -25,3 +25,24 @@ cases:
 - id: payment-callers
   prompt: Identify the file defining approve_repayment and source files that directly call it. List only those files.
   files: [payment.py, web.py, batch.py]
+- id: web-authorized-edges
+  prompt: Starting at approve_request, trace each direct reachable function call including authorization. Stop at the SQL boundary. Include the line of each call expression.
+  edges:
+    - "web.py:6::approve_request -> auth.py::may_approve"
+    - "web.py:8::approve_request -> payment.py::approve_repayment"
+    - "payment.py:6::approve_repayment -> ledger.py::write_posting"
+    - "payment.py:6::approve_repayment -> schedule.py::normalize_amount"
+- id: report-sql-boundary
+  prompt: Starting at daily_report, list the call edge to the ledger function and the data reference edge from that function to its imported SELECT_POSTINGS constant. Use the line containing each reference.
+  edges:
+    - "report.py:5::daily_report -> ledger.py::read_postings"
+    - "ledger.py:9::read_postings -> statements.py::SELECT_POSTINGS"
+- id: batch-fractional-truncation
+  prompt: >-
+    Batch replay of a synthetic amount 125.75 produces 125 in the posting parameters.
+    Diagnose read-only. Determine whether normalization or posting causes the loss.
+    Report only the two direct call edges that trace the faulty value from replay
+    through the first conversion, and do not include the downstream consumer.
+  edges:
+    - "batch.py:5::replay -> payment.py::approve_repayment"
+    - "payment.py:6::approve_repayment -> schedule.py::normalize_amount"

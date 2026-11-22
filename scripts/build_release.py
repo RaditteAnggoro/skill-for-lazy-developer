@@ -3,6 +3,7 @@
 import argparse
 import hashlib
 import json
+import os
 from pathlib import Path
 import re
 import subprocess
@@ -24,7 +25,7 @@ EXCLUDED = {
 }
 
 
-def collect_files(root):
+def collect_files(root, tracked=None):
     root = root.resolve()
     files = []
     for relative in PATHS:
@@ -37,7 +38,13 @@ def collect_files(root):
             raise ValueError("distribution path escapes repository: {}".format(relative))
         if path.is_symlink():
             raise ValueError("distribution contains a symlink: {}".format(relative))
-        candidates = path.rglob("*") if path.is_dir() else [path]
+        if tracked is None:
+            candidates = path.rglob("*") if path.is_dir() else [path]
+        else:
+            candidates = [root / name for name in tracked
+                          if name == relative or name.startswith(relative + "/")]
+            if not candidates:
+                raise ValueError("distribution path is absent from the committed snapshot: {}".format(relative))
         for candidate in candidates:
             parts = candidate.relative_to(root).parts
             if any(part in EXCLUDED for part in parts):
@@ -54,24 +61,40 @@ def collect_files(root):
 
 def build_release(root, require_clean=False):
     root = root.resolve()
+    git = ["git", "-C", str(root)]
+    tracked = None
+    commit = None
     if require_clean:
         try:
-            status = subprocess.run(["git", "-C", str(root), "status", "--porcelain"], capture_output=True, text=True, check=False)
-        except OSError as exc:
+            status = subprocess.run(git + ["status", "--porcelain", "--untracked-files=normal"],
+                                    capture_output=True, text=True, check=True)
+            if status.stdout.strip():
+                raise ValueError("source snapshot is not clean; commit or remove local changes before publishing")
+            commit = subprocess.check_output(git + ["rev-parse", "HEAD"], text=True).strip()
+            paths = subprocess.check_output(git + ["ls-tree", "-r", "--name-only", "-z", commit])
+            tracked = {os.fsdecode(name) for name in paths.split(b"\0") if name}
+        except (OSError, subprocess.CalledProcessError) as exc:
             raise ValueError("cannot verify clean source snapshot: {}".format(exc))
-        if status.returncode != 0 or status.stdout.strip():
-            raise ValueError("source snapshot is not clean; commit or remove local changes before publishing")
-    version = (root / "VERSION").read_text(encoding="utf-8").strip()
+    else:
+        try:
+            commit = subprocess.run(git + ["rev-parse", "HEAD"], capture_output=True,
+                                    text=True, check=False).stdout.strip() or None
+        except OSError:
+            pass
+
+    def source_bytes(source):
+        if not require_clean:
+            return source.read_bytes()
+        name = source.relative_to(root).as_posix()
+        try:
+            return subprocess.check_output(git + ["cat-file", "blob", f"{commit}:{name}"])
+        except subprocess.CalledProcessError as exc:
+            raise ValueError(f"cannot read committed source: {name}") from exc
+
+    version = source_bytes(root / "VERSION").decode("utf-8").strip()
     if re.fullmatch(r"[0-9]+\.[0-9]+\.[0-9]+", version) is None:
         raise ValueError("VERSION must use MAJOR.MINOR.PATCH")
-    files = collect_files(root)
-    try:
-        commit = subprocess.run(
-            ["git", "-C", str(root), "rev-parse", "HEAD"],
-            capture_output=True, text=True, check=False,
-        ).stdout.strip() or None
-    except OSError:
-        commit = None
+    files = collect_files(root, tracked=tracked)
     build_info = {
         "schema_version": 1,
         "version": version,
@@ -100,7 +123,7 @@ def build_release(root, require_clean=False):
             info.compress_type = ZIP_DEFLATED
             info.create_system = 3
             info.external_attr = 0o100644 << 16
-            bundle.writestr(info, source.read_bytes())
+            bundle.writestr(info, source_bytes(source))
     digest = hashlib.sha256(archive.read_bytes()).hexdigest()
     checksum.write_text(digest + "  " + archive.name + "\n", encoding="utf-8")
     return archive, checksum, len(files) + 1

@@ -40,3 +40,54 @@ jobs:
         run: python -m unittest discover -s tests -v
       - name: Build source archive
         run: python scripts/build_release.py --require-clean
+
+  record-receipt:
+    runs-on: ubuntu-22.04
+    timeout-minutes: 5
+    outputs:
+      artifact-id: ${{ steps.upload.outputs.artifact-id }}
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v7
+        with:
+          python-version: "3.13"
+      - run: python -m pip install -r requirements-dev.txt
+      - name: Record synthetic corpus check
+        run: >-
+          python scripts/record_phase_check.py .github/phase-receipt-smoke.yaml "$RUNNER_TEMP/receipt/bundle.json"
+          --phase orchestration --check phase-plan-corpus --artifacts "$RUNNER_TEMP/receipt"
+          -- python scripts/validate_phase_plan.py
+      - uses: actions/upload-artifact@v7
+        id: upload
+        with:
+          name: phase-receipt-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/receipt/*.json
+          if-no-files-found: error
+          retention-days: 1
+
+  resume-receipt:
+    needs: record-receipt
+    runs-on: ubuntu-22.04
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v7
+        with:
+          python-version: "3.13"
+      - run: python -m pip install -r requirements-dev.txt
+      - uses: actions/download-artifact@v8
+        with:
+          artifact-ids: ${{ needs.record-receipt.outputs.artifact-id }}
+          path: ${{ runner.temp }}/receipt
+          merge-multiple: true
+      - name: Resume from upstream receipt and verify completion
+        run: |
+          python scripts/record_phase_check.py .github/phase-receipt-smoke.yaml "$RUNNER_TEMP/receipt/bundle.json" \
+            --phase final --check skill-validation --artifacts "$RUNNER_TEMP/receipt" \
+            -- python scripts/validate_skills.py
+          python scripts/verify_phase_receipts.py .github/phase-receipt-smoke.yaml "$RUNNER_TEMP/receipt/bundle.json" \
+            --artifacts "$RUNNER_TEMP/receipt"

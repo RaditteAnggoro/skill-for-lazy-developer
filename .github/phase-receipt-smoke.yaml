@@ -1,0 +1,16 @@
+phases:
+  - id: orchestration
+    primary: research-plan-implement
+    entry: synthetic orchestration corpus available
+    exit: corpus validator passes
+    evidence: recorded corpus check
+    inputs: [scripts/validate_phase_plan.py, tests/orchestration_cases.yaml]
+    required_checks: [phase-plan-corpus]
+  - id: final
+    primary: verification-before-completion
+    depends_on: [orchestration]
+    entry: first job receipt is current
+    exit: skill validation and resumed receipt verification pass
+    evidence: completed receipt bundle
+    inputs: [scripts/validate_skills.py, .github/phase-receipt-smoke.yaml]
+    required_checks: [skill-validation]
