@@ -19,6 +19,8 @@ python -m unittest discover -s tests -v
 
 Keep skill names aligned with their directory names. UI metadata belongs in `agents/openai.yaml`. Link detailed procedures from the entrypoint rather than duplicating them. Use repository-relative file links in saved documents.
 
+For workflow design and maintenance decisions, see the [development plan](docs/ADVANCED_DEVELOPMENT_PLAN.md) and [V2 capability matrix](docs/V2_CAPABILITY_MATRIX.md).
+
 For a tooling change, add a test that detects the relevant failure. For a workflow change, try a realistic prompt where practical; document what actually happened and what remains untested. Do not treat wording-matching tests as proof of good agent behaviour.
 
 ## Submit a pull request

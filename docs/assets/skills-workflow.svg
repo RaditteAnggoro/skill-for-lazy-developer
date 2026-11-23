@@ -1,70 +1,80 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="640" viewBox="0 0 1280 640" role="img" aria-labelledby="title desc">
-  <title id="title">Automatic Codex skill routing</title>
-  <desc id="desc">Describe a software task normally. An adaptive workflow identifies the outcome, continues automatically for a clear task, or offers outcome-based choices when the request is ambiguous. It loads only the selected skills and finishes with evidence.</desc>
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="578" viewBox="0 0 1000 578" role="img" aria-labelledby="title desc">
+  <title id="title">Skills for Lazy Developer V4 workflow</title>
+  <desc id="desc">A request goes through the adaptive router, which selects current project source, relevant project memory, and native or authorized MCP tools as needed. One agent works through the selected phases and reports the result. Financial work follows a dedicated path from staging through claiming, posting, and reconciliation.</desc>
   <defs>
-    <linearGradient id="background" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0" stop-color="#0b1426"/>
-      <stop offset="1" stop-color="#142c3b"/>
+    <linearGradient id="background" x2="1" y2="1">
+      <stop stop-color="#101827"/>
+      <stop offset="1" stop-color="#14333a"/>
     </linearGradient>
-    <linearGradient id="router" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0" stop-color="#172d4d"/>
-      <stop offset="1" stop-color="#193b4a"/>
-    </linearGradient>
-    <marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto">
-      <path d="M1 1 L8 5 L1 9" fill="none" stroke="#7dd3fc" stroke-width="1.5"/>
+    <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M1 1l7 4-7 4" fill="none" stroke="#9cb8ca" stroke-width="1.6"/>
     </marker>
   </defs>
-  <rect width="1280" height="640" rx="24" fill="url(#background)"/>
-  <g font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif">
-    <text x="56" y="62" fill="#7dd3fc" font-size="15" font-weight="700" letter-spacing="2">ADAPTIVE CODEX WORKFLOWS</text>
-    <text x="56" y="116" fill="#f8fafc" font-size="39" font-weight="700">Describe the task. The right workflow finds you.</text>
-    <text x="56" y="153" fill="#cbd5e1" font-size="19">No skill-name syntax required. Clear work continues; meaningful ambiguity becomes an easy choice.</text>
+  <rect width="1000" height="578" rx="24" fill="url(#background)"/>
+  <g font-family="system-ui, -apple-system, 'Segoe UI', sans-serif">
+    <text x="38" y="52" fill="#f3f7ff" font-size="33" font-weight="700">Skills for Lazy Developer V4</text>
+    <text x="39" y="82" fill="#b7c9d9" font-size="19">Select the evidence each task needs</text>
 
-    <rect x="56" y="204" width="252" height="220" rx="16" fill="#15253b" stroke="#3b536e"/>
-    <rect x="358" y="204" width="252" height="220" rx="16" fill="url(#router)" stroke="#3f7188"/>
-    <rect x="660" y="204" width="252" height="220" rx="16" fill="#16343f" stroke="#36758a"/>
-    <rect x="962" y="204" width="262" height="220" rx="16" fill="#143a39" stroke="#3c8276"/>
-    <path d="M320 314 H346" fill="none" stroke="#7dd3fc" stroke-width="2" marker-end="url(#arrow)"/>
-    <path d="M622 314 H648" fill="none" stroke="#7dd3fc" stroke-width="2" marker-end="url(#arrow)"/>
-    <path d="M924 314 H950" fill="none" stroke="#7dd3fc" stroke-width="2" marker-end="url(#arrow)"/>
+    <g fill="none" stroke="#9cb8ca" stroke-width="1.8">
+      <path d="M286 139H319" marker-end="url(#arrow)"/>
+      <path d="M675 139H710" marker-end="url(#arrow)"/>
+      <path d="M499 171V199H182V217" marker-end="url(#arrow)"/>
+      <path d="M499 199V217" marker-end="url(#arrow)"/>
+      <path d="M499 199H816V217" marker-end="url(#arrow)"/>
+      <path d="M182 335V355H816V335"/>
+      <path d="M499 335V375" marker-end="url(#arrow)"/>
+    </g>
 
-    <text x="78" y="240" fill="#7dd3fc" font-size="14" font-weight="700">01 / DESCRIBE</text>
-    <text x="78" y="278" fill="#f8fafc" font-size="23" font-weight="700">Use normal words</text>
-    <text x="78" y="316" fill="#cbd5e1" font-size="16">“Fix this failing test.”</text>
-    <text x="78" y="344" fill="#cbd5e1" font-size="16">“Explain this data flow.”</text>
-    <text x="78" y="372" fill="#cbd5e1" font-size="16">“Is this release ready?”</text>
-    <text x="78" y="401" fill="#94a3b8" font-size="14">No workflow name needed</text>
+    <rect x="38" y="107" width="248" height="64" rx="12" fill="#1a293d" stroke="#405369"/>
+    <text x="57" y="134" fill="#f3f7ff" font-size="19" font-weight="650">Request</text>
+    <text x="57" y="155" fill="#b7c9d9" font-size="15.5">Outcome and permissions</text>
 
-    <text x="380" y="240" fill="#7dd3fc" font-size="14" font-weight="700">02 / ROUTE</text>
-    <text x="380" y="278" fill="#f8fafc" font-size="23" font-weight="700">Read the outcome</text>
-    <text x="380" y="316" fill="#cbd5e1" font-size="16">Clear → continue</text>
-    <text x="380" y="344" fill="#cbd5e1" font-size="16">Different outcomes → choose</text>
-    <text x="380" y="372" fill="#cbd5e1" font-size="16">Blocked → one question</text>
-    <text x="380" y="401" fill="#94a3b8" font-size="14">Scope and intent stay intact</text>
+    <rect x="323" y="107" width="352" height="64" rx="12" fill="#2a2d51" stroke="#7f79c1"/>
+    <text x="343" y="134" fill="#f3f7ff" font-size="19" font-weight="650">Adaptive workflow</text>
+    <text x="343" y="155" fill="#d4d2ec" font-size="15.5">Selects skills and phase boundaries</text>
 
-    <text x="682" y="240" fill="#7dd3fc" font-size="14" font-weight="700">03 / COMPOSE</text>
-    <text x="682" y="278" fill="#f8fafc" font-size="23" font-weight="700">Load only what helps</text>
-    <text x="682" y="316" fill="#cbd5e1" font-size="16">Debug → verify</text>
-    <text x="682" y="344" fill="#cbd5e1" font-size="16">Discover → build → verify</text>
-    <text x="682" y="372" fill="#cbd5e1" font-size="16">Map or review on its own</text>
-    <text x="682" y="401" fill="#94a3b8" font-size="14">One primary + up to two helpers</text>
+    <rect x="714" y="107" width="248" height="64" rx="12" fill="#1a293d" stroke="#405369"/>
+    <text x="734" y="134" fill="#f3f7ff" font-size="19" font-weight="650">Phase plan</text>
+    <text x="734" y="155" fill="#b7c9d9" font-size="15.5">Dependencies and evidence</text>
 
-    <text x="984" y="240" fill="#5eead4" font-size="14" font-weight="700">04 / EVIDENCE</text>
-    <text x="984" y="278" fill="#f8fafc" font-size="23" font-weight="700">See what happened</text>
-    <text x="984" y="316" fill="#cbd5e1" font-size="16">Result or supported cause</text>
-    <text x="984" y="344" fill="#cbd5e1" font-size="16">Checks that actually ran</text>
-    <text x="984" y="372" fill="#cbd5e1" font-size="16">Unknowns and blocked checks</text>
-    <text x="984" y="401" fill="#94a3b8" font-size="14">No invented completion claims</text>
+    <rect x="38" y="221" width="288" height="114" rx="12" fill="#193042" stroke="#5a839c"/>
+    <text x="58" y="252" fill="#b2e3fb" font-size="21" font-weight="700">Project source</text>
+    <text x="58" y="278" fill="#e0eaf3" font-size="16">Native reads or local index</text>
+    <text x="58" y="303" fill="#c1d2e0" font-size="16">Revision-checked excerpts</text>
 
-    <text x="56" y="478" fill="#f8fafc" font-size="18" font-weight="700">Adaptive router + eight focused workflows</text>
-    <text x="56" y="516" fill="#cbd5e1" font-size="16">Implement / review</text>
-    <text x="284" y="516" fill="#cbd5e1" font-size="16">Debug</text>
-    <text x="512" y="516" fill="#cbd5e1" font-size="16">Verify</text>
-    <text x="740" y="516" fill="#cbd5e1" font-size="16">Discover a feature</text>
-    <text x="1008" y="516" fill="#cbd5e1" font-size="16">Work across sessions</text>
-    <text x="56" y="552" fill="#cbd5e1" font-size="16">Map architecture</text>
-    <text x="284" y="552" fill="#cbd5e1" font-size="16">Assess a release</text>
-    <text x="512" y="552" fill="#cbd5e1" font-size="16">Diagnose a browser UI</text>
-    <text x="56" y="604" fill="#94a3b8" font-size="14">WORKFLOW ILLUSTRATION • Instructions for an existing coding agent • Actual behavior depends on the model and available tools</text>
+    <rect x="355" y="221" width="288" height="114" rx="12" fill="#272d47" stroke="#7778a8"/>
+    <text x="375" y="252" fill="#d7ceff" font-size="21" font-weight="700">Project memory</text>
+    <text x="375" y="278" fill="#e0eaf3" font-size="16">Relevant history on resume</text>
+    <text x="375" y="303" fill="#c1d2e0" font-size="16">Root scope and freshness</text>
+
+    <rect x="672" y="221" width="290" height="114" rx="12" fill="#173840" stroke="#508a87"/>
+    <text x="692" y="252" fill="#a5ebda" font-size="21" font-weight="700">Native and MCP tools</text>
+    <text x="692" y="278" fill="#e0eaf3" font-size="16">Authorized capability discovery</text>
+    <text x="692" y="303" fill="#c1d2e0" font-size="16">Native fallback when available</text>
+
+    <rect x="38" y="379" width="924" height="62" rx="12" fill="#1b2d3c" stroke="#567587"/>
+    <text x="58" y="417" fill="#f3f7ff" font-size="20" font-weight="650">Execute the selected phases</text>
+    <text x="941" y="416" text-anchor="end" fill="#c1d2e0" font-size="16">Preserve constraints and report evidence</text>
+
+    <rect x="38" y="463" width="924" height="83" rx="14" fill="#303121" stroke="#93835a"/>
+    <text x="58" y="495" fill="#f6dfaa" font-size="20" font-weight="700">Financial engineering</text>
+    <text x="58" y="521" fill="#e7e0ce" font-size="15.5">Spring Batch, PostgreSQL, Oracle</text>
+    <g fill="none" stroke="#b6aa8e" stroke-width="1.6" marker-end="url(#arrow)">
+      <path d="M560 506H580"/>
+      <path d="M668 506H688"/>
+      <path d="M771 506H791"/>
+    </g>
+    <g fill="#3f3e2e" stroke="#a29573">
+      <rect x="467" y="487" width="90" height="38" rx="8"/>
+      <rect x="583" y="487" width="82" height="38" rx="8"/>
+      <rect x="691" y="487" width="77" height="38" rx="8"/>
+      <rect x="794" y="487" width="148" height="38" rx="8"/>
+    </g>
+    <g fill="#f6ebd3" font-size="16" font-weight="650" text-anchor="middle">
+      <text x="512" y="512">Stage</text>
+      <text x="624" y="512">Claim</text>
+      <text x="730" y="512">Post</text>
+      <text x="868" y="512">Reconcile</text>
+    </g>
   </g>
 </svg>

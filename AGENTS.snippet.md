@@ -1,9 +1,7 @@
 ## Development skills
 
-Repository skills are in `.agents/skills/`. Describe tasks normally; when no workflow
-is named, `adaptive-workflow` selects the smallest useful ordered set. Read selected skills
-and relevant references. Announce the workflow briefly and continue. Discover available
-tools when needed; prefer native capabilities when adequate.
+Use `adaptive-workflow` to route unnamed tasks to skills in `.agents/skills/`.
+Announce the route, load relevant skills and references, and prefer adequate native tools.
 
 Route by outcome and consequence:
 
@@ -39,10 +37,14 @@ because an authorized diagnosis may end in a focused code fix.
 | Review third-party skills before adoption | `skill-security-guard` |
 | Protect money, ledger, and batch integrity | `transaction-safe-engineering` |
 
-Keep checks proportional; reuse project commands. A simple fix needs focused checks, not a specification or map. A diagnosis or review request produces findings
-unless changes are also requested. Prefer outcome-based labels such as **Diagnose only** or **Fix and verify**.
+Keep checks proportional and reuse project commands. Diagnosis and review produce findings
+unless changes are requested. Prefer outcome-based labels such as **Diagnose only** or **Fix and verify**.
 
-User choices and repository conventions override skill defaults. Continue authorized work; do not add approval steps. Report actual checks. Do not invent unavailable tools, completed tests, or runtime evidence.
+User choices and repository conventions override skill defaults. Continue authorized work
+and report observed evidence.
+
+Never commit or push logs, junk, temporary outputs, or unrelated files. Inspect staged
+changes and outgoing commits. Tell the user what was kept out.
 
 ## Working relationship
 

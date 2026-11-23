@@ -41,6 +41,8 @@ and test evidence. A review suggestion is not an executed test. For a high-conse
 change, an independent read-only review may be useful; it is optional, not a default
 fan-out. Report blocker/improvement/question/not-verified separately.
 
+When committing or pushing, apply the shared [Git scope and handoff policy](../adaptive-workflow/SKILL.md#keep-git-changes-focused).
+
 ## Handoff
 
 Give the result and a concise evidence statement: command or interaction checked, result, and material gaps. If the environment prevents a check, explain the blocker and the remaining action precisely. Do not describe code as deployed, secure, compatible, or fully tested on the strength of a narrower check.

@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+- Update the V4 workflow diagram and document scoped context, MCP routing, and
+  financial engineering in the README.
+- Require agents to keep logs, junk, and unrelated files out of commits and pushes
+  and report what was excluded.
 - Add project-scoped source retrieval with incremental SQLite indexing, revision
   checks, and budget-aware source expansion.
 - Add reversible context compaction, task-focused memory recall, and on-demand MCP

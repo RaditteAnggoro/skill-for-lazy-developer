@@ -92,6 +92,20 @@ boundary. An ordinary Spring or batch task does not require financial guidance.
 Keep user-facing findings precise and preserve read-only intent, project-scoped
 memory, and explicit authorization for consequential operations.
 
+## Keep Git changes focused
+
+Never commit or push logs, junk files, temporary outputs, caches, local artifacts,
+or files unrelated to the requested change. Stage intended paths explicitly and
+inspect the staged names and diff before committing. Review every outgoing commit
+before pushing, including files already committed locally. A clean working tree
+does not establish that the outgoing commits are clean.
+
+Exclude accidental artifacts from your change. If unrelated staged work or an
+existing commit cannot be safely excluded, preserve it and tell the user what
+blocks the operation. Do not delete other work or rewrite history to clean it up.
+In the handoff, tell the user that only relevant project files were included and
+which kinds of files were kept out, or report why the commit or push was held.
+
 ## Select tools by capability
 
 After selecting the workflow, discover the capabilities actually available when the
