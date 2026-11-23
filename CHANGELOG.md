@@ -2,6 +2,16 @@
 
 ## Unreleased
 
+- Add project-scoped source retrieval with incremental SQLite indexing, revision
+  checks, and budget-aware source expansion.
+- Add reversible context compaction, task-focused memory recall, and on-demand MCP
+  catalog selection with a native fallback.
+- Benchmark evidence retention, local retrieval, and reported Codex input tokens
+  using matched synthetic cases.
+- Add targeted financial references for Spring Batch, staging, replay, ledger
+  reconciliation, database changes, and auditability within existing skills.
+- Add source-anchored Java and SQL review, a matched financial routing-context
+  benchmark, and opt-in Spring Batch/PostgreSQL failure-injection fixtures.
 - Add an isolated Codex role dispatch canary and a local structural-navigation
   benchmark that measures exact caller anchors under aliases and shadowing.
 - Reconcile delivered P0/P1 evidence and separate follow-up validation in the roadmap.

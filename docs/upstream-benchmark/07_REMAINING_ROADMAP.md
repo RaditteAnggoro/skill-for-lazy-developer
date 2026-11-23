@@ -14,7 +14,7 @@
 | --- | --- |
 | Additional hosts | Authenticate Claude for its custom-role dispatch canary and exercise installed lifecycle hooks on each remaining host. DSH uses the sequential role fallback while its adapter has no verified dispatch API. |
 | Visual quality | Run a blind task review in a pinned visual profile. Include comparable success, recovery, accessibility and pixel checks. |
-| Server databases and batch frameworks | Use disposable server and framework fixtures to verify restart, concurrency, reconciliation and query plans. SQLite scale evidence stays specific to its local fixture. |
+| Server databases and batch frameworks | The [V4 suite](../enterprise-financial-engineering/FAILURE_INJECTION_RESULTS.md) exercises PostgreSQL and Spring Batch on disposable data. Extend coverage to Oracle and process termination during Spring Batch metadata persistence. SQLite scale evidence stays specific to its local fixture. |
 | Cross-upstream comparisons | Expand the matched [task matrix](05_BENCHMARK_RESULTS.md) using identical fixtures, acceptance checks and permissions per arm. |
 | Structural navigation | Evaluate multi-package or dynamic call graphs before adopting a persistent index. Use current source anchors for decisions. |
 

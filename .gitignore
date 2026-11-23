@@ -39,6 +39,7 @@ tests/ui/fixtures/next/node_modules/
 tests/ui/fixtures/next/.next/
 tests/ui/fixtures/next/out/
 tests/.npm-cache/
+tests/enhancement/fixtures/enterprise-batch/target/
 
 # Local runtime/tool state and generated host backups
 .engram/

@@ -21,7 +21,7 @@ PATHS = (
 )
 EXCLUDED = {
     ".git", ".venv", "venv", "__pycache__", ".DS_Store", "Thumbs.db",
-    "node_modules", ".next", "dist", "artifacts", ".npm-cache",
+    "node_modules", ".next", "dist", "artifacts", ".npm-cache", "target",
 }
 
 

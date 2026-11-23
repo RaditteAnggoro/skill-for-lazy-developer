@@ -175,7 +175,36 @@ function providerProject(project) {
   return `ld-${projectFingerprint(project)}`;
 }
 
-async function recall(config, project, cwd, timeout = 3000) {
+async function currentMemory(meta, project) {
+  if (meta.review_after != null && (typeof meta.review_after !== 'string' ||
+      !/(Z|[+-]\d\d:\d\d)$/.test(meta.review_after) || !(Date.parse(meta.review_after) > Date.now()))) return false;
+  const anchors = meta.source_anchors === undefined ? [] : meta.source_anchors;
+  if (!Array.isArray(anchors) || anchors.length > 8) return false;
+  for (const anchor of anchors) {
+    const relative = anchor?.path;
+    if (typeof anchor?.sha256 !== 'string' || !/^[0-9a-f]{64}$/.test(anchor.sha256)) return false;
+    if (typeof relative !== 'string' || /[\\:\0]/.test(relative) ||
+        relative.split('/').some((part) => !part || part.startsWith('.') ||
+          /^(secret|secrets|credential|credentials|private|password)(\.|$)/i.test(part))) return false;
+    let resolved = project.root;
+    try {
+      for (const part of relative.split('/')) {
+        resolved = path.join(resolved, part);
+        if ((await fs.lstat(resolved)).isSymbolicLink()) return false;
+      }
+      const info = await fs.stat(resolved);
+      if (!info.isFile() || info.size > 128 * 1024 ||
+          createHash('sha256').update(await fs.readFile(resolved)).digest('hex') !== anchor.sha256) return false;
+    } catch { return false; }
+  }
+  return true;
+}
+
+const memoryControlWords = new Set(('recall memory what know remember continue resume previous work project about earlier '
+  + 'lanjut lanjutkan ingat memori proyek pekerjaan tampilkan yang tentang show the please with this from for dan untuk dengan serta').split(' '));
+const memoryWords = (value) => String(value).toLowerCase().match(/[a-z0-9_-]{3,}/g) ?? [];
+
+async function recall(config, project, cwd, timeout = 3000, task = '') {
   const namespace = providerProject(project);
   const temporary = await fs.mkdtemp(path.join(tmpdir(), 'ld-memory-'));
   let observations;
@@ -188,23 +217,34 @@ async function recall(config, project, cwd, timeout = 3000) {
     await fs.rm(temporary, { recursive: true, force: true });
   }
   if (!Array.isArray(observations)) return '';
-  const records = [];
+  const records = new Map();
   const scope = projectFingerprint(project);
   observations.sort((a, b) => String(b?.updated_at ?? '').localeCompare(String(a?.updated_at ?? '')));
-  let size = 0;
+  const query = new Set(memoryWords(task).filter((word) => !memoryControlWords.has(word)));
   for (const item of observations) {
     if (item?.project !== namespace || item.scope !== 'project' || typeof item.content !== 'string') continue;
     const block = item.content.trim();
     const match = block.match(/^<!-- memory-record:v1 (\{[\s\S]*?\}) -->/);
-    if (!match || block.length > 1800 || sensitive(block)) continue;
+    if (!match || block.length > 1800 || sensitive(block) ||
+        /ignore\s+(?:all\s+)?(?:prior|previous|system|developer)\b|reveal\s+(?:the\s+)?(?:system prompt|secrets)/i.test(block)) continue;
     let meta;
     try { meta = JSON.parse(match[1]); } catch { continue; }
-    if (meta?.status !== 'active' || meta.scope?.project !== project.name || meta.project_fingerprint !== scope) continue;
-    if (size + block.length + 2 > 1800) break;
-    records.push(block);
+    if (meta?.status !== 'active' || meta.scope?.project !== project.name || meta.trust === 'untrusted' ||
+        meta.project_fingerprint !== scope || !await currentMemory(meta, project)) continue;
+    const topic = meta.topic ?? meta.id ?? block;
+    if (records.has(topic)) continue;
+    const terms = new Set(memoryWords(`${topic} ${block.slice(match[0].length)}`));
+    const score = [...query].filter((word) => terms.has(word)).length;
+    records.set(topic, { score, block });
+  }
+  let size = 0;
+  const selected = [];
+  for (const { score, block } of [...records.values()].sort((a, b) => b.score - a.score)) {
+    if ((query.size && !score) || size + block.length + 2 > 1800) continue;
+    selected.push(block);
     size += block.length + 2;
   }
-  return records.reverse().join('\n\n');
+  return selected.reverse().join('\n\n');
 }
 
 function record(kind, topic, title, content, trust, confidence, projectName, evidence) {
@@ -409,8 +449,6 @@ async function handleForget(prompt, config, project, cwd, agent) {
   return true;
 }
 
-const pendingRecall = new WeakMap();
-
 async function installLifecycle(ctx, config = {}) {
   ctx.on('agent/created', async ({ agent }) => {
     const cwd = cwdFor(agent);
@@ -419,14 +457,7 @@ async function installLifecycle(ctx, config = {}) {
     const optOuts = await readOptOuts(config);
     if (optOuts.includes(project.root)) return;
     const seen = new Set();
-    try {
-      const text = await recall(config, project, cwd);
-      if (text) {
-        pendingRecall.set(agent, text);
-      }
-    } catch {
-      // Memory is optional; ordinary work must continue.
-    }
+    let firstRecall = true;
     agent.ctx.on('agent/pre-step', async (payload, next) => {
       let decision = await next();
       if (decision.kind === 'reject') return decision;
@@ -434,10 +465,11 @@ async function installLifecycle(ctx, config = {}) {
       const prompt = messageText(latest);
       const disabling = /(do not remember|don't remember|jangan ingat|jangan simpan).*(project|proyek)/is.test(prompt);
       if ((await readOptOuts(config)).includes(project.root)) return decision;
-      const recallText = pendingRecall.get(agent);
-      if (!disabling && recallText && (payload.messages || []).some((item) => item?.role === 'user' && item?.source?.kind === 'user')) {
-        pendingRecall.delete(agent);
-        decision = {
+      if (!disabling && firstRecall && prompt) {
+        firstRecall = false;
+        const task = /\b(resume|continue|lanjutkan|lanjut|handoff)\b/i.test(prompt) ? prompt : '';
+        const recallText = await recall(config, project, cwd, 3000, task).catch(() => '');
+        if (recallText) decision = {
           ...decision,
           messages: [{
             id: randomUUID(),
@@ -457,7 +489,7 @@ async function installLifecycle(ctx, config = {}) {
       const lowered = prompt.toLowerCase();
       try {
         if (disabling) {
-          pendingRecall.delete(agent);
+          firstRecall = false;
           const optOuts = await readOptOuts(config);
           if (!optOuts.includes(project.root)) await writeOptOuts(config, [...optOuts, project.root]);
           injectText(agent, 'Memory is disabled for this project.');

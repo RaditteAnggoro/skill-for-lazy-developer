@@ -85,6 +85,13 @@ focused fix after it locates the cause, so do not add `lean-senior-engineering` 
 because the investigation may end with a code change. Add a supporting workflow only
 for a separate responsibility the primary workflow does not cover.
 
+For Spring Batch loan repayment, financial replay, or ledger reconciliation, route
+by the transaction integrity risk and the requested outcome. Open the relevant
+transaction safety reference after seeing the framework, database or source
+boundary. An ordinary Spring or batch task does not require financial guidance.
+Keep user-facing findings precise and preserve read-only intent, project-scoped
+memory, and explicit authorization for consequential operations.
+
 ## Select tools by capability
 
 After selecting the workflow, discover the capabilities actually available when the

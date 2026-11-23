@@ -42,6 +42,18 @@ across systems that cannot provide it.
 For batches, persist checkpoints and a replay marker. Replays must be idempotent and
 must not reset missing values to zero. Reconcile totals before and after recovery.
 
+## Select enterprise guidance
+
+Load only the reference required by the observed risk:
+
+- [Spring Batch safety](references/spring-batch-safety.md) for job identity, chunk boundaries, and reader restart.
+- [Staging and posting](references/staging-posting-pipeline.md) for ownership, reclaim, posting and dialect examples.
+- [Ledger invariants](references/ledger-invariants.sql) for close-out assertions on the documented fixture schema.
+- [SQL performance and change safety](references/sql-performance-and-change-safety.md) for plans, migrations and audit evidence.
+
+Where available, use explicit Java/SQL source checks to identify candidates, then
+verify the real call proxy, schema, transaction manager and durable outcomes.
+
 For a high-consequence financial change, consider one independent read-only integrity
 review of idempotency, replay, transaction boundaries, ledger balance, and auditability.
 It is advisory and must not write production data. Do not delegate every transaction

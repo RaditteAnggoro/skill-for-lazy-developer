@@ -33,6 +33,7 @@ it is not a standalone app.*
 | **Optional specialist roles** | 4 read-only contracts |
 | **Host wrappers** | 4 Codex TOML + 4 Claude Markdown |
 | **Memory** | Optional Engram adapters; no credentials imported |
+| **Context** | Scoped source retrieval, revision checks, and on-demand tool selection |
 | **Packaging** | Portable pack with deterministic manifest, checksum, backup, and rollback |
 
 > **Read this first:** installing the skill pack does **not** install an agent, Engram,
@@ -47,6 +48,12 @@ it is not a standalone app.*
   has explicit fallback states.
 - **Evidence-gated learning** — lessons become local proposals, never automatic edits to
   active skills.
+- **Context-aware workflows** — retrieve relevant source within the project, reopen
+  exact evidence when a summary is insufficient, and choose tools by capability.
+  [Context architecture and benchmarks](docs/context-intelligence-v4/08_IMPLEMENTATION_REPORT.md)
+- **Financial engineering** — targeted Spring Batch, SQL, ledger, and replay
+  guidance with disposable PostgreSQL verification fixtures.
+  [Financial engineering evidence](docs/enterprise-financial-engineering/IMPLEMENTATION_AND_ROADMAP.md)
 - **Setup preview** — dry-run before import: would import, conflicts, skipped items, and
   missing support.
 - **Humanized voice** — casual register and slang when appropriate; formal and precise

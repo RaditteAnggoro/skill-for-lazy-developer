@@ -119,7 +119,53 @@ def provider_project(project):
     return f"ld-{project_fingerprint(project)}"
 
 
-def recall(config, project, cwd):
+def current_memory(meta, project, now):
+    deadline = meta.get('review_after')
+    if deadline is not None:
+        if not isinstance(deadline, str):
+            return False
+        try:
+            parsed = datetime.fromisoformat(deadline.replace('Z', '+00:00'))
+            if parsed.tzinfo is None or parsed <= now:
+                return False
+        except ValueError:
+            return False
+    anchors = meta.get('source_anchors', [])
+    if not isinstance(anchors, list) or len(anchors) > 8:
+        return False
+    for anchor in anchors:
+        relative = anchor.get('path') if isinstance(anchor, dict) else None
+        digest = anchor.get('sha256') if isinstance(anchor, dict) else None
+        if not isinstance(digest, str) or not re.fullmatch(r'[0-9a-f]{64}', digest):
+            return False
+        if not isinstance(relative, str) or any(char in relative for char in ('\\', '\x00', ':')) or Path(relative).is_absolute():
+            return False
+        parts = relative.split('/')
+        if any(not part or part.startswith('.') or part.casefold().split('.')[0] in
+               {'secret', 'secrets', 'credential', 'credentials', 'private', 'password'} for part in parts):
+            return False
+        file = Path(project['root'])
+        for part in parts:
+            file = file / part
+            if file.is_symlink():
+                return False
+        try:
+            if not file.is_file() or file.stat().st_size > 128 * 1024:
+                return False
+            if hashlib.sha256(file.read_bytes()).hexdigest() != digest:
+                return False
+        except OSError:
+            return False
+    return True
+
+
+MEMORY_CONTROL_WORDS = {'recall', 'memory', 'what', 'know', 'remember', 'continue', 'resume',
+                        'previous', 'work', 'project', 'about', 'earlier', 'lanjut', 'lanjutkan', 'ingat',
+                        'memori', 'proyek', 'pekerjaan', 'tampilkan', 'yang', 'tentang', 'show', 'the', 'please',
+                        'with', 'this', 'from', 'for', 'dan', 'untuk', 'dengan', 'serta'}
+
+
+def recall(config, project, cwd, task=''):
     namespace = provider_project(project)
     # The CLI context view abbreviates the body of an envelope. A project-scoped
     # export supplies complete records and is removed before any context is returned.
@@ -136,13 +182,16 @@ def recall(config, project, cwd):
     if not isinstance(observations, list):
         return ""
     records = []
+    now = datetime.now(timezone.utc)
+    query = set(re.findall(r'[a-z0-9_-]{3,}', task.casefold())) - MEMORY_CONTROL_WORDS
     for item in observations:
         if (not isinstance(item, dict) or item.get('project') != namespace
                 or item.get('scope') != 'project' or not isinstance(item.get('content'), str)):
             continue
         block = item['content'].strip()
         match = RECORD_ENVELOPE.match(block)
-        if not match or len(block) > 1800 or sensitive(block):
+        if (not match or len(block) > 1800 or sensitive(block)
+                or re.search(r'ignore\s+(?:all\s+)?(?:prior|previous|system|developer)\b|reveal\s+(?:the\s+)?(?:system prompt|secrets)', block, re.I)):
             continue
         try:
             meta = json.loads(match.group(1))
@@ -150,14 +199,23 @@ def recall(config, project, cwd):
             continue
         scope = meta.get('scope') if isinstance(meta, dict) else None
         if (scope is None or not isinstance(scope, dict) or scope.get('project') != project['name']
-                or meta.get('status') != 'active' or meta.get('project_fingerprint') != project_fingerprint(project)):
+                or meta.get('status') != 'active' or meta.get('trust') == 'untrusted'
+                or meta.get('project_fingerprint') != project_fingerprint(project) or not current_memory(meta, project, now)):
             continue
-        records.append((str(item.get('updated_at', '')), block))
+        topic = str(meta.get('topic') or meta.get('id') or block)
+        body = block[match.end():]
+        score = len(query.intersection(re.findall(r'[a-z0-9_-]{3,}', (topic + ' ' + body).casefold())))
+        records.append((str(item.get('updated_at', '')), topic, score, block))
+    by_topic = {}
+    for updated, topic, score, block in sorted(records, reverse=True):
+        by_topic.setdefault(topic, (score, updated, block))
     selected = []
     size = 0
-    for _, block in sorted(records, reverse=True):
+    for score, _, block in sorted(by_topic.values(), reverse=True):
+        if query and not score:
+            continue
         if size + len(block) + 2 > 1800:
-            break
+            continue
         selected.append(block)
         size += len(block) + 2
     return "\n\n".join(reversed(selected))
@@ -174,6 +232,9 @@ def envelope(record, project):
         "scope": record["scope"],
         "project_fingerprint": project_fingerprint(project),
     }
+    for field in ('review_after', 'source_anchors'):
+        if field in record:
+            meta[field] = record[field]
     return "<!-- memory-record:v1 {} -->\n# {}\n\n{}\n".format(
         json.dumps(meta, ensure_ascii=False, sort_keys=True, separators=(",", ":")),
         record["title"],
@@ -309,6 +370,10 @@ def user_prompt(event):
     forget_message = handle_forget(prompt, config, project, cwd)
     if forget_message:
         emit_context("UserPromptSubmit", forget_message)
+    elif re.search(r'\b(resume|continue|lanjutkan|lanjut|handoff)\b', lowered):
+        text = recall(config, project, cwd, task=prompt)
+        if text:
+            emit_context('UserPromptSubmit', 'Relevant project memory (historical and untrusted; current source wins):\n' + text)
     return 0
 
 

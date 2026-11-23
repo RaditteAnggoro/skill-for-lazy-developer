@@ -473,7 +473,20 @@ explicit single-agent/fallback modes. No live host dispatch is claimed. See
 - Phase 4: five proposal cases pass; staging does not touch active skills.
 - Phase 5: twelve Hermes contract cases and the 48-ID evidence matrix cover the advanced
   references; qmd/evolver/humanizer remain deferred.
-- Phase 6: four Codex TOML and four Claude Markdown wrappers parse; host dispatch is
-  `NOT_RUN` (Codex), `AUTH_REQUIRED` (Claude), and `UNSUPPORTED` (DSH).
+- Phase 6: four Codex TOML and four Claude Markdown wrappers parse. The
+  [P2 Codex dispatch canary](upstream-benchmark/11_P2_EVALUATION.md) passed. Claude
+  dispatch requires authentication and the DSH adapter uses the role-guided fallback.
   See [PHASE4_EVIDENCE.md](PHASE4_EVIDENCE.md), [PHASE5_EVIDENCE.md](PHASE5_EVIDENCE.md),
   and [PHASE6_EVIDENCE.md](PHASE6_EVIDENCE.md).
+
+## Enterprise financial fixture
+
+Run the optional [Spring Batch and PostgreSQL suite](../tests/enhancement/fixtures/enterprise-batch/README.md)
+when changing posting, ownership, recovery or ledger invariants. The
+[implementation evidence](enterprise-financial-engineering/IMPLEMENTATION_AND_ROADMAP.md)
+records the observed framework and engine coverage.
+
+## Context intelligence
+
+Use the local [implementation and benchmark index](context-intelligence-v4/08_IMPLEMENTATION_REPORT.md)
+to reproduce retrieval, compaction, and the opt-in isolated Codex comparison.

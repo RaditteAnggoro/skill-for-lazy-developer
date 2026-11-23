@@ -14,8 +14,8 @@ await mkdir(path.join(project, '.engram'), { recursive: true });
 await writeFile(path.join(project, '.engram/config.json'), '{"project_name":"demo"}\n');
 const localRoot = await realpath(project);
 const fingerprint = (directory) => createHash('sha256').update(directory).digest('hex');
-const memory = (projectRoot, status, body) => {
-  const metadata = { scope: { project: 'demo' }, project_fingerprint: fingerprint(projectRoot), status };
+const memory = (projectRoot, status, body, fields = {}) => {
+  const metadata = { scope: { project: 'demo' }, project_fingerprint: fingerprint(projectRoot), status, ...fields };
   return `<!-- memory-record:v1 ${JSON.stringify(metadata)} -->\n${body}`;
 };
 await writeFile(context, memory(localRoot, 'active', 'Previous session: RECALL-TOKEN-7319'));
@@ -71,6 +71,21 @@ await handlers['agent/pre-step']({
 }, enter);
 assert.match(JSON.stringify(injected.at(-1)), /LOCAL-CURRENT/);
 assert.doesNotMatch(JSON.stringify(injected.at(-1)), /FOREIGN-PROJECT|STALE-RECORD|UNBOUND-LEGACY/);
+await writeFile(path.join(project, 'ledger.sql'), 'SELECT 1;\n');
+await writeFile(context, [
+  memory(localRoot, 'active', 'Invoice UNRELATED-NOTE'),
+  memory(localRoot, 'active', 'Ledger CURRENT-NOTE',
+    { source_anchors: [{ path: 'ledger.sql', sha256: fingerprint('SELECT 1;\n') }] }),
+  memory(localRoot, 'active', 'Ledger EXPIRED-NOTE', { review_after: '2000-01-01T00:00:00Z' }),
+  memory(localRoot, 'active', 'Ledger CHANGED-SOURCE',
+    { source_anchors: [{ path: 'ledger.sql', sha256: '0'.repeat(64) }] }),
+].join('\n'));
+await created({ agent });
+const resume = await handlers['agent/pre-step']({
+  messages: [{ role: 'user', source: { kind: 'user' }, content: [{ type: 'text', text: 'Lanjutkan ledger' }] }],
+}, enter);
+assert.match(JSON.stringify(resume), /CURRENT-NOTE/);
+assert.doesNotMatch(JSON.stringify(resume), /UNRELATED-NOTE|EXPIRED-NOTE|CHANGED-SOURCE/);
 await handlers['agent/pre-step']({
   messages: [{ role: 'user', source: { kind: 'user' }, content: [{ type: 'text', text: 'Remember this: Phase 3 uses bounded handoff' }] }],
 }, enter);

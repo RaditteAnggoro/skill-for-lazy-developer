@@ -3,9 +3,15 @@
 import argparse
 import json
 from pathlib import Path
+import subprocess
 import sys
 
 import yaml
+
+ROOT = Path(__file__).resolve().parents[1]
+if str(ROOT) not in sys.path:
+    sys.path.insert(0, str(ROOT))
+from scripts.analyze_financial_source import analyze  # noqa: E402
 
 
 REQUIRED_KINDS = {"money", "ledger", "batch", "reconciliation"}
@@ -46,9 +52,26 @@ def load(path):
 
 def main(argv=None):
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("path", type=Path)
+    parser.add_argument("path", type=Path, nargs="?")
+    parser.add_argument("--source", type=Path, action="append", default=[])
+    parser.add_argument("--reviewed", type=Path, help="JSON dispositions for source findings")
     parser.add_argument("--json", action="store_true")
     args = parser.parse_args(argv)
+    if bool(args.path) == bool(args.source) or (args.reviewed and not args.source):
+        parser.error('choose one YAML declaration or explicit --source paths')
+    if args.source:
+        try:
+            findings = analyze(args.source, reviewed=args.reviewed)
+        except (OSError, ValueError, TypeError, KeyError, subprocess.SubprocessError) as exc:
+            print(f'Source check blocked: {exc}', file=sys.stderr)
+            return 2
+        if args.json:
+            print(json.dumps({'mode': 'source_review', 'findings': findings}, indent=2))
+        else:
+            for finding in findings:
+                print('{classification} {rule} {file}:{line} {method} — {reason} {verification}'.format(**finding))
+            print(f'{len(findings)} source finding(s). Verify financial outcomes separately.')
+        return 0
     try:
         errors = check(load(args.path))
     except (OSError, UnicodeError, yaml.YAMLError) as exc:
