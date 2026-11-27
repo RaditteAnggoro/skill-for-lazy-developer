@@ -465,3 +465,165 @@ cases:
   interaction: automatic
   primary: lean-senior-engineering
   supporting: []
+
+# Everyday casual Indonesian requests. Replies must stay in one pronoun register.
+- id: id-casual-resume-named-phase
+  kind: contextual
+  prompt: lanjut p4
+  workspace_files:
+    .agents/artifacts/dashboard-filter/handoff.md: |
+      # Handoff: dashboard filter
+
+      - Task and outcome: add a saved-filter dropdown to the dashboard.
+      - Stage and authority: implementation authorized through final verification.
+      - Phases:
+        - p1 | research-plan-implement | completed | plan.md
+        - p2 | lean-senior-engineering | completed | filter API contract tests pass
+        - p3 | ui-design-intelligence | completed | dropdown states agreed
+        - p4 | ui-implementation | pending | —
+        - p5 | verification-before-completion | pending | —
+      - Next action: p4 with ui-implementation, using the frozen filter API contract.
+  interaction: automatic
+  primary: ui-implementation
+  supporting: []
+  # Verification is the recorded next phase, so naming it as support is also valid.
+  accepted_supporting:
+  - []
+  - - verification-before-completion
+  message_expectations:
+    language: id
+    question: forbidden
+    max_words: 45
+    table: forbidden
+- id: id-casual-resume-next-phase
+  kind: contextual
+  prompt: gas lanjutin aja
+  workspace_files:
+    .agents/artifacts/invoice-rounding/handoff.md: |
+      # Handoff: invoice rounding
+
+      - Task and outcome: fix invoice total rounding and keep existing tests green.
+      - Stage and authority: implementation authorized through final verification.
+      - Phases:
+        - p1 | research-plan-implement | completed | plan.md
+        - p2 | lean-senior-engineering | pending | —
+        - p3 | verification-before-completion | pending | —
+      - Next action: p2 with lean-senior-engineering.
+  interaction: automatic
+  primary: lean-senior-engineering
+  supporting: []
+  # The handoff authorizes work through p3, so naming verification as support is also valid.
+  accepted_supporting:
+  - []
+  - - verification-before-completion
+  message_expectations:
+    language: id
+    question: forbidden
+    max_words: 45
+    table: forbidden
+- id: id-casual-batch-diagnose
+  kind: negative-control
+  prompt: cek kenapa job batch export laporan semalem gagal, jangan diubah dulu ya
+  interaction: automatic
+  primary: systematic-debugging
+  supporting: []
+  message_expectations:
+    language: id
+    question: forbidden
+    max_words: 45
+    table: forbidden
+- id: id-casual-failing-test
+  kind: direct
+  prompt: test login merah abis update dependency, benerin dong terus jalanin lagi
+    testnya
+  interaction: automatic
+  primary: systematic-debugging
+  supporting:
+  - verification-before-completion
+  message_expectations:
+    language: id
+    question: forbidden
+    max_words: 50
+    table: forbidden
+- id: id-casual-label-change
+  kind: direct
+  prompt: ganti label tombol Submit jadi Simpan, sekalian update test-nya
+  interaction: automatic
+  primary: lean-senior-engineering
+  supporting:
+  - verification-before-completion
+  message_expectations:
+    language: id
+    question: forbidden
+    max_words: 45
+    table: forbidden
+- id: id-casual-doc-typo
+  kind: negative-control
+  prompt: benerin typo di docs onboarding aja, kodenya jangan disentuh
+  interaction: automatic
+  primary: lean-senior-engineering
+  supporting: []
+  message_expectations:
+    language: id
+    question: forbidden
+    max_words: 40
+    table: forbidden
+- id: id-casual-explain-flow
+  kind: negative-control
+  prompt: jelasin dong alur request notifikasi dari controller sampe masuk queue, gak
+    usah ngubah apa-apa
+  interaction: automatic
+  primary: architecture-map
+  supporting: []
+  message_expectations:
+    language: id
+    question: forbidden
+    max_words: 45
+    table: forbidden
+- id: id-casual-check-existing-fix
+  kind: negative-control
+  prompt: tolong cek patch kemarin beneran udah nge-fix bug export CSV yang kosong,
+    gak usah cari penyebab lain
+  interaction: automatic
+  primary: verification-before-completion
+  supporting: []
+  message_expectations:
+    language: id
+    question: forbidden
+    max_words: 45
+    table: forbidden
+- id: id-casual-browser-blank
+  kind: contextual
+  prompt: dashboard jadi blank abis di-refresh, coba reproduce di browser terus benerin
+  interaction: automatic
+  primary: browser-diagnostics
+  supporting:
+  - systematic-debugging
+  - verification-before-completion
+  message_expectations:
+    language: id
+    question: forbidden
+    max_words: 50
+    table: forbidden
+- id: id-casual-release-check
+  kind: direct
+  prompt: rilis besok aman gak? cek apa aja yang belum beres, jangan deploy dulu
+  interaction: automatic
+  primary: release-readiness
+  supporting: []
+  message_expectations:
+    language: id
+    question: forbidden
+    max_words: 50
+    table: forbidden
+- id: id-casual-vague-fix
+  kind: negative-control
+  prompt: benerin sistemnya dong
+  interaction: question
+  primary: adaptive-workflow
+  supporting: []
+  message_expectations:
+    language: id
+    question: required
+    max_words: 40
+    table: forbidden

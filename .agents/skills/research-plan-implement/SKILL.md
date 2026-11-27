@@ -107,10 +107,15 @@ Preserve user changes. Keep independent tasks separate if using agents; delegate
 
 ## Keep a useful handoff
 
-When saved records are in scope, update the plan and handoff at meaningful milestones or before stopping, using [handoff-template.md](references/handoff-template.md) as a compact shape. Otherwise include the relevant record in chat. Include exact checks and remaining work, not a transcript of the conversation. Keep credentials and private payloads out of artifacts.
+When saved records are in scope, update the plan and handoff at meaningful milestones or before stopping, using [handoff-template.md](references/handoff-template.md) as a compact shape. For a task with two or more phases, also update the handoff at every phase boundary with the phase ID, status, and closing evidence, so a compacted or resumed session can continue from the file. Otherwise include the relevant record in chat. Include exact checks and remaining work, not a transcript of the conversation. Keep credentials and private payloads out of artifacts.
 
 On resumption, verify the recorded environment and code state, complete remaining authorized work, and check the original acceptance criteria. A plan file is not completion evidence.
 
-When the final phase closes, report the phase trace rather than a flat “done”. For each
-phase, name the primary skill, optional support, outcome, and evidence. Mark skipped
-phases and unresolved gaps. Do not list skills that were not actually loaded or used.
+On a short continue command such as `lanjut`, `gas`, or `lanjut p4`, resume the named or
+recorded next phase from the active handoff without re-routing or asking what to continue.
+
+When the final phase closes and the task ran two or more phases, report the phase trace
+rather than a flat “done”: for each phase, name the primary skill, optional support,
+outcome, and evidence. A single-phase task gets one evidence sentence instead of a table.
+Mark skipped phases and unresolved gaps, and put anything waiting on the user last. Do not
+list skills that were not actually loaded or used.

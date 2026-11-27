@@ -84,7 +84,7 @@ def workspace_snapshot(root):
 def run_case(case, dsh, profile, timeout, artifacts=None):
     with tempfile.TemporaryDirectory(prefix="dsh-routing-eval-") as temporary:
         workspace = Path(temporary)
-        prepare_workspace(workspace)
+        prepare_workspace(workspace, case)
         if DSH_OVERLAY.is_file():
             instructions = workspace / "AGENTS.md"
             instructions.write_text(

@@ -49,6 +49,11 @@ class RoutingPolicyTests(unittest.TestCase):
             if len(accepted) > 1:
                 self.assertNotIn("automatic", accepted)
             self.assertLessEqual(len(case.get("supporting", [])), 2)
+            accepted_supporting = case.get("accepted_supporting", [case.get("supporting", [])])
+            self.assertIn(case.get("supporting", []), accepted_supporting, case["id"])
+            for option in accepted_supporting:
+                self.assertLessEqual(len(option), 2, case["id"])
+                self.assertTrue(set(option) <= self.skills - {"adaptive-workflow"}, case["id"])
 
     def test_corpus_covers_automatic_choice_and_question_routes(self):
         interactions = {case["interaction"] for case in self.cases}

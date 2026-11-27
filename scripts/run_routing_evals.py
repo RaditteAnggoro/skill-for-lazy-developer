@@ -26,6 +26,18 @@ FORBIDDEN_BOILERPLATE = (
     "permintaan anda telah diterima",
     "berdasarkan instruksi yang diberikan",
 )
+INDONESIAN_MARKERS = {
+    "saya", "akan", "dan", "yang", "untuk", "lalu", "penyebab",
+    "gua", "gue", "lo", "lu", "aku", "kita", "dulu", "cek", "nih", "ya", "udah", "aja",
+}
+# One reply must keep one Indonesian pronoun register from start to finish.
+PRONOUN_REGISTERS = {
+    "formal": {"saya", "anda"},
+    "gua-lo": {"gua", "gue", "lo", "lu", "elo", "elu"},
+    "aku-kamu": {"aku", "kamu"},
+}
+TABLE_ROW = re.compile(r"^\s*\|.*\|\s*$")
+TABLE_RULE = re.compile(r"^\s*\|?\s*:?-{3,}:?\s*(\|\s*:?-{3,}:?\s*)+\|?\s*$")
 
 
 def load_cases(path=CASES):
@@ -84,12 +96,19 @@ def score_case(case, actual):
                 accepted_interactions, actual.get("interaction")
             )
         )
-    for key in ("primary", "supporting"):
-        expected = case.get(key, [])
-        if actual.get(key) != expected:
-            differences.append(
-                "{} expected {!r}, got {!r}".format(key, expected, actual.get(key))
-            )
+    if actual.get("primary") != case.get("primary"):
+        differences.append(
+            "primary expected {!r}, got {!r}".format(case.get("primary"), actual.get("primary"))
+        )
+    accepted_supporting = case.get("accepted_supporting", [case.get("supporting", [])])
+    if actual.get("supporting") not in accepted_supporting:
+        expected = (
+            accepted_supporting[0] if len(accepted_supporting) == 1 else accepted_supporting
+        )
+        label = "supporting expected" if len(accepted_supporting) == 1 else "supporting expected one of"
+        differences.append(
+            "{} {!r}, got {!r}".format(label, expected, actual.get("supporting"))
+        )
     differences.extend(score_message(case, actual.get("user_message")))
     return differences
 
@@ -119,9 +138,15 @@ def score_message(case, message):
     if question == "forbidden" and "?" in message:
         differences.append("user_message must continue without a redundant question")
     if expected["language"] == "id":
-        markers = {"saya", "akan", "dan", "yang", "untuk", "lalu", "penyebab"}
-        if not markers.intersection(word.casefold() for word in words):
+        if not INDONESIAN_MARKERS.intersection(word.casefold() for word in words):
             differences.append("user_message does not appear to use Indonesian")
+        registers = pronoun_registers(message)
+        if len(registers) > 1:
+            differences.append(
+                "user_message mixes pronoun registers {!r}".format(registers)
+            )
+    if expected.get("table") == "forbidden" and has_markdown_table(message):
+        differences.append("user_message must not contain a table")
     required_any = [item.casefold() for item in expected.get("required_any", [])]
     if required_any and not any(item in lowered for item in required_any):
         differences.append(
@@ -130,19 +155,65 @@ def score_message(case, message):
     return differences
 
 
-def prepare_workspace(destination):
+def pronoun_registers(message):
+    """Return the sorted Indonesian pronoun registers used in one message."""
+    words = {word.casefold() for word in re.findall(r"\b[\w'-]+\b", message, flags=re.UNICODE)}
+    return sorted(name for name, pronouns in PRONOUN_REGISTERS.items() if words & pronouns)
+
+
+def has_markdown_table(text):
+    lines = text.splitlines()
+    return any(
+        TABLE_ROW.match(lines[index]) and TABLE_RULE.match(lines[index + 1])
+        for index in range(len(lines) - 1)
+    )
+
+
+def score_final_answer(text, expectations):
+    """Check the shape of a final handoff: tables only for multi-phase work, pending last."""
+    if not isinstance(text, str) or not text.strip():
+        return ["final answer must be a nonempty string"]
+    differences = []
+    phases = expectations.get("phases", 1)
+    if phases < 2 and has_markdown_table(text):
+        differences.append("single-phase answer must not contain a phase table")
+    pending = [item.casefold() for item in expectations.get("pending", [])]
+    if pending:
+        lines = [line for line in text.splitlines() if line.strip()]
+        last = lines[-1].casefold()
+        if not any(item in last for item in pending):
+            differences.append("pending user action must be the last line")
+    if expectations.get("language") == "id":
+        registers = pronoun_registers(text)
+        if len(registers) > 1:
+            differences.append("final answer mixes pronoun registers {!r}".format(registers))
+    return differences
+
+
+def _safe_relative(path):
+    relative = Path(path)
+    if relative.is_absolute() or ".." in relative.parts or not relative.parts:
+        raise ValueError("unsafe workspace file path: {}".format(path))
+    return relative
+
+
+def prepare_workspace(destination, case=None):
     shutil.copytree(
         ROOT / ".agents",
         destination / ".agents",
         ignore=shutil.ignore_patterns("artifacts", "__pycache__"),
     )
     shutil.copy2(ROOT / "AGENTS.snippet.md", destination / "AGENTS.md")
+    for path, content in ((case or {}).get("workspace_files") or {}).items():
+        target = destination / _safe_relative(path)
+        target.parent.mkdir(parents=True, exist_ok=True)
+        target.write_text(content, encoding="utf-8")
 
 
 def run_case(case, codex, model, timeout, artifacts=None):
     with tempfile.TemporaryDirectory(prefix="routing-eval-") as temporary:
         workspace = Path(temporary)
-        prepare_workspace(workspace)
+        prepare_workspace(workspace, case)
         result = workspace / "result.json"
         command = build_command(codex, workspace, result, model)
         completed = subprocess.run(

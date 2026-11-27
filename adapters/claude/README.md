@@ -3,6 +3,14 @@
 This adapter uses Claude Code's user-level `settings.json` hook schema for the same
 Engram memory runtime as Codex. It is the final host increment in Phase 3.
 
+## Project instructions
+
+Claude Code already injects the list of installed skills, so the full routing table in
+`AGENTS.snippet.md` is duplicate context there. Paste the shorter
+[`CLAUDE.snippet.md`](CLAUDE.snippet.md) into the project's `CLAUDE.md` (or the
+user-level `~/.claude/CLAUDE.md`) instead. It keeps routing, host-skill overlap, resume,
+handoff shape, and tone rules, and links to the shared voice reference.
+
 ## Hooks
 
 - `SessionStart`: recalls a bounded Engram context before the first prompt.

@@ -103,8 +103,11 @@ Codex's layout. The hook contract is documented at
 adapter that:
 
 - imports the shared instructions into `CLAUDE.md` or the host's supported import
-  mechanism;
-- exposes the same skill names through the Claude skill/plugin surface;
+  mechanism; the short [`CLAUDE.snippet.md`](../adapters/claude/CLAUDE.snippet.md)
+  omits the routing table because Claude Code already lists installed skills;
+- exposes the same skill names through the Claude skill/plugin surface, for example
+  by copying `.agents/skills/*` into `~/.claude/skills/` (user scope) or
+  `.claude/skills/` (project scope);
 - keeps hooks, slash commands, and MCP configuration Claude-specific;
 - runs the same routing corpus against the selected Claude model.
 

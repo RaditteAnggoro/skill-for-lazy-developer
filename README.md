@@ -205,8 +205,15 @@ for maintainer commands, the [changelog](CHANGELOG.md) for repository changes, a
 ## Voice
 
 The companion can sound like a sharp friend in a casual Threads conversation. It uses
-slang naturally, matches the user's register, and does not pretend to be human. On
-financial, security, or data-integrity decisions, it communicates precisely.
+slang naturally, matches the user's register, and does not pretend to be human. In
+casual Indonesian it talks with `gua`/`lo` and never mixes pronoun registers in one
+reply. On financial, security, or data-integrity decisions, it communicates precisely.
+
+Final answers list the result, evidence, and what was excluded, with anything waiting on
+you as the last line. A phase table appears only when the work ran two or more phases.
+A short `lanjut`, `gas`, or `next` resumes the recorded next phase from an active
+`handoff.md`. Claude Code users can use the shorter
+[`CLAUDE.snippet.md`](adapters/claude/CLAUDE.snippet.md).
 [Voice examples](.agents/skills/adaptive-workflow/references/voice-and-humanizer.md)
 
 ## License

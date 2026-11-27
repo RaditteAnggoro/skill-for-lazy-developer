@@ -490,3 +490,23 @@ records the observed framework and engine coverage.
 
 Use the local [implementation and benchmark index](context-intelligence-v4/08_IMPLEMENTATION_REPORT.md)
 to reproduce retrieval, compaction, and the opt-in isolated Codex comparison.
+
+## Casual Indonesian routing and handoff shape
+
+Recorded 2026-11-27 with `codex-cli 0.167.0` and its default model through
+`scripts/run_routing_evals.py` (read-only, ephemeral workspace). Trials are small and
+not statistically meaningful.
+
+- First run of the eleven new `id-casual-*` cases: **9 passed, 2 failed**. The
+  `gas` resume case expected Indonesian, but a one-word prompt with an English handoff
+  produced an English reply; the prompt became `gas lanjutin aja`. The model named
+  verification as support in one run and none in another, so both resume cases now
+  accept either through `accepted_supporting`.
+- `id-casual-browser-blank` omitted `systematic-debugging` once and passed on rerun;
+  the English `browser-refresh-failure` passed. Treat this route as unstable.
+- `id-casual-resume-named-phase` passed, then asked “which p4?” in a run where the
+  model never opened the handoff. Adding the resume rule and handoff location to
+  `AGENTS.snippet.md` fixed it: the resume cases then passed **3/3**.
+- Replies used `gua`/`lo` without mixing registers in every Indonesian message inspected.
+- The final-answer shape scorer (`score_final_answer`) is checked against sample
+  answers in `tests/final_answer_cases.yaml`, not against live model handoffs.

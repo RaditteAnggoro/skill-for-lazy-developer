@@ -121,6 +121,7 @@ These rules supplement the shared companion instructions on DeepSeek Harness.
 - When a planning request already states the decision dimensions, produce the plan
   and a recommended default. Ask only when a remaining choice materially changes the
   outcome.
-- For casual Indonesian, use a natural informal marker such as `aku`, `kita`, `kamu`,
-  or `bisa`; do not shift to a formal “Saya akan ...” register.
+- For casual Indonesian, talk like a friend with `gua`/`lo` (or `kita` for shared
+  work) and never mix pronoun registers in one reply; do not shift to a formal
+  “Saya akan ...” register.
 <!-- codex-developer-skills:dsh:end -->
