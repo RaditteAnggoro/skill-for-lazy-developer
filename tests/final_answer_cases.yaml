@@ -1,0 +1,56 @@
+# Sample final answers for the handoff-shape scorer in scripts/run_routing_evals.py.
+# These check the scorer itself; they are not evidence of model behaviour.
+cases:
+- id: single-phase-sentence
+  expectations: {phases: 1, language: id}
+  answer: |
+    Label tombol udah gua ganti jadi Simpan dan test-nya ikut gua update.
+    Evidence: `python -m unittest tests.test_form -v` lolos, 4 test OK.
+  valid: true
+- id: single-phase-with-table
+  expectations: {phases: 1, language: id}
+  answer: |
+    Label tombol udah gua ganti jadi Simpan.
+
+    | Phase | Skill | Support | Evidence |
+    | --- | --- | --- | --- |
+    | implement | `lean-senior-engineering` | — | unit test |
+  valid: false
+  reason: single-phase answer must not contain a phase table
+- id: multi-phase-with-table
+  expectations: {phases: 3, language: id}
+  answer: |
+    Filter dropdown udah jadi dan lolos verifikasi akhir.
+
+    | Phase | Skill | Support | Evidence |
+    | --- | --- | --- | --- |
+    | p2 | `lean-senior-engineering` | — | contract tests |
+    | p4 | `ui-implementation` | — | interaction checks |
+    | p5 | `verification-before-completion` | — | final checks |
+  valid: true
+- id: pending-last
+  expectations: {phases: 1, language: id, pending: ["lo"]}
+  answer: |
+    Fix-nya udah masuk dan test lolos.
+    Yang nggak gua cek: tampilan di Safari.
+    Tinggal lo putusin mau rilis hari ini atau besok.
+  valid: true
+- id: pending-buried
+  expectations: {phases: 1, language: id, pending: ["lo putusin"]}
+  answer: |
+    Fix-nya udah masuk.
+    Tinggal lo putusin mau rilis hari ini atau besok.
+    Evidence: test lolos, 12 OK.
+  valid: false
+  reason: pending user action must be the last line
+- id: mixed-pronouns
+  expectations: {phases: 1, language: id}
+  answer: |
+    Gua udah cek logs-nya. Saya sarankan kamu restart service-nya.
+  valid: false
+  reason: mixes pronoun registers
+- id: formal-consistent
+  expectations: {phases: 1, language: id}
+  answer: |
+    Saya sudah memeriksa log. Anda dapat menjalankan ulang service tersebut.
+  valid: true

@@ -2,6 +2,21 @@
 
 ## Unreleased
 
+- Use a phase trace table only for work with two or more phases; single-phase answers
+  close with one evidence sentence. Order the handoff as result, evidence, excluded
+  items, then anything waiting on the user as the last line.
+- Move phase orchestration into `adaptive-workflow/references/phase-orchestration.md`
+  and keep the router shorter. Update the handoff at every phase boundary so a
+  compacted session can resume, and resume `lanjut`/`gas`/`next` from an active
+  handoff without re-routing or asking.
+- Defer to a host skill only when the user names it; never load a host skill and a
+  pack skill for the same task.
+- Make `voice-and-humanizer.md` the single source for tone. Casual Indonesian now uses
+  `gua`/`lo` and never mixes pronoun registers in one reply.
+- Add a short Claude Code snippet (`adapters/claude/CLAUDE.snippet.md`).
+- Add eleven casual Indonesian routing cases, including two resume cases that ship a
+  handoff file into the evaluation workspace. Add scorer checks for mixed pronoun
+  registers, forbidden tables, and final-answer shape.
 - Update the V4 workflow diagram and document scoped context, MCP routing, and
   financial engineering in the README.
 - Require agents to keep logs, junk, and unrelated files out of commits and pushes

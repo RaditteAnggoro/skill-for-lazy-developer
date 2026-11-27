@@ -111,6 +111,60 @@ class RoutingEvalRunnerTests(unittest.TestCase):
             [],
         )
 
+    def test_message_grader_accepts_gua_lo_continuation(self):
+        case = {
+            "message_expectations": {
+                "language": "id",
+                "question": "forbidden",
+                "max_words": 30,
+                "table": "forbidden",
+            }
+        }
+        self.assertEqual(
+            score_message(case, "Oke, gua lanjut p4 dulu ya, abis itu lo tinggal cek UI-nya."),
+            [],
+        )
+
+    def test_message_grader_rejects_mixed_pronoun_registers(self):
+        case = {
+            "message_expectations": {
+                "language": "id",
+                "question": "forbidden",
+                "max_words": 30,
+            }
+        }
+        differences = score_message(case, "Gua cek dulu, nanti saya kabari kamu.")
+        self.assertEqual(len(differences), 1)
+        self.assertIn("mixes pronoun registers", differences[0])
+
+    def test_message_grader_rejects_forbidden_table(self):
+        case = {
+            "message_expectations": {
+                "language": "en",
+                "question": "forbidden",
+                "max_words": 60,
+                "table": "forbidden",
+            }
+        }
+        message = "Done.\n\n| Phase | Evidence |\n| --- | --- |\n| fix | tests |"
+        self.assertEqual(
+            score_message(case, message), ["user_message must not contain a table"]
+        )
+
+    def test_prepared_workspace_writes_case_files_safely(self):
+        from scripts.run_routing_evals import prepare_workspace
+
+        case = {"workspace_files": {".agents/artifacts/task/handoff.md": "- Next action: p4\n"}}
+        with tempfile.TemporaryDirectory() as temporary:
+            workspace = Path(temporary)
+            prepare_workspace(workspace, case)
+            handoff = workspace / ".agents/artifacts/task/handoff.md"
+            self.assertEqual(handoff.read_text(encoding="utf-8"), "- Next action: p4\n")
+        for unsafe in ("../escape.md", "/tmp/escape.md"):
+            with tempfile.TemporaryDirectory() as temporary:
+                with self.assertRaisesRegex(ValueError, "unsafe workspace file path"):
+                    prepare_workspace(Path(temporary), {"workspace_files": {unsafe: "x"}})
+
 
 if __name__ == "__main__":
     unittest.main()
